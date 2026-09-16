@@ -42,6 +42,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+        }
+
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            background: #e5e7eb;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.85rem;
         }
 
         .header {
@@ -50,7 +70,7 @@
         }
 
         .header h1 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: var(--primary-color);
             margin-bottom: 3px;
         }
@@ -134,7 +154,6 @@
             color: #9ca3af;
         }
 
-        /* Bottom Action Buttons (Red & Green) */
         .action-buttons {
             display: flex;
             gap: 20px;
@@ -158,20 +177,10 @@
             justify-content: center;
             gap: 8px;
             font-weight: 600;
-            transition: transform 0.1s;
         }
 
-        .action-btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-red {
-            background-color: var(--danger-color);
-        }
-
-        .btn-green {
-            background-color: var(--success-color);
-        }
+        .btn-red { background-color: var(--danger-color); }
+        .btn-green { background-color: var(--success-color); }
 
         .instructions {
             text-align: center;
@@ -186,7 +195,7 @@
             align-items: center;
             text-align: center;
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 14px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             width: 100%;
@@ -200,22 +209,25 @@
             display: flex;
             gap: 15px;
             margin: 15px 0;
+            width: 100%;
+            justify-content: center;
         }
 
         .score-item {
             background: #f8fafc;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            flex: 1;
         }
 
         .score-item div:first-child {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #6b7280;
         }
 
         .score-item div:last-child {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
         }
 
@@ -223,27 +235,101 @@
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 1rem;
         }
 
-        .btn:hover {
-            background: var(--primary-hover);
+        .btn-secondary { background: #6b7280; }
+
+        /* Sets List Screen Style */
+        .sets-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .set-card {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .set-info {
+            text-align: left;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .set-info h3 {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 3px;
+        }
+
+        .set-info p {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .delete-set-btn {
+            background: #fee2e2;
+            color: var(--danger-color);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Flashcard App Screen -->
-        <div id="app-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        
+        <!-- 1. Sets Selection Screen (Index Page) -->
+        <div id="sets-screen" class="screen active" style="background: transparent; box-shadow: none; padding: 0;">
+            <div class="header" style="margin-bottom: 15px;">
+                <h1>ഫ്ലാഷ് കാർഡ് സെറ്റുകൾ</h1>
+                <p style="font-size: 0.85rem; color: #6b7280; margin-top: 5px;">പഠിക്കാനുള്ള സെറ്റ് തിരഞ്ഞെടുക്കുക</p>
+            </div>
+            
+            <div class="sets-container" id="sets-list-container">
+                <div class="set-card">
+                    <div class="set-info" onclick="startMainSet()">
+                        <h3>ഭൂമിയുടെ ഘടന (മെയിൻ സെറ്റ്)</h3>
+                        <p>ചോദ്യങ്ങൾ ലഭ്യമാണ്</p>
+                    </div>
+                </div>
+            </div>
+            
+            <p id="loading-text" style="font-size: 0.85rem; color: #6b7280; margin-top: 15px;">ഫയർബേസ് സെറ്റുകൾ ലോഡ് ചെയ്യുന്നു...</p>
+        </div>
+
+        <!-- 2. Flashcard Playing Screen -->
+        <div id="app-screen" class="screen" style="background: transparent; box-shadow: none; padding: 0; display: none;">
+            <div class="top-bar">
+                <button class="back-btn" onclick="goToSetsScreen()">⬅️ ബാക്ക്</button>
+                <div class="progress-text" style="margin: 0;">കാർഡ് <span id="current-card">1</span> / <span id="total-cards">0</span></div>
+                <div style="width: 50px;"></div>
+            </div>
+
             <div class="header">
-                <h1>ഭൂമിയുടെ ഘടന - ഫ്ലാഷ് കാർഡുകൾ</h1>
-                <div class="progress-text">കാർഡ് <span id="current-card">1</span> / <span id="total-cards">0</span></div>
+                <h1 id="active-set-title">ഭൂമിയുടെ ഘടന</h1>
             </div>
 
             <div class="flashcard-wrapper" id="swipe-area">
@@ -260,21 +346,25 @@
                 </div>
             </div>
 
-            <!-- Clear Action Buttons below the card -->
             <div class="action-buttons">
                 <button class="action-btn btn-red" onclick="markCard('unlearned')">❌ ഓർമ്മയില്ല</button>
                 <button class="action-btn btn-green" onclick="markCard('learned')">✔️ അറിയാം</button>
             </div>
 
             <div class="instructions">
-                <p>കാർഡിൽ തൊട്ട് ഉത്തരം നോക്കാം. മുകളിലെ ബട്ടണുകൾ ഉപയോഗിക്കുകയോ സ്ക്രീനിൽ സ്വൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.</p>
+                <p>കാർഡിൽ തൊട്ട് ഉത്തരം നോക്കാം. ബട്ടണുകൾ ഉപയോഗിക്കുകയോ സ്വൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.</p>
             </div>
         </div>
 
-        <!-- Result Screen -->
+        <!-- 3. Result Screen -->
         <div id="result-screen" class="screen">
-            <h2>റിവിഷൻ പൂർത്തിയായി!</h2>
-            <p>നിങ്ങളുടെ പ്രകടനത്തിന്റെ സംഗ്രഹം താഴെ നൽകുന്നു:</p>
+            <div class="top-bar" style="margin-bottom: 5px;">
+                <button class="back-btn" onclick="goToSetsScreen()">⬅️ സെറ്റുകൾ</button>
+                <h2 style="font-size: 1.1rem; color: var(--primary-color);">റിവിഷൻ പൂർത്തിയായി!</h2>
+                <div style="width: 50px;"></div>
+            </div>
+            <p style="font-size: 0.85rem; color: #6b7280;">പ്രകടനത്തിന്റെ സംഗ്രഹം:</p>
+            
             <div class="score-box">
                 <div class="score-item">
                     <div>പഠിച്ചവ (Green)</div>
@@ -285,10 +375,40 @@
                     <div id="res-unlearned" style="color: var(--danger-color);">0</div>
                 </div>
             </div>
-            <button class="btn" id="retry-btn" onclick="retryUnlearned()" style="display: none;">പഠിക്കാത്തവ മാത്രം വീണ്ടും പഠിക്കുക</button>
-            <button class="btn" onclick="restartAll()" style="background: #6b7280;">എല്ലാം ആദ്യമേ മുതൽ റിവിഷൻ ചെയ്യുക</button>
+
+            <button class="btn" id="retry-btn" onclick="retryUnlearned()">പഠിക്കാത്തവ മാത്രം വീണ്ടും പഠിക്കുക</button>
+            <button class="btn" id="save-firebase-btn" onclick="saveUnlearnedToFirebase()" style="background: var(--success-color);">തെറ്റിയ ചോദ്യങ്ങൾ പുതിയ ഫ്ലാഷ് കാർഡായി സേവ് ചെയ്യുക</button>
+            <button class="btn btn-secondary" onclick="restartAll()">എല്ലാം ആദ്യമേ മുതൽ റിവിഷൻ ചെയ്യുക</button>
         </div>
     </div>
+
+    <!-- Firebase SDK & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDA1XwfYzlPCL_Soxia0d-JpNekGGCaJMM",
+            authDomain: "mypscrevison.firebaseapp.com",
+            projectId: "mypscrevison",
+            storageBucket: "mypscrevison.firebasestorage.app",
+            messagingSenderId: "89979950079",
+            appId: "1:89979950079:web:707815264541bba457cdca",
+            measurementId: "G-GC849S4G0N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.doc = doc;
+
+        window.loadSavedSets();
+    </script>
 
     <script>
         const cardsData = [
@@ -333,20 +453,21 @@
             { q: "കാമ്പ് നിർമ്മിക്കപ്പെട്ടിരിക്കുന്ന പ്രധാന പദാർത്ഥങ്ങൾ ഏവ? അതിനാൽ ഈ ഭാഗം എന്ത് പേരിലും അറിയപ്പെടുന്നു?", a: "ഇരുമ്പും നിക്കലും. അതിനാൽ ഈ ഭാഗത്തെ NIFE ലെയർ എന്നും വിളിക്കുന്നു (പ്രത്യേകിച്ച് ആന്തര അകക്കാമ്പ്)." }
         ];
 
+        let currentCardsData = [...cardsData];
         let activeCards = [];
         let currentIndex = 0;
         let unlearnedCards = [];
 
+        const setsScreen = document.getElementById('sets-screen');
+        const appScreen = document.getElementById('app-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
         const cardElement = document.getElementById('flashcard');
         const questionElement = document.getElementById('card-question');
         const answerElement = document.getElementById('card-answer');
         const currentCardSpan = document.getElementById('current-card');
         const totalCardsSpan = document.getElementById('total-cards');
-        
-        const appScreen = document.getElementById('app-screen');
-        const resultScreen = document.getElementById('result-screen');
 
-        // Fisher-Yates Shuffle Function to randomize cards order
         function shuffleArray(array) {
             let shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -354,6 +475,32 @@
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
             return shuffled;
+        }
+
+        function startMainSet() {
+            currentCardsData = [...cardsData];
+            document.getElementById('active-set-title').textContent = "ഭൂമിയുടെ ഘടന (മെയിൻ സെറ്റ്)";
+            launchApp();
+        }
+
+        function launchApp() {
+            setsScreen.classList.remove('active');
+            setsScreen.style.display = 'none';
+            resultScreen.classList.remove('active');
+            appScreen.style.display = 'flex';
+            
+            activeCards = shuffleArray(currentCardsData);
+            unlearnedCards = [];
+            currentIndex = 0;
+            loadCard();
+        }
+
+        function goToSetsScreen() {
+            appScreen.style.display = 'none';
+            resultScreen.classList.remove('active');
+            setsScreen.style.display = 'flex';
+            setsScreen.classList.add('active');
+            window.loadSavedSets();
         }
 
         function loadCard() {
@@ -395,10 +542,14 @@
             document.getElementById('res-unlearned').textContent = unlearnedCards.length;
 
             const retryBtn = document.getElementById('retry-btn');
+            const saveFirebaseBtn = document.getElementById('save-firebase-btn');
+
             if (unlearnedCards.length > 0) {
                 retryBtn.style.display = 'block';
+                saveFirebaseBtn.style.display = 'block';
             } else {
                 retryBtn.style.display = 'none';
+                saveFirebaseBtn.style.display = 'none';
             }
         }
 
@@ -412,8 +563,7 @@
         }
 
         function restartAll() {
-            // Shuffle cards every time the user restarts the full session
-            activeCards = shuffleArray(cardsData);
+            activeCards = shuffleArray(currentCardsData);
             unlearnedCards = [];
             currentIndex = 0;
             resultScreen.classList.remove('active');
@@ -421,45 +571,130 @@
             loadCard();
         }
 
+        // Save Unlearned to Firebase
+        window.saveUnlearnedToFirebase = async function() {
+            if (unlearnedCards.length === 0) return;
+
+            let customName = prompt("ഈ ഫ്ലാഷ് കാർഡ് സെറ്റിന് നൽകേണ്ട പേര് ടൈപ്പ് ചെയ്യുക:", "ഭൂമി - റിവിഷൻ സെറ്റ്");
+            if (!customName || customName.trim() === "") return;
+
+            try {
+                for (let card of unlearnedCards) {
+                    await window.addDoc(window.collection(window.db, "revision_mistakes"), {
+                        setName: customName.trim(),
+                        q: card.q,
+                        a: card.a,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                alert("മറന്നുപോയവ പുതിയ സെറ്റായി സേവ് ചെയ്തു!");
+                goToSetsScreen();
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("സേവ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു.");
+            }
+        }
+
+        // Load Saved Sets from Firebase
+        window.loadSavedSets = async function() {
+            if (!window.db) return;
+            const container = document.getElementById('sets-list-container');
+            const loadingText = document.getElementById('loading-text');
+
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "revision_mistakes"));
+                let setsMap = {};
+
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    let sName = data.setName || "റിവിഷൻ സെറ്റ്";
+                    if (!setsMap[sName]) {
+                        setsMap[sName] = [];
+                    }
+                    setsMap[sName].push({ id: docSnap.id, q: data.q, a: data.a });
+                });
+
+                container.innerHTML = `
+                    <div class="set-card">
+                        <div class="set-info" onclick="startMainSet()">
+                            <h3>ഭൂമിയുടെ ഘടന (മെയിൻ സെറ്റ്)</h3>
+                            <p>${cardsData.length} ചോദ്യങ്ങൾ</p>
+                        </div>
+                    </div>
+                `;
+
+                for (let sName in setsMap) {
+                    let cards = setsMap[sName];
+                    let cardJSON = JSON.stringify(cards).replace(/"/g, '&quot;');
+                    
+                    container.innerHTML += `
+                        <div class="set-card">
+                            <div class="set-info" onclick="startCustomSet('${sName.replace(/'/g, "\\'")}', ${cardJSON})">
+                                <h3>📌 ${sName}</h3>
+                                <p>${cards.length} ചോദ്യങ്ങൾ</p>
+                            </div>
+                            <button class="delete-set-btn" onclick="deleteCustomSet('${sName.replace(/'/g, "\\'")}')">ഡിലീറ്റ്</button>
+                        </div>
+                    `;
+                }
+                if(loadingText) loadingText.style.display = 'none';
+            } catch (e) {
+                console.error("Error loading sets: ", e);
+                if(loadingText) loadingText.textContent = "സെറ്റുകൾ ലോഡ് ചെയ്യുന്നതിൽ ചെറിയ തടസ്സം നേരിട്ടു.";
+            }
+        }
+
+        window.startCustomSet = function(setName, cards) {
+            currentCardsData = cards;
+            document.getElementById('active-set-title').textContent = setName;
+            launchApp();
+        }
+
+        // Delete Custom Set
+        window.deleteCustomSet = async function(setName) {
+            let confirmDel = confirm(`"${setName}" എന്ന ഫ്ലാഷ് കാർഡ് സെറ്റ് പൂർണ്ണമായി ഡിലീറ്റ് ചെയ്യണമെന്നുറപ്പാണോ?`);
+            if (!confirmDel) return;
+
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "revision_mistakes"));
+                let deletePromises = [];
+                
+                querySnapshot.forEach((docSnap) => {
+                    let data = docSnap.data();
+                    if ((data.setName || "റിവിഷൻ സെറ്റ്") === setName) {
+                        deletePromises.push(window.deleteDoc(window.doc(window.db, "revision_mistakes", docSnap.id)));
+                    }
+                });
+
+                await Promise.all(deletePromises);
+                alert("സെറ്റ് വിജയകരമായി ഡിലീറ്റ് ചെയ്തു!");
+                window.loadSavedSets();
+            } catch (e) {
+                console.error("Error deleting set: ", e);
+                alert("ഡിലീറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു.");
+            }
+        }
+
+        // Touch & Mouse Swipe Support
         let touchStartX = 0;
         let touchEndX = 0;
         const swipeArea = document.getElementById('swipe-area');
 
-        swipeArea.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        swipeArea.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
+        swipeArea.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+        swipeArea.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); });
 
         let mouseStartX = 0;
-        swipeArea.addEventListener('mousedown', e => {
-            mouseStartX = e.clientX;
-        });
-
+        swipeArea.addEventListener('mousedown', e => { mouseStartX = e.clientX; });
         swipeArea.addEventListener('mouseup', e => {
             let mouseEndX = e.clientX;
-            if (mouseStartX - mouseEndX > 50) {
-                markCard('unlearned');
-            } else if (mouseEndX - mouseStartX > 50) {
-                markCard('learned');
-            }
+            if (mouseStartX - mouseEndX > 50) markCard('unlearned');
+            else if (mouseEndX - mouseStartX > 50) markCard('learned');
         });
 
         function handleSwipe() {
-            if (touchEndX < touchStartX - 50) {
-                markCard('unlearned');
-            }
-            if (touchEndX > touchStartX + 50) {
-                markCard('learned');
-            }
+            if (touchEndX < touchStartX - 50) markCard('unlearned');
+            if (touchEndX > touchStartX + 50) markCard('learned');
         }
-
-        // Initialize first card with shuffled data on page load
-        activeCards = shuffleArray(cardsData);
-        loadCard();
     </script>
 </body>
 </html>
