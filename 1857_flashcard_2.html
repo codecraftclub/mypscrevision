@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1857 Revolt Flash Cards - 1857 ലെ കലാപം</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --red-btn: #ef4444;
+            --red-hover: #dc2626;
+            --green-btn: #10b981;
+            --green-hover: #059669;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .progress-bar-bg {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Flash Card Styles */
+        .card-viewport {
+            width: 100%;
+            height: 320px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            border-radius: 16px;
+            background-color: var(--card-bg);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-front {
+            color: var(--text-main);
+        }
+
+        .card-back {
+            background-color: #faf5ff;
+            color: #3b0764;
+            transform: rotateY(180deg);
+            border-color: #e9d5ff;
+        }
+
+        .card-face h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .card-face p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .hint-text {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-red {
+            background-color: var(--red-btn);
+        }
+        .btn-red:hover {
+            background-color: var(--red-hover);
+        }
+
+        .btn-green {
+            background-color: var(--green-btn);
+        }
+        .btn-green:hover {
+            background-color: var(--green-hover);
+        }
+
+        /* Summary Screen */
+        .summary-screen {
+            display: none;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .summary-screen h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .stat-card span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .stat-learned span { color: var(--green-btn); }
+        .stat-unlearned span { color: var(--red-btn); }
+
+        .summary-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        .btn-outline:hover {
+            background-color: #e0e7ff;
+        }
+
+        /* Animation classes for slide out */
+        .slide-left {
+            animation: slideOutLeft 0.4s forwards;
+        }
+        .slide-right {
+            animation: slideOutRight 0.4s forwards;
+        }
+
+        @keyframes slideOutLeft {
+            to {
+                transform: translateX(-120%) rotate(-10deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideOutRight {
+            to {
+                transform: translateX(120%) rotate(10deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>1857 ലെ കലാപം - ഫ്ലാഷ് കാർഡുകൾ-2</h1>
+        <p>ഒന്നാം സ്വാതന്ത്ര്യ സമരം (പഠന സഹായി)</p>
+    </header>
+
+    <div class="container" id="app-container">
+        <!-- Flashcard Session View -->
+        <div id="quiz-view" style="width: 100%;">
+            <div class="progress-container">
+                <span id="current-card-num">1</span>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <span id="total-cards-num">10</span>
+            </div>
+
+            <div class="card-viewport" id="card-viewport">
+                <div class="flashcard" id="flashcard">
+                    <div class="card-face card-front">
+                        <h3>ചോദ്യം / സൂചകം (Front)</h3>
+                        <p id="card-front-text">ലോഡ് ചെയ്യുന്നു...</p>
+                        <span class="hint-text">(ഉത്തരം കാണാൻ കാർഡിൽ ക്ലിക്ക് ചെയ്യുക)</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <h3>ഉത്തരം / വിവരണം (Back)</h3>
+                        <p id="card-back-text">ലോഡ് ചെയ്യുന്നു...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-red" onclick="handleAnswer('unlearned')">
+                    ❌ ഓർമ്മയില്ല (Unlearned)
+                </button>
+                <button class="btn btn-green" onclick="handleAnswer('learned')">
+                    ✔️ അറിയാം (Learned)
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary View -->
+        <div class="summary-screen" id="summary-view">
+            <h2>വിശകലന റിപ്പോർട്ട് (Session Summary)</h2>
+            <div class="stats-grid">
+                <div class="stat-card stat-learned">
+                    അറിയാവുന്നത് (Learned)
+                    <span id="summary-learned">0</span>
+                </div>
+                <div class="stat-card stat-unlearned">
+                    പഠിക്കാനുള്ളത് (Unlearned)
+                    <span id="summary-unlearned">0</span>
+                </div>
+            </div>
+            <div class="summary-buttons">
+                <button class="btn btn-primary" id="retry-unlearned-btn" onclick="retryUnlearned()">
+                    പഠിക്കാത്തവ മാത്രം വീണ്ടും പഠിക്കുക (Review Unlearned)
+                </button>
+                <button class="btn btn-outline" onclick="restartAll()">
+                    മുഴുവൻ കാർഡുകളും ആദ്യമേ തുടങ്ങുക (Restart All)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Full Dataset extracted from 1857 Revolt PDF Notes
+        const fullDeck = [
+            { front: "മംഗൾ പാണ്ഡെ ജനിച്ചത് എവിടെ?", back: "ഉത്തർപ്രദേശിലെ ബല്ലിയയിൽ" },
+            { front: "മംഗൾ പാണ്ഡെ ഏത് സൈനിക റെജിമെന്റിലെ ഭടൻ ആയിരുന്നു?", back: "34 ആം ബംഗാൾ നേറ്റീവ് ഇൻഫെൻന്ററി റെജിമെന്റ് (ബർകപൂർ)" },
+            { front: "മംഗൾ പാണ്ഡെ ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥനെ കൊലപ്പെടുത്തിയ തീയതി?", back: "1857 മാർച്ച് 29" },
+            { front: "മംഗൾ പാണ്ഡെയെ തൂക്കിക്കൊന്ന തീയതിയും സ്ഥലവും?", back: "1857 ഏപ്രിൽ 8, ബർകപൂരിൽ" },
+            { front: "മംഗൾ പാണ്ഡെയെ ആദരിച്ചുകൊണ്ട് ഇന്ത്യ ഗവൺമെന്റ് സ്റ്റാമ്പ് പുറത്തിറക്കിയ വർഷം?", back: "1984 ൽ (50 പൈസാ സ്റ്റാമ്പ്)" },
+            { front: "'മംഗൾ പാണ്ഡെ ദ റൈസിംഗ്' എന്ന സിനിമ സംവിധാനം ചെയ്തത് ആര്? അതിൽ അഭിനയിച്ചത് ആര്?", back: "സംവിധാനം: കേതൻ മെഹ്ത\nഅഭിനയിച്ചത്: അമീർഖാൻ" },
+            { front: "കാൺപൂരിലെ ഭരണാധിപനായിരുന്ന ഭാജിറാവുവിന്റെ ദത്തുപുത്രൻ ആര്?", back: "നാനാ സാഹിബ്" },
+            { front: "1857 ലെ വിപ്ലവത്തിന്റെ ബുദ്ധികേന്ദ്രം മൂന്നാം നെപ്പോളിയൻ എന്നറിയപ്പെടുന്നത് ആര്?", back: "നാനാ സാഹിബ്" },
+            { front: "നാനാ സാഹിബ് നാടുകടത്തപ്പെട്ട വർഷം എങ്ങോട്ട്?", back: "1859 ൽ നേപ്പാളിലേക്ക്" },
+            { front: "താന്തിയാതോപ്പിയുടെ യഥാർത്ഥ നാമം എന്താണ്?", back: "രാമചന്ദ്ര പാണ്ഡുരംഗ" },
+            { front: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തിൽ ഗൊറില്ല യുദ്ധമുറ ഉപയോഗിച്ച വിപ്ലവകാരി ആര്?", back: "താന്തിയാതോപ്പി" },
+            { front: "താന്തിയാതോപ്പിയെ തൂക്കിക്കൊന്ന തീയതിയും സ്ഥലവും?", back: "1859 ഏപ്രിൽ 18 ന് മധ്യപ്രദേശിലെ ശിവപുരിയിൽ" },
+            { front: "താന്തിയാതോപ്പി മെമ്മോറിയൽ സ്ഥിതിചെയ്യുന്നത് എവിടെ?", back: "ശിവപുരിയിൽ" },
+            { front: "ഝാൻസിയിൽ ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തിന് നേതൃത്വം നൽകിയത് ആര്?", back: "റാണി ലക്ഷ്മിഭായ്" },
+            { front: "റാണി ലക്ഷ്മി ഭായിയുടെ യഥാർത്ഥനാമം എന്താണ്?", back: "മണികർണ്ണിക (മനുഭായ്)" },
+            { front: "ഝാൻസിയിലെ രാജാവായിരുന്ന രാജ ഗംഗാധർ റാവുവിന്റെ രാജ്ഞി ആര്?", back: "റാണി ലക്ഷ്മിഭായ്" },
+            { front: "1857 വിപ്ലവത്തിലെ 'ജൊവാൻ ഓഫ് ആർക്ക്' എന്നറിയപ്പെടുന്നത് ആര്?", back: "റാണി ലക്ഷ്മിഭായ്" },
+            { front: "ഝാൻസി റാണിയെ വധിച്ച ബ്രിട്ടീഷ് പട്ടാള മേധാവി ആര്?", back: "ഹ്യൂഗ് റോസ് (ഗ്വാളിയോറിൽ വച്ച്)" },
+            { front: "'വിപ്ലവകാരികളുടെ സമുന്നത നേതാവ്' എന്ന് ഝാൻസി റാണിയെ വിശേഷിപ്പിച്ചത് ആര്?", back: "ഹ്യൂഗ് റോസ്" },
+            { front: "'ഇരുണ്ട പശ്ചാത്തലത്തിലെ പ്രകാശമാനമായ ബിന്ദു' എന്ന് ഝാൻസി റാണിയെ വിശേഷിപ്പിച്ചത് ആര്?", back: "ജവഹർലാൽ നെഹ്റു (വിശ്വ ചരിത്ര അവലോകനം എന്ന കൃതിയിൽ)" },
+            { front: "ഝാൻസി റാണിയുടെ കുതിരകളുടെ പേരുകൾ ഏവ?", back: "ബാദൽ, സാരംഗി, പവൻ (കലാപകാലത്തു സഞ്ചരിച്ചത് 'ബാദൽ' എന്ന കുതിരയിലാണ്)" },
+            { front: "'ചബേലി' എന്നറിയപ്പെട്ട വിപ്ലവകാരി ആര്?", back: "ഝാൻസി റാണി" },
+            { front: "ഝാൻസി റാണി വധിക്കപ്പെട്ട തീയതി?", back: "1858 ജൂൺ 18" },
+            { front: "ഒന്നാം സ്വാതന്ത്ര്യ സമര സമയത്തെ മുഗൾ ഭരണാധികാരിയായ ബഹദൂർഷാ II നെ കീഴടക്കാൻ നേതൃത്വം കൊടുത്തത് ആര്?", back: "വില്യം ഹോഡ്സൺ" },
+            { front: "ബഹദൂർഷാ II നെ പിടികൂടിയ ചരിത്ര സ്മാരകം ഏത്?", back: "ഹുമയൂണിന്റെ ശവകുടീരം" },
+            { front: "ബഹദൂർഷാ II നെ നാടുകടത്തിയത് എങ്ങോട്ട്? എപ്പോഴാണ് അദ്ദേഹം അന്തരിച്ചത്?", back: "ബർമയിലെ റംഗൂണിലേക്ക് (1858 ഒക്ടോബർ 7). 1862 ൽ അവിടെ വെച്ച് അന്തരിച്ചു." },
+            { front: "'സഫർ' എന്ന തൂലികാ നാമത്തിൽ കവിതകൾ എഴുതിയ മുഗൾ ഭരണാധികാരി ആര്?", back: "ബഹദൂർഷാ II (ബഹദൂർഷാ സഫർ)" },
+            { front: "അവധിലെ ഭരണാധികാരിയായിരുന്ന വാജിദ് അലിഷായുടെ പത്നി ആര്?", back: "ബീഗം ഹസ്റത്ത് മഹൽ" },
+            { front: "ഉത്തർപ്രദേശിലെ ബരൗട്ട് പർഗാനിയിൽ ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകിയതാര്?", back: "ഷാമൽ" },
+            { front: "ഷാമൽ പിടിച്ചെടുത്ത ഇംഗ്ലീഷ് ഉദ്യോഗസ്ഥന്റെ ബംഗ്ലാവ് എന്ത് പേരിലാണ് അറിയപ്പെട്ടത്?", back: "നീതിയുടെ ഹാൾ (Hall of Justice)" },
+            { front: "ഫൈസാബാദിൽ ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകുകയും 'ദൻകാ ഷാ' എന്നറിയപ്പെടുകയും ചെയ്തത് ആര്?", back: "മൗലവി അഹമ്മദുള്ള ഷാ" },
+            { front: "1857 ലെ വിപ്ലവത്തിന്റെ പ്രവാചകൻ / അംബാസിഡർ എന്നറിയപ്പെടുന്നത് ആര്?", back: "അസിമുള്ളഖാൻ" },
+            { front: "1857 വിപ്ലവത്തിന്റെ വന്ദ്യവയോധികൻ എന്നറിയപ്പെടുന്നത് ആര്?", back: "കൺവർസിംഗ്" },
+            { front: "1857 ലെ വിപ്ലവത്തിന്റെ പ്രധാന പരാജയ കാരണങ്ങൾ എന്തൊക്കെ?", back: "കലാപം പ്രാദേശികമായിരുന്നു, ദേശവ്യാപകമായില്ല; ജനവിഭാഗങ്ങളും നാട്ടുരാജ്യങ്ങളും വിട്ടുനിന്നു; ആധുനിക ആയുധങ്ങളുടെ കുറവ്; അച്ചടക്കമില്ലായ്മയും ആസൂത്രണരാഹിത്യവും." },
+            { front: "1857 ലെ കലാപത്തിന്റെ പ്രധാന ഫലങ്ങൾ എന്തൊക്കെ?", back: "മുഗൾ രാജവംശം അവസാനിച്ചു; ഈസ്റ്റ് ഇന്ത്യാ കമ്പനി ഭരണം അവസാനിച്ചു, ബ്രിട്ടീഷ് രാജ്ഞി ഭരണം നേരിേറ്റെടുത്തു; വിഭജിച്ച് ഭരിക്കൽ നയം നടപ്പിലായി." },
+            { front: "'1857 ഫസ്റ്റ് വാർ ഓഫ് ഇൻഡിപെൻഡൻസ്' എന്ന പുസ്തകത്തിന്റെ രചയിതാവ്?", back: "വി ഡി സവർക്കർ" },
+            { front: "'1857 ദി ഗ്രേറ്റ് റെബെല്ലിയൻ' രചിച്ചത് ആര്?", back: "അശോക് മേത്ത" },
+            { front: "'ശിപായി മുട്ടണി ആൻഡ് റിവോൾട്ട് ഓഫ് 1857' രചിച്ചത് ആര്?", back: "ആർ സി മജുൻദാർ" },
+            { front: "'ക്വീൻ ഓഫ് ഝാൻസി' രചിച്ചത് ആര്?", back: "മഹാശ്വേതാ ദേവി" },
+            { front: "'ഇന്ത്യൻ സ്വാതന്ത്ര്യ സമരങ്ങളുടെ ചരിത്രം' രചിച്ചത് ആര്?", back: "താരാചന്ദ്" },
+            { front: "നാനാ സാഹിബിന്റെ ജീവിതത്തെ ആസ്പദമാക്കി 'ദ ഡെവിൾസ് വിൻഡ് (ചെകുത്താൻ കാറ്റ്)' രചിച്ചതാര്?", back: "മനോഹർ മൽഗോർക്കാർ" },
+            { front: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തെ ആസ്പദമാക്കി 'മാത്സ് പ്രവാസ്' എന്ന മറാത്ത ഗ്രന്ഥം രചിച്ചത് ആര്?", back: "വിഷ്ണുഭട്ട് ഗോഡ്സെ" },
+            { front: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തെ ആസ്പദമാക്കി 'അമൃതം തേടി' എന്ന കൃതി രചിച്ച വ്യക്തി ആര്?", back: "മലയാറ്റൂർ രാമകൃഷ്ണൻ" },
+            { front: "1858 ലെ ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് പ്രകാരം ഏർപ്പെടുത്തിയ പുതിയ പദവി എന്ത്?", back: "സെക്രട്ടറി ഓഫ് സ്റ്റേറ്റ്" },
+            { front: "1858 ലെ ബ്രിട്ടീഷ് രാജ്ഞിയുടെ വിളംബരം അലഹബാദിൽ വായിച്ച വ്യക്തി ആര്?", back: "കാനിങ് പ്രഭു" },
+            { front: "ഗവർണർ ജനറൽ ഓഫ് ഇന്ത്യ എന്ന പദവി എതു തീയതി മുതലാണ് 'വൈസ്രോയി' ആയി അറിയപ്പെടാൻ തുടങ്ങിയത്?", back: "1858 ഓഗസ്റ്റ് 2" },
+            { front: "ബ്രിട്ടീഷ് രാജ്ഞിയുടെ വിളംബരത്തിനെതിരെ എതിർ വിളംബരം പുറപ്പെടുവിച്ച വിപ്ലവകാരി ആര്?", back: "ബീഗം ഹസ്രത്ത് മഹൽ" },
+            { front: "'ഇന്ത്യയുടെ ഒന്നാം സ്വാതന്ത്ര്യ സമരം' എന്ന് 1857 ലെ വിപ്ലവത്തെ വിശേഷിപ്പിച്ചത് ആര്?", back: "വി ഡി സവർക്കർ" },
+            { front: "'ശിപായി ലഹള' എന്ന് 1857 വിപ്ലവത്തെ വിശേഷിപ്പിച്ചത് ആര്?", back: "ജോൺ ലോറൻസ്, സീലി" },
+            { front: "'ആദ്യത്തേതുമല്ല ദേശിയ തലത്തിലും അല്ല, സ്വാതന്ത്ര്യ സമരവും അല്ല' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "ആർ സി മജുൻദാർ" },
+            { front: "'ആഭ്യന്തര കലാപം' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "എസ് ബി ചൗധരി" },
+            { front: "'ദേശിയ ഉയർത്തെഴുന്നേൽപ്പ്' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "ബെഞ്ചമിൻ ഡിസ്രേലി" },
+            { front: "'പരിഷ്കൃതവും അപരിഷ്കൃതവും തമ്മിലുള്ള സംഘർഷം' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "ടി ആർ ഹോംസ്" },
+            { front: "'ഫ്യൂഡൽ റിവോൾട്ട്' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "എം എൻ റോയ്" },
+            { front: "'ഫ്യൂഡൽ ഇന്ത്യയുടെ അവസാന ചിറകടി' എന്ന് വിശേഷിപ്പിച്ചത് ആര്?", back: "ജവഹർലാൽ നെഹ്റു" },
+            { front: "1857 ലെ വിപ്ലവത്തെ ഇന്ത്യയുടെ ഒന്നാം സ്വാതന്ത്ര്യ സമരമായി കരുതാം എന്ന് ന്യൂയോർക് ട്രൈബ്യൂണലിൽ ആദ്യമായി എഴുതിയത് ആര്?", back: "കാറൽ മാർക്സ്" }
+        ];
+
+        let activeDeck = [];
+        let currentIndex = 0;
+        let learnedCount = 0;
+        let unlearnedCount = 0;
+        let unlearnedList = [];
+
+        const flashcardEl = document.getElementById('flashcard');
+        const cardFrontText = document.getElementById('card-front-text');
+        const cardBackText = document.getElementById('card-back-text');
+        const currentNumEl = document.getElementById('current-card-num');
+        const totalNumEl = document.getElementById('total-cards-num');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        
+        const quizView = document.getElementById('quiz-view');
+        const summaryView = document.getElementById('summary-view');
+        const cardViewport = document.getElementById('card-viewport');
+
+        // Fisher-Yates Shuffle Function to randomize cards order
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialize App with Shuffled Deck
+        function initSession(deck) {
+            // Shuffle the deck every time a session is initialized/restarted
+            activeDeck = shuffleArray(deck);
+            currentIndex = 0;
+            learnedCount = 0;
+            unlearnedCount = 0;
+            unlearnedList = [];
+
+            quizView.style.display = 'block';
+            summaryView.style.display = 'none';
+
+            loadCard();
+        }
+
+        function loadCard() {
+            if (currentIndex >= activeDeck.length) {
+                showSummary();
+                return;
+            }
+
+            flashcardEl.classList.remove('flipped');
+            flashcardEl.classList.remove('slide-left', 'slide-right');
+
+            cardFrontText.innerText = activeDeck[currentIndex].front;
+            cardBackText.innerText = activeDeck[currentIndex].back;
+
+            currentNumEl.innerText = currentIndex + 1;
+            totalNumEl.innerText = activeDeck.length;
+            progressBarFill.style.width = ((currentIndex / activeDeck.length) * 100) + '%';
+        }
+
+        // Flip Card interaction
+        cardViewport.addEventListener('click', () => {
+            flashcardEl.classList.toggle('flipped');
+        });
+
+        // Handle User Answer
+        function handleAnswer(status) {
+            if (status === 'learned') {
+                learnedCount++;
+                flashcardEl.classList.add('slide-right');
+            } else {
+                unlearnedCount++;
+                unlearnedList.push(activeDeck[currentIndex]);
+                flashcardEl.classList.add('slide-left');
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                loadCard();
+            }, 350);
+        }
+
+        // Touch / Swipe Gestures Support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        cardViewport.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        cardViewport.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) {
+                // Swipe Left -> Unlearned
+                handleAnswer('unlearned');
+            } else if (touchEndX > touchStartX + threshold) {
+                // Swipe Right -> Learned
+                handleAnswer('learned');
+            }
+        }
+
+        // Show Summary
+        function showSummary() {
+            quizView.style.display = 'none';
+            summaryView.style.display = 'block';
+
+            document.getElementById('summary-learned').innerText = learnedCount;
+            document.getElementById('summary-unlearned').innerText = unlearnedCount;
+
+            const retryBtn = document.getElementById('retry-unlearned-btn');
+            if (unlearnedList.length === 0) {
+                retryBtn.style.display = 'none';
+            } else {
+                retryBtn.style.display = 'block';
+            }
+        }
+
+        function retryUnlearned() {
+            initSession([...unlearnedList]);
+        }
+
+        function restartAll() {
+            initSession([...fullDeck]);
+        }
+
+        // Run on load (Automatically shuffles cards on first open)
+        initSession(fullDeck);
+    </script>
+</body>
+</html>

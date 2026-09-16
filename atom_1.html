@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ് - ആറ്റവും തന്മാത്രകളും1</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f6f9; color: #333; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 500px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; padding: 20px; position: relative; }
+        
+        /* Welcome Screen */
+        #welcomeScreen { text-align: center; padding: 30px 10px; }
+        #welcomeScreen h1 { font-size: 1.5rem; color: #1e293b; margin-bottom: 15px; line-height: 1.4; font-weight: 700; }
+        #welcomeScreen p { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+        .start-btn { background: #22c55e; color: white; border: none; padding: 14px 24px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; transition: background 0.2s; }
+        .start-btn:hover { background: #16a34a; }
+
+        /* Exam Screen Header */
+        .exam-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: bold; color: #b91c1c; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .timer-box { display: flex; align-items: center; gap: 8px; }
+        .pause-btn { background: #e2e8f0; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #334155; }
+        .pause-btn:hover { background: #cbd5e1; }
+
+        /* Question Palette Grid */
+        .palette-toggle { background: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%; transition: background 0.3s; }
+        .palette-toggle.blink-red-blue { animation: redBlueBlink 0.8s infinite; }
+
+        .palette-grid { display: none; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 150px; overflow-y: auto; }
+        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; border-radius: 4px; cursor: pointer; background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
+        .grid-item.answered { background: #22c55e; color: white; border-color: #16a34a; }
+        .grid-item.bookmarked { background: #f59e0b; color: white; border-color: #d97706; }
+        .grid-item.current { border: 2px solid #1e3a8a; }
+        
+        /* Question Section */
+        .q-title { font-size: 1.12rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        .option-box { border: 2px solid #cbd5e1; border-radius: 12px; padding: 14px; background: white; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; font-size: 0.95rem; color: #1e293b; font-weight: 500; }
+        .option-box.selected { border-color: #3b82f6; background: #eff6ff; }
+        .option-box:hover { border-color: #94a3b8; }
+
+        /* Swipe Hint */
+        .swipe-hint { text-align: center; font-size: 0.8rem; color: #64748b; margin: 15px 0; }
+
+        /* Action Buttons */
+        .action-btn { width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 0.95rem; border: none; cursor: pointer; margin-bottom: 10px; text-align: center; }
+        .bookmark-action { background: #f59e0b; color: white; }
+        .bookmark-action.bookmarked { background: #d97706; }
+        
+        /* Submit Action Button with Red-Blue Blinking Animation for Last Question */
+        .submit-action { background: #d97706; color: white; transition: background 0.3s; }
+        .submit-action.blink-red-blue { animation: redBlueBlink 0.8s infinite; }
+
+        /* Red and Blue Blinking Animation Keyframes */
+        @keyframes redBlueBlink {
+            0% { background-color: #dc2626; color: white; }
+            50% { background-color: #2563eb; color: white; }
+            100% { background-color: #dc2626; color: white; }
+        }
+
+        /* Pause Overlay Modal */
+        .pause-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 10; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .pause-overlay h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .pause-overlay p { color: #64748b; margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* Result View */
+        #resultScreen { display: none; text-align: center; }
+        #resultScreen h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .result-summary { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95rem; color: #334155; line-height: 1.6; text-align: left; }
+        .retry-container { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .retry-btn { background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .retry-btn:hover { background: #2563eb; }
+
+        /* Review Section */
+        .review-filters { display: flex; gap: 5px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 10px; font-size: 0.8rem; font-weight: bold; border: 1px solid #cbd5e1; background: #e2e8f0; border-radius: 6px; cursor: pointer; }
+        .filter-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+        .review-list { text-align: left; max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .review-item { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; line-height: 1.5; }
+        .review-item.correct { background: #dcfce7; border-color: #86efac; color: #166534; }
+        .review-item.wrong { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+        .review-item.skipped { background: #ffedd5; border-color: #fdba74; color: #9a3412; }
+        .explanation { margin-top: 6px; font-size: 0.8rem; color: #334155; font-style: italic; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="appContainer">
+    
+    <!-- Pause Overlay Modal -->
+    <div class="pause-overlay" id="pauseOverlay">
+        <h2>എക്സാം പോസ് ചെയ്തിരിക്കുന്നു ⏸️</h2>
+        <p>ടൈമർ താൽക്കാലികമായി നിർത്തലാക്കിയിട്ടുണ്ട്. തുടരാൻ താഴെയുള്ള ബട്ടൺ അമർത്തുക.</p>
+        <button class="start-btn" onclick="resumeExam()">തുടരുക (Resume)</button>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <h1>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ്</h1>
+        <p>ആറ്റവും തന്മാത്രകളും (Atom & Molecules)<br><br>നെഗറ്റീവ് മാർക്ക്: ശരിക്ക് +1, തെറ്റിന് -0.33</p>
+        <button class="start-btn" onclick="startExam()">എക്സാം ആരംഭിക്കുക (Start Exam)</button>
+    </div>
+
+    <!-- Exam Screen -->
+    <div id="examScreen" style="display: none;">
+        <div class="exam-header">
+            <div id="qCounter">ചോദ്യം 1 / 36</div>
+            <div class="timer-box">
+                <span id="timerDisplay">സമയം ബാക്കി: 36:00</span>
+                <button class="pause-btn" id="pauseBtn" onclick="pauseExam()">Pause</button>
+            </div>
+        </div>
+
+        <button class="palette-toggle" id="paletteToggleBtn" onclick="togglePalette()">📊 ചോദ്യങ്ങളുടെ പാലറ്റ് കാണുക (Grid)</button>
+        <div class="palette-grid" id="paletteGrid"></div>
+
+        <div class="q-title" id="questionText">ചോദ്യം ഇവിടെ വരുന്നു...</div>
+        
+        <div class="options-container" id="optionsList"></div>
+
+        <div class="swipe-hint">💡 സ്ക്രീനിന്റെ എവിടെ സ്വൈപ്പ് ചെയ്താലും ചോദ്യങ്ങൾ മാറുന്നതാണ്</div>
+
+        <button class="action-btn bookmark-action" id="bookmarkBtn" onclick="toggleBookmark()">⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)</button>
+        
+        <!-- സബ്മിറ്റ് ബട്ടൺ (അവസാന ചോദ്യത്തിൽ എത്തുമ്പോൾ ചുവപ്പും നീലയും മാറിമാറി ബ്ലിങ്ക് ചെയ്യും) -->
+        <button class="action-btn submit-action" id="submitBtn" onclick="submitExam()">എക്സാം സബ്മിറ്റ് ചെയ്യുക</button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="resultScreen">
+        <h2>പരീക്ഷ ഫലം (Result)</h2>
+        <div class="result-summary" id="resultSummaryText">ഫലം കണക്കാക്കുന്നു...</div>
+        
+        <div class="review-filters">
+            <button class="filter-btn active" onclick="filterReview('all')">എല്ലാം</button>
+            <button class="filter-btn" onclick="filterReview('correct')">ശരി</button>
+            <button class="filter-btn" onclick="filterReview('wrong')">തെറ്റ്</button>
+            <button class="filter-btn" onclick="filterReview('skipped')">വിട്ടുപോയവ</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+
+        <div class="retry-container">
+            <button class="retry-btn" onclick="retryQuiz('all')">മുഴുവൻ ചോദ്യങ്ങളും വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong')">തെറ്റായവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('skipped')">വിട്ടുപോയവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong_skipped')">തെറ്റും വിട്ടുപോയവയും മാത്രം വീണ്ടും ചെയ്യുക</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const allQuestionsData = [
+        { q: "ജോൺ ഡാൾട്ടൻ തന്റെ അറ്റോമിക സിദ്ധാന്തം പ്രസിദ്ധീകരിച്ച വർഷം ഏത്?", opts: ["എ) 1800", "ബി) 1805", "സി) 1808", "ഡി) 1815"], ans: 2, exp: "1808-ലാണ് ജോൺ ഡാൾട്ടൻ തന്റെ പ്രശസ്തമായ അറ്റോമിക സിദ്ധാന്തം പ്രസിദ്ധീകരിച്ചത്." },
+        { q: "ജോൺ ഡാൾട്ടന്റെ അറ്റോമിക സിദ്ധാന്തം പ്രസിദ്ധീകരിച്ച ഗ്രന്ഥത്തിന്റെ പേര് എന്ത്?", opts: ["എ) എ ന്യൂ സിസ്റ്റം ഓഫ് കെമിക്കൽ ഫിലോസഫി", "ബി) പ്രിൻസിപ്പിയ മാത്തമാറ്റിക്ക", "സി) കെമിക്കൽ ഓർഗനൈസേഷൻ", "ഡി) ദ ഒറിജിൻ ഓഫ് സ്പീഷീസ്"], ans: 0, exp: "1808-ൽ പ്രസിദ്ധീകരിച്ച 'എ ന്യൂ സിസ്റ്റം ഓഫ് കെമിക്കൽ ഫിലോസഫി' എന്ന ഗ്രന്ഥത്തിലാണ് ഡാൾട്ടൻ തന്റെ സിദ്ധാന്തങ്ങൾ അവതരിപ്പിച്ചത്." },
+        { q: "രാസപ്രവർത്തനത്തിൽ ഏർപ്പെടാൻ കഴിയുന്ന ഏറ്റവും ചെറിയ കണിക ഏത്?", opts: ["എ) തന്മാത്ര", "ബി) ആറ്റം", "സി) ഇലക്ട്രോൺ", "ഡി) പ്രോട്ടോൺ"], ans: 1, exp: "രാസപ്രവർത്തനത്തിൽ ഏർപ്പെടാൻ കഴിയുന്ന ഏറ്റവും ചെറിയ കണികയാണ് ആറ്റം." },
+        { q: "ഡാൾട്ടന്റെ അറ്റോമിക സിദ്ധാന്തപ്രകാരം രാസപ്രവർത്തനങ്ങളിലൂടെ എന്ത് ചെയ്യാൻ കഴിയില്ല?", opts: ["എ) ആറ്റങ്ങളെ പുനഃക്രമീകരിക്കാൻ", "ബി) ആറ്റങ്ങളെ സംയോജിപ്പിക്കാൻ", "സി) ആറ്റത്തെ വിഭജിക്കാൻ", "ഡി) തന്മാത്രകൾ നിർമ്മിക്കാൻ"], ans: 2, exp: "ഡാൾട്ടന്റെ സിദ്ധാന്തപ്രകാരം രാസപ്രവർത്തനങ്ങളിലൂടെ ആറ്റത്തെ വിഭജിക്കാൻ കഴിയില്ല." },
+        { q: "ആറ്റങ്ങൾ പൂർണ്ണ സംഖ്യാ അനുപാതങ്ങളിൽ സംയോജിക്കുമ്പോൾ എന്ത് രൂപം കൊള്ളുന്നു?", opts: ["എ) മൂലകങ്ങൾ", "ബി) സംയുക്തങ്ങൾ", "സി) മിശ്രിതങ്ങൾ", "ഡി) അയോണുകൾ"], ans: 1, exp: "ആറ്റങ്ങൾ പൂർണ്ണ സംഖ്യാ അനുപാതങ്ങളിൽ സംയോജിക്കുമ്പോൾ സംയുക്തങ്ങൾ രൂപം കൊള്ളുന്നു." },
+        { q: "രാസപ്രവർത്തനങ്ങളിൽ ആറ്റങ്ങൾക്ക് എന്ത് സംഭവിക്കുന്നു എന്ന് ഡാൾട്ടൻ വ്യക്തമാക്കി?", opts: ["എ) ആറ്റങ്ങൾ സൃഷ്ടിക്കപ്പെടുന്നു", "ബി) ആറ്റങ്ങൾ നശിപ്പിക്കപ്പെടുന്നു", "സി) ആറ്റങ്ങളുടെ പുനഃക്രമീകരണം നടക്കുന്നു", "ഡി) ആറ്റങ്ങൾ ഇല്ലാതാകുന്നു"], ans: 2, exp: "രാസപ്രവർത്തനങ്ങളിൽ ആറ്റങ്ങൾ സൃഷ്ടിക്കപ്പെടുകയോ നശിപ്പിക്കപ്പെടുകയോ ചെയ്യുന്നില്ല, എന്നാൽ ആറ്റങ്ങളുടെ പുനഃക്രമീകരണം നടക്കുന്നു." },
+        { q: "ജോൺ ഡാൾട്ടന്റെ അറ്റോമിക സിദ്ധാന്തത്തിന് താഴെ പറയുന്നവരിൽ ആരുടെ നിയമമാണ് വിശദീകരിക്കാൻ കഴിഞ്ഞത്?", opts: ["എ) രാസ സംയോജക നിയമങ്ങൾ", "ബി) ചലന നിയമങ്ങൾ", "സി) താപഗതിക നിയമങ്ങൾ", "ഡി) വൈദ്യുത കാന്തിക നിയമങ്ങൾ"], ans: 0, exp: "ഡാൾട്ടന്റെ അറ്റോമിക സിദ്ധാന്തത്തിന് രാസ സംയോജക നിയമങ്ങൾ വിശദീകരിക്കാൻ കഴിഞ്ഞു." },
+        { q: "പിണ്ഡസംരക്ഷണ നിയമം (Law of Conservation of Mass) ആരുടെ സംഭാവനയാണ്?", opts: ["എ) ജോൺ ഡാൾട്ടൻ", "ബി) അന്റോയ്ൻ ലാവോയ്‌സിയർ", "സി) ജോസഫ് പ്രൂസ്റ്റ്", "ഡി) അമീഡിയോ അവാഗഡ്രോ"], ans: 1, exp: "പിണ്ഡസംരക്ഷണ നിയമത്തിന്റെ ഉപജ്ഞാതാവ് അന്റോയ്ൻ ലാവോയ്‌സിയർ ആണ്." },
+        { q: "നിശ്ചിത അനുപാത നിയമം (Law of Definite Proportions) ആവിഷ്കരിച്ചത് ആര്?", opts: ["എ) ജോൺ ഡാൾട്ടൻ", "ബി) ഗേ ലൂസാക്ക്", "സി) ജോസഫ് പ്രൂസ്റ്റ്", "ഡി) അമീഡിയോ അവാഗഡ്രോ"], ans: 2, exp: "നിശ്ചിത അനുപാത നിയമം ആവിഷ്കരിച്ചത് ജോസഫ് പ്രൂസ്റ്റ് ആണ്." },
+        { q: "ബഹു അനുപാത നിയമം (Law of Multiple Proportions) ആരുടേതാണ്?", opts: ["എ) ജോൺ ഡാൾട്ടൻ", "ബി) ജോസഫ് പ്രൂസ്റ്റ്", "സി) അന്റോയ്ൻ ലാവോയ്‌സിയർ", "ഡി) ഗേ ലൂസാക്ക്"], ans: 0, exp: "ബഹു അനുപാത നിയമം ജോൺ ഡാൾട്ടന്റെ സംഭാവനയാണ്." },
+        { q: "ഗേ ലൂസാക്ക് നിയമത്തിന്റെ ഉപജ്ഞാതാവ് ആര്?", opts: ["എ) ജോൺ ഡാൾട്ടൻ", "ബി) ഗേ ലൂസാക്ക്", "സി) ജോസഫ് പ്രൂസ്റ്റ്", "ഡി) അമീഡിയോ അവാഗഡ്രോ"], ans: 1, exp: "ഗേ ലൂസാക്ക് നിയമം ആവിഷ്കരിച്ചത് ഗേ ലൂസാക്ക് ആണ്." },
+        { q: "അവാഗഡ്രോ നിയമം (Avogadro's Law) ആരുടെ കണ്ടെത്തലാണ്?", opts: ["എ) ജോൺ ഡാൾട്ടൻ", "ബി) അമീഡിയോ അവാഗഡ്രോ", "സി) ജോസഫ് പ്രൂസ്റ്റ്", "ഡി) അന്റോയ്ൻ ലാവോയ്‌സിയർ"], ans: 1, exp: "അവാഗഡ്രോ നിയമത്തിന്റെ ഉപജ്ഞാതാവ് അമീഡിയോ അവാഗഡ്രോ ആണ്." },
+        { q: "ഒരു മൂലകത്തിലെ ഏറ്റവും ചെറിയ കണിക ഏത്?", opts: ["എ) തന്മാത്ര", "ബി) ആറ്റം", "സി) ഇലക്ട്രോൺ", "ഡി) ഐസോടോപ്പ്"], ans: 1, exp: "ഒരു മൂലകത്തിലെ ഏറ്റവും ചെറിയ കണികയാണ് ആറ്റം." },
+        { q: "ഒരേ ഇനം ആറ്റങ്ങൾ കൊണ്ട് മാത്രം നിർമിതമായ ശുദ്ധപദാർഥങ്ങൾ ഏത് പേരിൽ അറിയപ്പെടുന്നു?", opts: ["എ) സംയുക്തങ്ങൾ", "ബി) മിശ്രിതങ്ങൾ", "സി) മൂലകങ്ങൾ (Elements)", "ഡി) ലായണികൾ"], ans: 2, exp: "ഒരേ ഇനം ആറ്റങ്ങൾ കൊണ്ട് മാത്രം നിർമിതമായ ശുദ്ധപദാർഥങ്ങളാണ് മൂലകങ്ങൾ." },
+        { q: "ഒരു പദാർത്ഥത്തിന്റെ എല്ലാ ഗുണങ്ങളുമുള്ള ഏറ്റവും ചെറിയ കണിക ഏത്?", opts: ["എ) ആറ്റം", "ബി) തന്മാത്ര", "സി) ഇലക്ട്രോൺ", "ഡി) പ്രോട്ടോൺ"], ans: 1, exp: "ഒരു പദാർത്ഥത്തിലെ ഏറ്റവും ചെറിയ കണികയാണ് തന്മാത്ര; അതിന് ആ പദാർത്ഥത്തിന്റെ എല്ലാ ഗുണങ്ങളുമുണ്ട്." },
+        { q: "ഒരു ആറ്റം മാത്രം കൂടി ചേർന്നുണ്ടാകുന്ന തന്മാത്രകൾ ഏത് പേരിൽ അറിയപ്പെടുന്നു?", opts: ["എ) ദ്വായറ്റോമിക തന്മാത്രകൾ", "ബി) ഏകാറ്റോമിക തന്മാത്രകൾ", "സി) ബഹു അറ്റോമിക തന്മാത്രകൾ", "ഡി) ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്രകൾ"], ans: 1, exp: "ഒരു ആറ്റം മാത്രം കൂടി ചേർന്നുണ്ടാകുന്ന തന്മാത്രകളാണ് ഏകാറ്റോമിക തന്മാത്രകൾ." },
+        { q: "ഏകാറ്റോമിക തന്മാത്രകൾക്ക് ഉദാഹരണമല്ലാത്തത് ഏത്?", opts: ["എ) ലോഹങ്ങൾ", "ബി) അലസവാതകങ്ങൾ", "സി) ഹൈഡ്രജൻ", "ഡി) ഹീലിയം"], ans: 2, exp: "ഹൈഡ്രജൻ ഒരു ദ്വായറ്റോമിക തന്മാത്രയാണ് ($H_2$)." },
+        { q: "താഴെ പറയുന്നവരിൽ അലസവാതകങ്ങളിൽ (Noble gases) ഉൾപ്പെടാത്തത് ഏത്?", opts: ["എ) ഹീലിയം (Helium)", "ബി) നിയോൺ (Neon)", "സി) ക്ലോറിൻ (Chlorine)", "ഡി) ആർഗോൺ (Argon)"], ans: 2, exp: "ക്ലോറിൻ ഒരു ഹാലോജനാണ്, അലസവാതകമല്ല." },
+        { q: "നോട്ടിൽ പരാമർശിച്ചിരിക്കുന്ന ഏറ്റവും പുതിയ അലസവാതകം ഏത്?", opts: ["എ) ക്രിപ്റ്റോൺ (Krypton)", "ബി) സെനോൺ (Xenon)", "സി) റഡോൺ (Radon)", "ഡി) ഒഗാനെസ്സൻ (Oganesson)"], ans: 3, exp: "ഒഗാനെസ്സൻ (Oganesson) ആണ് നോട്ടിൽ പരാമർശിച്ചിരിക്കുന്ന അലസവാതകം." },
+        { q: "രണ്ട് ആറ്റങ്ങൾ മാത്രം കൂടിച്ചേർന്നുണ്ടാകുന്ന തന്മാത്രകൾ ഏത് പേരിൽ അറിയപ്പെടുന്നു?", opts: ["എ) ഏകാറ്റോമിക തന്മാത്രകൾ", "ബി) ദ്വായറ്റോമിക തന്മാത്രകൾ", "സി) ബഹു അറ്റോമിക തന്മാത്രകൾ", "ഡി) ഹോമോന്യൂക്ലിയർ തന്മാത്രകൾ"], ans: 1, exp: "രണ്ട് ആറ്റങ്ങൾ മാത്രം കൂടിച്ചേർന്നുണ്ടാകുന്ന തന്മാത്രകളാണ് ദ്വായറ്റോമിക തന്മാത്രകൾ." },
+        { q: "ദ്വായറ്റോമിക തന്മാത്രയ്ക്ക് ഉദാഹരണമല്ലാത്തത് ഏത്?", opts: ["എ) H2", "ബി) O2", "സി) O3", "ഡി) N2"], ans: 2, exp: "ഓസോൺ ($O_3$) ഒരു ബഹു അറ്റോമിക തന്മാത്രയാണ്." },
+        { q: "ഹാലോജനുകൾ (Halogens) ഏതുതരം തന്മാത്രകൾക്ക് ഉദാഹരണമാണ്?", opts: ["എ) ഏകാറ്റോമിക തന്മാത്രകൾ", "ബി) ദ്വായറ്റോമിക തന്മാത്രകൾ", "സി) ബഹു അറ്റോമിക തന്മാത്രകൾ", "ഡി) ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്രകൾ"], ans: 1, exp: "ഹാലോജനുകൾ ($F_2, Cl_2, Br_2, I_2$) ദ്വായറ്റോമിക തന്മാത്രകൾക്ക് ഉദാഹരണമാണ്." },
+        { q: "താഴെ പറയുന്നവയിൽ ഹാലോജനുകളിൽ ഉൾപ്പെടാത്തത് ഏത്?", opts: ["എ) ഫ്ലൂറിൻ (F2)", "ബി) ക്ലോറിൻ (Cl2)", "സി) ബ്രോമിൻ (Br2)", "ഡി) ഹീലിയം (He)"], ans: 3, exp: "ഹീലിയം ഒരു അലസവാതകമാണ്, ഹാലോജനല്ല." },
+        { q: "രണ്ടിൽ കൂടുതൽ ആറ്റങ്ങൾ കൂടിച്ചേർന്നുണ്ടാകുന്ന തന്മാത്രകൾ എങ്ങനെ അറിയപ്പെടുന്നു?", opts: ["എ) ഏകാറ്റോമിക തന്മാത്രകൾ", "ബി) ദ്വായറ്റോമിക തന്മാത്രകൾ", "സി) ബഹു അറ്റോമിക തന്മാത്രകൾ", "ഡി) ഹോമോന്യൂക്ലിയർ തന്മാത്രകൾ"], ans: 2, exp: "രണ്ടിൽ കൂടുതൽ ആറ്റങ്ങൾ കൂടിച്ചേർന്നുണ്ടാകുന്നവയാണ് ബഹു അറ്റോമിക തന്മാത്രകൾ." },
+        { q: "ബഹു അറ്റോമിക തന്മാത്രയ്ക്ക് ഉദാഹരണമല്ലാത്തത് ഏത്?", opts: ["എ) ഓസോൺ (O3)", "ബി) സൾഫർ (S8)", "സി) ഫോസ്ഫറസ് (P4)", "ഡി) നൈട്രജൻ (N2)"], ans: 3, exp: "നൈട്രജൻ ($N_2$) ഒരു ദ്വായറ്റോമിക തന്മാത്രയാണ്." },
+        { q: "ഒരു തരം ആറ്റം മാത്രം ഉൾക്കൊള്ളുന്ന തന്മാത്രകളെ എന്ത് വിളിക്കുന്നു?", opts: ["എ) ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്ര", "ബി) ഹോമോന്യൂക്ലിയർ തന്മാത്ര", "സി) ദ്വായറ്റോമിക തന്മാത്ര", "ഡി) അയോണിക് തന്മാത്ര"], ans: 1, exp: "ഒരു തരം ആറ്റം മാത്രം ഉൾക്കൊള്ളുന്ന തന്മാത്രകളാണ് ഹോമോന്യൂക്ലിയർ തന്മാത്രകൾ." },
+        { q: "ഹോമോന്യൂക്ലിയർ തന്മാത്രയ്ക്ക് ഉദാഹരണമല്ലാത്തത് ഏത്?", opts: ["എ) H2", "ബി) O2", "സി) H2O", "ഡി) O3"], ans: 2, exp: "ജലം ($H_2O$) വ്യത്യസ്ത തരം ആറ്റങ്ങൾ അടങ്ങിയ ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്രയാണ്." },
+        { q: "വ്യത്യസ്ത തരം ആറ്റങ്ങൾ അടങ്ങിയിരിക്കുന്ന തന്മാത്രകൾ ഏത് പേരിൽ അറിയപ്പെടുന്നു?", opts: ["എ) ഹോമോന്യൂക്ലിയർ തന്മാത്ര", "ബി) ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്ര", "സി) ഏകാറ്റോമിക തന്മാത്ര", "ഡി) മൂലക തന്മാത്ര"], ans: 1, exp: "വ്യത്യസ്ത തരം ആറ്റങ്ങൾ അടങ്ങിയിരിക്കുന്ന തന്മാത്രകളാണ് ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്രകൾ." },
+        { q: "ഹെറ്ററോ ന്യൂക്ലിയർ തന്മാത്രയ്ക്ക് ഉദാഹരണമല്ലാത്തത് ഏത്?", opts: ["എ) H2O", "ബി) NH3", "സി) CO2", "ഡി) N2"], ans: 3, exp: "നൈട്രജൻ ($N_2$) ഒരേ തരം ആറ്റങ്ങൾ മാത്രമുള്ള ഹോമോന്യൂക്ലിയർ തന്മാത്രയാണ്." },
+        { q: "രാസസൂത്രപ്രകാരം '2N' എന്നത് എന്തിനെ സൂചിപ്പിക്കുന്നു?", opts: ["എ) രണ്ട് നൈട്രജൻ തന്മാത്രകളെ", "ബി) രണ്ട് നൈട്രജൻ ആറ്റങ്ങളെ", "സി) ഒരു നൈട്രജൻ തന്മാത്രയെ", "ഡി) നൈട്രജൻ വാതകത്തെ"], ans: 1, exp: "'2N' എന്നത് രണ്ട് നൈട്രജൻ ആറ്റങ്ങളെ സൂചിപ്പിക്കുന്നു." },
+        { q: "രാസസൂത്രപ്രകാരം 'N2' എന്നത് എന്തിനെ സൂചിപ്പിക്കുന്നു?", opts: ["എ) രണ്ട് നൈട്രജൻ ആറ്റങ്ങളെ", "ബി) രണ്ട് ആറ്റങ്ങൾ ചേർന്ന് ഉണ്ടായ ഒരു നൈട്രജൻ തന്മാത്രയെ", "സി) രണ്ട് നൈട്രജൻ തന്മാത്രകളെ", "ഡി) നാല് നൈട്രജൻ ആറ്റങ്ങളെ"], ans: 1, exp: "'N_2' എന്നത് രണ്ട് ആറ്റങ്ങൾ ചേർന്ന് ഉണ്ടായ ഒരു നൈട്രജൻ തന്മാത്രയെ സൂചിപ്പിക്കുന്നു." },
+        { q: "രാസസൂത്രപ്രകാരം '2N2' എന്നത് എന്തിനെ സൂചിപ്പിക്കുന്നു?", opts: ["എ) രണ്ട് നൈട്രജൻ ആറ്റങ്ങളെ", "ബി) ഒരു നൈട്രജൻ തന്മാത്രയെ", "സി) രണ്ട് നൈട്രജൻ തന്മാത്രകളെ", "ഡി) നാല് നൈട്രജൻ തന്മാത്രകളെ"], ans: 2, exp: "'2N_2' എന്നത് രണ്ട് നൈട്രജൻ തന്മാത്രകളെ സൂചിപ്പിക്കുന്നു." },
+        { q: "'4Cl2' എന്ന പദാർത്ഥത്തിൽ തന്മാത്രകളുടെ എണ്ണം എത്ര?", opts: ["എ) 2", "ബി) 4", "സി) 6", "ഡി) 8"], ans: 1, exp: "'4Cl_2' എന്നതിൽ തന്മാത്രകളുടെ എണ്ണം 4 ആണ്." },
+        { q: "'6N2' എന്ന പദാർത്ഥത്തിൽ ആകെ ആറ്റങ്ങളുടെ എണ്ണം എത്ര?", opts: ["എ) 6", "ബി) 10", "സി) 12", "ഡി) 24"], ans: 2, exp: "ഒരു നൈട്രജൻ തന്മാത്രയിൽ 2 ആറ്റങ്ങൾ വീതം 6 തന്മാത്രകളിൽ ആകെ 6 x 2 = 12 ആറ്റങ്ങൾ ഉണ്ട്." },
+        { q: "'2HCl' എന്ന സംയുക്തത്തിൽ ആകെ ആറ്റങ്ങളുടെ എണ്ണം എത്ര?", opts: ["എ) 2", "ബി) 4", "സി) 6", "ഡി) 8"], ans: 1, exp: "2HCl-ൽ 2 ഹൈഡ്രജനും ക്ലോറിനും ചേർത്ത് ആകെ 4 ആറ്റങ്ങൾ ഉണ്ട്." },
+        { q: "'4SO2' എന്ന സംയുക്തത്തിൽ ആകെ ആറ്റങ്ങളുടെ എണ്ണം എത്ര?", opts: ["എ) 4", "ബി) 8", "സി) 12", "ഡി) 16"], ans: 2, exp: "ഒരു $SO_2$ തന്മാത്രയിൽ 3 ആറ്റങ്ങൾ വീതം 4 തന്മാത്രകളിൽ ആകെ 4 x 3 = 12 ആറ്റങ്ങൾ ഉണ്ട്." }
+    ];
+
+    let questionsData = [...allQuestionsData];
+    let currentIndex = 0;
+    let userAnswers = {};
+    let bookmarks = {};
+    let timerInterval;
+    let timeLeft = questionsData.length * 60; 
+    let isPaused = false;
+
+    function startExam() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                    return;
+                }
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById('timerDisplay').innerText = `സമയം ബാക്കി: ${m}:${s < 10 ? '0' : ''}${s}`;
+                timeLeft--;
+            }
+        }, 1000);
+    }
+
+    function pauseExam() {
+        isPaused = true;
+        document.getElementById('pauseOverlay').style.display = 'flex';
+    }
+
+    function resumeExam() {
+        isPaused = false;
+        document.getElementById('pauseOverlay').style.display = 'none';
+    }
+
+    function togglePalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+    }
+
+    function buildPalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.innerHTML = '';
+        questionsData.forEach((_, idx) => {
+            let item = document.createElement('div');
+            item.className = 'grid-item';
+            if (idx === currentIndex) item.classList.add('current');
+            if (userAnswers[idx] !== undefined) item.classList.add('answered');
+            if (bookmarks[idx]) item.classList.add('bookmarked');
+            item.innerText = idx + 1;
+            item.onclick = () => {
+                currentIndex = idx;
+                loadQuestion();
+                grid.style.display = 'none';
+            };
+            grid.appendChild(item);
+        });
+    }
+
+    function loadQuestion() {
+        const q = questionsData[currentIndex];
+        document.getElementById('qCounter').innerText = `ചോദ്യം ${currentIndex + 1} / ${questionsData.length}`;
+        document.getElementById('questionText').innerText = `${currentIndex + 1}. ${q.q}`;
+        
+        const list = document.getElementById('optionsList');
+        list.innerHTML = '';
+        q.opts.forEach((opt, idx) => {
+            let isSelected = userAnswers[currentIndex] === idx ? 'selected' : '';
+            list.innerHTML += `
+                <div class="option-box ${isSelected}" onclick="selectOption(${idx})">
+                    ${opt}
+                </div>
+            `;
+        });
+        
+        const bmBtn = document.getElementById('bookmarkBtn');
+        if (bookmarks[currentIndex]) {
+            bmBtn.classList.add('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്തു (Bookmarked)';
+        } else {
+            bmBtn.classList.remove('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)';
+        }
+
+        // അവസാന ചോദ്യത്തിൽ എത്തുമ്പോൾ സബ്മിറ്റ് ബട്ടണും ഗ്രിഡ് പാലറ്റ് ബട്ടണും ചുവപ്പും നീലയും മാറിമാറി ബ്ലിങ്ക് ചെയ്യും
+        const submitBtn = document.getElementById('submitBtn');
+        const paletteToggleBtn = document.getElementById('paletteToggleBtn');
+
+        if (currentIndex === questionsData.length - 1) {
+            submitBtn.classList.add('blink-red-blue');
+            paletteToggleBtn.classList.add('blink-red-blue');
+        } else {
+            submitBtn.classList.remove('blink-red-blue');
+            paletteToggleBtn.classList.remove('blink-red-blue');
+        }
+
+        buildPalette();
+    }
+
+    function selectOption(idx) {
+        userAnswers[currentIndex] = idx;
+        
+        // തത്സമയം സെലക്ട് ചെയ്ത ഓപ്ഷൻ യൂസർക്ക് കാണാൻ വേണ്ടി ബോക്സ് ഹൈലൈറ്റ് ചെയ്യുക
+        const optionBoxes = document.querySelectorAll('.option-box');
+        optionBoxes.forEach((box, i) => {
+            if (i === idx) {
+                box.classList.add('selected');
+            } else {
+                box.classList.remove('selected');
+            }
+        });
+
+        // 600 മില്ലിസെക്കൻഡ് (0.6 സെക്കൻഡ്) സമയം നൽകി അടുത്ത ചോദ്യത്തിലേക്ക് ഓട്ടോമാറ്റിക്കായി മാറുന്നു (അവസാന ചോദ്യം അല്ലെങ്കിൽ മാത്രം)
+        setTimeout(() => {
+            if (currentIndex < questionsData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            }
+        }, 600);
+    }
+
+    function toggleBookmark() {
+        bookmarks[currentIndex] = !bookmarks[currentIndex];
+        loadQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentIndex < questionsData.length - 1) {
+            currentIndex++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadQuestion();
+        }
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+        document.getElementById('pauseOverlay').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+
+        let score = 0;
+        let correct = 0;
+        let wrong = 0;
+        let skipped = 0;
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            if (ans === undefined) {
+                skipped++;
+            } else if (ans === q.ans) {
+                correct++;
+                score += 1;
+            } else {
+                wrong++;
+                score -= 0.33;
+            }
+        });
+
+        document.getElementById('resultSummaryText').innerHTML = `
+            <b>ആകെ സ്കോർ:</b> ${score.toFixed(2)} / ${questionsData.length}<br>
+            <b>ശരി ഉത്തരങ്ങൾ:</b> ${correct}<br>
+            <b>തെറ്റായ ഉത്തരങ്ങൾ:</b> ${wrong}<br>
+            <b>വിട്ടുപോയവ:</b> ${skipped}
+        `;
+        filterReview('all');
+    }
+
+    let currentFilter = 'all';
+    function filterReview(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        if (event && event.target) event.target.classList.add('active');
+
+        const listContainer = document.getElementById('reviewList');
+        listContainer.innerHTML = '';
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            let status = 'skipped';
+            if (ans !== undefined) {
+                status = (ans === q.ans) ? 'correct' : 'wrong';
+            }
+
+            if (filter !== 'all' && filter !== status) return;
+
+            let item = document.createElement('div');
+            item.className = `review-item ${status}`;
+            item.innerHTML = `
+                <b>ചോദ്യം ${i + 1}:</b> ${q.q}<br>
+                <b>നിങ്ങളുടെ ഉത്തരം:</b> ${ans !== undefined ? q.opts[ans] : 'വിട്ടുപോയി'}<br>
+                <b>ശരിയായ ഉത്തരം:</b> ${q.opts[q.ans]}
+                <div class="explanation"><b>വിശദീകരണം:</b> ${q.exp}</div>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    function retryQuiz(type) {
+        let filteredIndices = [];
+        if (type === 'all') {
+            questionsData = [...allQuestionsData];
+        } else {
+            allQuestionsData.forEach((q, i) => {
+                let ans = userAnswers[i];
+                if (type === 'wrong' && ans !== undefined && ans !== q.ans) filteredIndices.push(i);
+                if (type === 'skipped' && ans === undefined) filteredIndices.push(i);
+                if (type === 'wrong_skipped' && (ans === undefined || ans !== q.ans)) filteredIndices.push(i);
+            });
+            if (filteredIndices.length === 0) {
+                alert('ഈ വിഭാഗത്തിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല!');
+                return;
+            }
+            questionsData = filteredIndices.map(i => allQuestionsData[i]);
+        }
+
+        currentIndex = 0;
+        userAnswers = {};
+        bookmarks = {};
+        timeLeft = questionsData.length * 60;
+        isPaused = false;
+
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    // Global Swipe Support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        let diff = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diff) > 50 && document.getElementById('examScreen').style.display !== 'none' && !isPaused) {
+            if (diff < 0) nextQuestion();
+            else prevQuestion();
+        }
+    });
+</script>
+
+</body>
+</html>

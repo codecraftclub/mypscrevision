@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ഭൂമിയുടെ ഘടന - കേരള പി.എസ്.സി മോക്ക് ടെസ്റ്റ്</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timer-box {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--danger);
+            background: #fee2e2;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        /* Question Meta */
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #cbd5e1;
+            transition: color 0.2s;
+        }
+
+        .bookmark-btn.bookmarked {
+            color: #f59e0b;
+        }
+
+        /* Question Box */
+        .question-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: #e0e7ff;
+            color: var(--primary-hover);
+            font-weight: 600;
+        }
+
+        /* Question Palette Grid */
+        .palette-container {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .palette-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+            gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+
+        .palette-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .palette-btn.current {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+        }
+
+        .palette-btn.answered {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .palette-btn.bookmarked-pal {
+            position: relative;
+        }
+        .palette-btn.bookmarked-pal::after {
+            content: '★';
+            position: absolute;
+            top: -2px;
+            right: 2px;
+            font-size: 10px;
+            color: #f59e0b;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Pause Overlay */
+        .pause-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+        }
+
+        .pause-overlay h2 {
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        /* Result Screen Styles */
+        .result-summary {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .score-card {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .score-box {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .score-box div:first-child {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .score-box div:last-child {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .filter-btn.active-filter {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .review-list {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+        }
+
+        .review-item {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .review-item.correct-bg {
+            background-color: #d1fae5;
+            border-color: #6ee7b7;
+        }
+
+        .review-item.wrong-bg {
+            background-color: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        .review-item.unattempted-bg {
+            background-color: #fef3c7;
+            border-color: #fde68a;
+        }
+
+        .explanation {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #334155;
+            background: rgba(255,255,255,0.6);
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        .retry-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Exam Screen -->
+        <div id="exam-screen" class="screen active">
+            <div class="top-bar">
+                <div class="timer-box" id="timer-display">സമയം: 42:45</div>
+                <div class="controls-group">
+                    <button class="btn btn-warning" onclick="togglePause()">പോസ് (Pause)</button>
+                    <button class="btn btn-danger" onclick="confirmSubmit()">സമർപ്പിക്കുക (Submit)</button>
+                </div>
+            </div>
+
+            <div class="q-meta">
+                <span id="q-counter">ചോദ്യം 1 / 57</span>
+                <button class="bookmark-btn" id="bookmark-toggle" onclick="toggleBookmark()">★</button>
+            </div>
+
+            <div class="question-title" id="question-text">ചോദ്യം ഇവിടെ ലോഡ് ആകുന്നു...</div>
+
+            <div class="options-list" id="options-container">
+                <!-- Options injected via JS -->
+            </div>
+
+            <div class="palette-container">
+                <div class="palette-title">ചോദ്യങ്ങളുടെ പട്ടിക (Question Palette):</div>
+                <div class="palette-grid" id="palette-grid">
+                    <!-- Palette buttons injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <div class="result-summary">
+                <h2>മോക്ക് ടെസ്റ്റ് ഫലം (Result Summary)</h2>
+                <div class="score-card">
+                    <div class="score-box">
+                        <div>ആകെ സ്കോർ</div>
+                        <div id="res-total-score" style="color: var(--primary);">0.00</div>
+                    </div>
+                    <div class="score-box">
+                        <div>ശരി ഉത്തരങ്ങൾ</div>
+                        <div id="res-correct" style="color: var(--success);">0</div>
+                    </div>
+                    <div class="score-box">
+                        <div>തെറ്റായ ഉത്തരങ്ങൾ</div>
+                        <div id="res-wrong" style="color: var(--danger);">0</div>
+                    </div>
+                    <div class="score-box">
+                        <div>അറ്റൻഡ് ചെയ്യാത്തവ</div>
+                        <div id="res-unattempted" style="color: var(--warning);">0</div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <button class="filter-btn active-filter" onclick="filterReview('all')">എല്ലാം (All)</button>
+                    <button class="filter-btn" onclick="filterReview('correct')">ശരി (Correct)</button>
+                    <button class="filter-btn" onclick="filterReview('wrong')">തെറ്റ് (Wrong)</button>
+                    <button class="filter-btn" onclick="filterReview('unattempted')">മടികൂടാത്തവ (Unattempted)</button>
+                </div>
+
+                <div class="review-list" id="review-container">
+                    <!-- Review items injected here -->
+                </div>
+
+                <div class="retry-options">
+                    <button class="btn" onclick="restartExam('all')">മുഴുവൻ ചോദ്യങ്ങളും വീണ്ടും ചെയ്യുക</button>
+                    <button class="btn btn-warning" onclick="restartExam('wrong')">തെറ്റായവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+                    <button class="btn btn-danger" onclick="restartExam('unattempted')">അറ്റൻഡ് ചെയ്യാത്തവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+                    <button class="btn" style="background:#64748b;" onclick="restartExam('wrong-unattempted')">തെറ്റും അറ്റൻഡ് ചെയ്യാത്തവയും മാത്രം ചെയ്യുക</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Overlay Modal -->
+    <div class="pause-overlay" id="pause-overlay">
+        <h2>ടെസ്റ്റ് താൽക്കാലികമായി നിർത്തിവെച്ചിരിക്കുന്നു</h2>
+        <p style="margin-bottom: 20px;">തുടരാൻ താഴെയുള്ള ബട്ടണിൽ ക്ലിക്ക് ചെയ്യുക.</p>
+        <button class="btn" onclick="togglePause()" style="font-size: 1.1rem; padding: 10px 25px;">തുടരുക (Resume)</button>
+    </div>
+
+    <script>
+        const rawData = [
+            { q: "ഭൂമിയുടെ ഉൾഭാഗത്തെ പറ്റി നാം മനസ്സിലാക്കുന്നത് എന്തിന്റെ അടിസ്ഥാനത്തിലാണ്?", options: ["നേരത്തെ ഇറങ്ങിച്ചെന്ന് ശേഖരിച്ച വിവരങ്ങൾ", "ഉപരിതലത്തിൽ നിന്നും ലഭ്യമായ തെളിവുകളുടെയും നിഗമനങ്ങളുടെയും അടിസ്ഥാനത്തിൽ", "പൂർണ്ണമായും ശാസ്ത്രീയ പരീക്ഷണങ്ങളുടെ മാത്രം ഫലമായി", "ഉപഗ്രഹ ചിത്രങ്ങളുടെ അടിസ്ഥാനത്തിൽ"], ans: 1, exp: "ഉയർന്ന താപവും മർദ്ദവും കാരണം ഭൂമിയുടെ ഉൾഭാഗത്തേക്ക് നേരിട്ട് ഇറങ്ങിച്ചെന്ന് വിവരങ്ങൾ ശേഖരിക്കാൻ സാധിക്കാത്തതിനാൽ ഉപരിതലത്തിൽ നിന്നും ലഭ്യമായ തെളിവുകളുടെയും നിഗമനങ്ങളുടെയും അടിസ്ഥാനത്തിലാണ് നാം ഇത് മനസ്സിലാക്കുന്നത്[span_0](start_span)[span_0](end_span)." },
+            { q: "ഭൂമിയുടെ ഉൾഭാഗത്തെ പറ്റി വിവരം ശേഖരിക്കാനുള്ള പ്രധാന സ്രോതസ്സുകളിൽ ഉൾപ്പെടാത്തത് ഏത്?", options: ["ഖനികൾ", "അഗ്നിപർവ്വതങ്ങൾ പുറത്തേക്ക് തള്ളുന്ന ദ്രവവസ്തുക്കൾ", "സമുദ്രത്തിലെ വേലിയേറ്റങ്ങൾ", "ഭൂകമ്പ പ്രവർത്തനങ്ങൾ"], ans: 2, exp: "ഖനികൾ, അഗ്നിപർവ്വതങ്ങൾ പുറത്തേക്ക് തള്ളുന്ന ദ്രവവസ്തുക്കൾ, ഭൂകമ്പ പ്രവർത്തനങ്ങൾ, ഭൂഗുരുത്വാകർഷണം, ഭൗമകാന്തിക മണ്ഡലം എന്നിവയാണ് ഭൂമിയുടെ ഉൾഭാഗത്തെ പറ്റി വിവരം ശേഖരിക്കാനുള്ള പ്രധാന സ്രോതസ്സുകൾ[span_1](start_span)[span_1](end_span)." },
+            { q: "ലോകപ്രശസ്തമായ സ്വർണ്ണഖനി സ്ഥിതി ചെയ്യുന്നത് എവിടെയാണ്?", options: ["ഓസ്ട്രേലിയയിലെ സിഡ്നിയിൽ", "ദക്ഷിണാഫ്രിക്കയിലെ ജൊഹാനസ്ബർഗിൽ", "കാനഡയിലെ ക്വബെക്കിൽ", "റുമാനിയയിലെ ബുഖാരെസ്റ്റിൽ"], ans: 1, exp: "ദക്ഷിണാഫ്രിക്കയിലെ ജൊഹാനസ്ബർഗിലാണ് ലോകപ്രശസ്തമായ സ്വർണ്ണഖനി സ്ഥിതി ചെയ്യുന്നത്[span_2](start_span)[span_2](end_span)." },
+            { q: "ഭൂമിയുടെ ഉള്ളിൽ നിന്നും വമിക്കുന്ന വിഷവാതകങ്ങളിൽ നിന്നും രക്ഷനേടാൻ ഖനികളിൽ ജോലിചെയ്യുന്നവർ ധരിക്കുന്ന ജീവൻരക്ഷ ഉപകരണം ഏത്?", options: ["ഓക്സി ബോക്സ്", "ഗ്യാസ് മാസ്ക്", "റെസ്പിറേറ്റർ", "ഓക്സിജൻ സിലിണ്ടർ"], ans: 0, exp: "ഭൂമിയുടെ ഉള്ളിൽ നിന്നും വമിക്കുന്ന വിഷവാതകങ്ങളിൽ നിന്നും രക്ഷനേടാൻ ഖനികളിൽ ജോലിചെയ്യുന്നവർ ധരിക്കുന്ന ജീവൻരക്ഷ ഉപകരണം 'ഓക്സി ബോക്സ്' ആണ്[span_3](start_span)[span_3](end_span)." },
+            { q: "ഭൂമിയെ പ്രധാനമായും എത്ര പാളികളായി തിരിക്കാം?", options: ["രണ്ട്", "മൂന്ന്", "നാല്", "അഞ്ച്"], ans: 1, exp: "ഭൂമിയെ പ്രധാനമായും ഭൂവൽക്കം (Crust), മാൻറിൽ (Mantle), കാമ്പ് (Core) എന്നിങ്ങനെ മൂന്ന് പാളികളായി തിരിക്കാം[span_4](start_span)[span_4](end_span)." },
+            { q: "താഴെ പറയുന്നവയിൽ ഭൂമിയുടെ പാളികളിൽ ഉൾപ്പെടാത്തത് ഏത്?", options: ["ഭൂവൽക്കം (Crust)", "മാൻറിൽ (Mantle)", "കാമ്പ് (Core)", "ലിത്തോസ്ഫിയർ (Lithosphere)"], ans: 3, exp: "ഭൂവൽക്കം, മാൻറിൽ, കാമ്പ് എന്നിവയാണ് ഭൂമിയുടെ പ്രധാന പാളികൾ[span_5](start_span)[span_5](end_span). ലിത്തോസ്ഫിയർ എന്നത് ഭൂവൽക്കവും മാന്റിലിന്റെ മുകൾഭാഗവും ചേർന്ന പ്രദേശമാണ്[span_6](start_span)[span_6](end_span)." },
+            { q: "ഭൂമിയുടെ ഏറ്റവും പുറമെയുള്ള പാളി ഏത്?", options: ["മാൻറിൽ", "ഭൂവൽക്കം", "കാമ്പ്", "അസ്തനോസ്ഫിയർ"], ans: 1, exp: "ഭൂമിയുടെ ഏറ്റവും പുറമെയുള്ള പാളിയാണ് ഭൂവൽക്കം (Crust)[span_7](start_span)[span_7](end_span)." },
+            { q: "ശിലകളുടെ ധാതുക്കളുടെയും കലവറ എന്നറിയപ്പെടുന്ന ഭൂമിയുടെ പാളി ഏത്?", options: ["മാൻറിൽ", "കാമ്പ്", "ഭൂവൽക്കം", "ലിത്തോസ്ഫിയർ"], ans: 2, exp: "ശിലകളുടെ ധാതുക്കളുടെയും കലവറ എന്നറിയപ്പെടുന്നത് ഭൂവൽക്കമാണ്[span_8](start_span)[span_8](end_span)." },
+            { q: "ഭൂവൽക്കത്തിലെ പ്രധാനപ്പെട്ട രണ്ട് ഭാഗങ്ങൾ ഏതൊക്കെ?", options: ["ഉപരി മാൻറിലും അധോ മാൻറിലും", "വൻകര ഭൂവൽക്കവും സമുദ്ര ഭൂവൽക്കവും", "പുറക്കാമ്പും അകക്കാമ്പും", "സിയാലും സിമയും"], ans: 1, exp: "വൻകര ഭൂവൽക്കവും സമുദ്ര ഭൂവൽക്കവുമാണ് ഭൂവൽക്കത്തിലെ പ്രധാന രണ്ട് ഭാഗങ്ങൾ[span_9](start_span)[span_9](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കത്തിൽ മുഖ്യമായും അടങ്ങിയിരിക്കുന്ന ധാതുക്കൾ ഏവ?", options: ["സിലിക്കയും മഗ്നീഷ്യവും", "സിലിക്കയും അലുമിനയും", "ഇരുമ്പും നിക്കലും", "സിലിക്കണും ഓക്സിജനും"], ans: 1, exp: "സിലിക്ക, അലുമിന എന്നീ ധാതുക്കൾ മുഖ്യമായും അടങ്ങിയിരിക്കുന്നതിനാലാണ് വൻകര ഭൂവൽക്കത്തെ സിയാൽ എന്ന് വിളിക്കുന്നത്[span_10](start_span)[span_10](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കം അറിയപ്പെടുന്ന മറ്റൊരു പേര് എന്ത്?", options: ["സിമ (SIMA)", "സിയാൽ (SIAL)", "നിഫെ (NIFE)", "ലിത്തോസ്ഫിയർ"], ans: 1, exp: "സിലിക്കയും അലുമിനയും അടങ്ങിയിരിക്കുന്നതിനാൽ വൻകര ഭൂവൽക്കം 'സിയാൽ (SIAL)' എന്നറിയപ്പെടുന്നു[span_11](start_span)[span_11](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കത്തിൽ കൂടുതലായും കാണപ്പെടുന്ന ശില ഏത്?", options: ["ബസാൾട്ട് ശില", "ഗ്രാനൈറ്റ് ശില", "മാർബിൾ ശില", "ലൈംസ്റ്റോൺ ശില"], ans: 1, exp: "വൻകര ഭൂവൽക്കത്തിൽ കൂടുതലായും കാണപ്പെടുന്ന ശില ഗ്രാനൈറ്റ് ശിലയാണ്[span_12](start_span)[span_12](end_span)." },
+            { q: "സമുദ്ര ഭൂവൽക്കത്തിൽ മുഖ്യമായും അടങ്ങിയിരിക്കുന്ന ധാതുക്കൾ ഏവ?", options: ["സിലിക്കയും അലുമിനയും", "സിലിക്കയും മഗ്നീഷ്യവും", "ഇരുമ്പും നിക്കലും", "കാൽസ്യവും മഗ്നീഷ്യവും"], ans: 1, exp: "സിലിക്കയും മഗ്നീഷ്യവും മുഖ്യമായും അടങ്ങിയിരിക്കുന്നതിനാലാണ് സമുദ്ര ഭൂവൽക്കത്തെ സിമ എന്ന് വിളിക്കുന്നത്[span_13](start_span)[span_13](end_span)." },
+            { q: "സമുദ്ര ഭൂവൽക്കം അറിയപ്പെടുന്ന പേര് എന്ത്?", options: ["സിയാൽ (SIAL)", "സിമ (SIMA)", "നിഫെ (NIFE)", "മീസോസ്ഫിയർ"], ans: 1, exp: "സിലിക്കയും മഗ്നീഷ്യവും അടങ്ങിയിരിക്കുന്നതിനാൽ സമുദ്ര ഭൂവൽക്കം 'സിമ (SIMA)' എന്നറിയപ്പെടുന്നു[span_14](start_span)[span_14](end_span)." },
+            { q: "സമുദ്ര ഭൂവൽക്കത്തിൽ കൂടുതലായും കാണപ്പെടുന്ന ശില ഏത്?", options: ["ഗ്രാനൈറ്റ് ശില", "ബസാൾട്ട് ശില", "സ്ലേറ്റ് ശില", "നീസ് ശില"], ans: 1, exp: "സമുദ്ര ഭൂവൽക്കത്തിൽ കൂടുതലായും കാണപ്പെടുന്ന ശില ബസാൾട്ട് ശിലയാണ്[span_15](start_span)[span_15](end_span)." },
+            { q: "ഭൂവൽക്കത്തിന്റെ ശരാശരി കനം (thickness) എത്രയാണ്?", options: ["ഏകദേശം 20 km", "ഏകദേശം 40 km", "ഏകദേശം 100 km", "ഏകദേശം 2900 km"], ans: 1, exp: "ഭൂവൽക്കത്തിന്റെ ശരാശരി കനം ഏകദേശം 40 km ആണ്[span_16](start_span)[span_16](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കവും സമുദ്ര ഭൂവൽക്കവും തമ്മിലുള്ള കനം, സാന്ദ്രത എന്നിവയുമായി ബന്ധപ്പെട്ട് ശരിയായ പ്രസ്താവന ഏത്?", options: ["വൻകര ഭൂവൽക്കത്തിനാണ് കനം കൂടുതൽ", "സമുദ്ര ഭൂവൽക്കത്തിനാണ് കനം കൂടുതൽ", "രണ്ടിന്റെയും കനം തുല്യമാണ്", "വൻകര ഭൂവൽക്കത്തിനാണ് സാന്ദ്രത കൂടുതൽ"], ans: 0, exp: "സമുദ്ര ഭൂവൽക്കത്തേക്കാൾ കൂടുതൽ കനം വൻകര ഭൂവൽക്കത്തിനാണ്[span_17](start_span)[span_17](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കത്തേക്കാൾ സാന്ദ്രത കൂടുതലുള്ളത് ഏതിനാണ്?", options: ["സമുദ്ര ഭൂവൽക്കത്തിന്", "മാൻറിലിന്", "പുറക്കാമ്പിന്", "അന്തരീക്ഷത്തിന്"], ans: 0, exp: "വൻകര ഭൂവൽക്കത്തേക്കാൾ സാന്ദ്രത കൂടുതൽ സമുദ്ര ഭൂവൽക്കത്തിനാണ്[span_18](start_span)[span_18](end_span)." },
+            { q: "വൻകര ഭൂവൽക്കത്തിന്റെ (സിയാൽ) ശരാശരി സാന്ദ്രത എത്രയാണ്?", options: ["3 gm/cm³", "-2.7 gm/cm³", "3.4 gm/cm³", "13 gm/cm³"], ans: 1, exp: "വൻകര ഭൂവൽക്കത്തിന്റെ (സിയാൽ) ശരാശരി സാന്ദ്രത 2.7 gm/cm³ ആണ്[span_19](start_span)[span_19](end_span)." },
+            { q: "സമുദ്ര ഭൂവൽക്കത്തിന്റെ (സിമ) ശരാശരി സാന്ദ്രത എത്രയാണ്?", options: ["2.7 gm/cm³", "3 gm/cm³", "3.4 gm/cm³", "5 gm/cm³"], ans: 1, exp: "സമുദ്ര ഭൂവൽക്കത്തിന്റെ (സിമ) ശരാശരി സാന്ദ്രത 3 gm/cm³ ആണ്[span_20](start_span)[span_20](end_span)." },
+            { q: "സിയാലിന്റെയും സിമയുടെയും അതിർത്തി അറിയപ്പെടുന്നത് എന്ത്?", options: ["മോഹോറോവിസിക് വിച്ഛിന്നത", "കോൺറാഡ് വിച്ഛിന്നത", "റെപ്പെറ്റി വിച്ഛിന്നത", "ഗുട്ടൻബർഗ് വിച്ഛിന്നത"], ans: 1, exp: "സിയാലിന്റെയും സിമയുടെയും അതിർത്തി അറിയപ്പെടുന്നത് കോൺറാഡ് വിച്ഛിന്നത എന്നാണ്[span_21](start_span)[span_21](end_span)." },
+            { q: "ഭൂവൽക്കത്തിന്റെയും മാന്റിലിന്റെയും അതിർവരമ്പ് അറിയപ്പെടുന്നത് എന്ത്?", options: ["കോൺറാഡ് വിച്ഛിന്നത", "മോഹോറോവിസിക് വിച്ഛിന്നത", "ലേമാൻ വിച്ഛിന്നത", "റെപ്പെറ്റി വിച്ഛിന്നത"], ans: 1, exp: "ഭൂവൽക്കത്തിന്റെയും മാന്റിലിന്റെയും അതിർവരമ്പ് മോഹോറോവിസിക് വിച്ഛിന്നത എന്നറിയപ്പെടുന്നു[span_22](start_span)[span_22](end_span)." },
+            { q: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന മൂലകം ഏത്?", options: ["അലുമിനിയം", "സിലിക്കൺ", "ഓക്സിജൻ", "ഇരുമ്പ്"], ans: 2, exp: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന മൂലകം ഓക്സിജൻ ആണ്[span_23](start_span)[span_23](end_span)." },
+            { q: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന ലോഹം ഏത്?", options: ["ഇരുമ്പ്", "ചെമ്പ്", "അലൂമിനിയം", "മഗ്നീഷ്യം"], ans: 2, exp: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന ലോഹം അലൂമിനിയം ആണ്[span_24](start_span)[span_24](end_span)." },
+            { q: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന ധാതു ഏത്?", options: ["ക്വാർട്സ്", "ഫെൽസ്‌പാർ", "മൈക്ക", "ഒളിവിൻ"], ans: 1, exp: "ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതലായി കാണപ്പെടുന്ന ധാതു ഫെൽസ്‌പാർ ആണ്[span_25](start_span)[span_25](end_span)." },
+            { q: "ഫെൽസ്‌പാർ എന്ന ധാതുവിൽ അടങ്ങിയിരിക്കുന്ന മൂലകങ്ങൾ ഏതൊക്കെ?", options: ["സിലിക്കണും ഓക്സിജനും", "ഇരുമ്പും നിക്കലും", "സിലിക്കയും അലുമിനയും", "സിലിക്കയും മഗ്നീഷ്യവും"], ans: 0, exp: "ഫെൽസ്‌പാർ ധാതുവിൽ സിലിക്കണും ഓക്സിജനും എന്നീ മൂലകങ്ങൾ അടങ്ങിയിരിക്കുന്നു[span_26](start_span)[span_26](end_span)." },
+            { q: "ഭൂവൽക്കത്തിന് താഴെയുള്ള മണ്ഡലം ഏത്?", options: ["കാമ്പ്", "മാൻറിൽ", "ലിത്തോസ്ഫിയർ", "അസ്തനോസ്ഫിയർ"], ans: 1, exp: "ഭൂവൽക്കത്തിന് താഴെയുള്ള മണ്ഡലമാണ് മാന്റിൽ[span_27](start_span)[span_27](end_span)." },
+            { q: "മാന്റിൽ വ്യാപിച്ചു കിടക്കുന്നത് എത്ര ദൂരത്തിലാണ്?", options: ["ഭൂവൽക്കത്തിന് താഴെ തുടങ്ങി 100 കിലോമീറ്റർ വരെ", "ഭൂവൽക്കത്തിന് താഴെ തുടങ്ങി 2900 കിലോമീറ്റർ വരെ", "2900 കിലോമീറ്റർ മുതൽ 6371 കിലോമീറ്റർ വരെ", "ഉപരിതലത്തിൽ നിന്ന് 5000 കിലോമീറ്റർ വരെ"], ans: 1, exp: "ഭൂവൽക്കത്തിന് താഴെ തുടങ്ങി 2900 കിലോമീറ്റർ വരെയാണ് മാന്റിൽ വ്യാപിച്ചു കിടക്കുന്നത്[span_28](start_span)[span_28](end_span)." },
+            { q: "ഭൂമിയുടെ പിണ്ഡത്തിന്റെ ഏറ്റവും കൂടുതലുള്ള ഭാഗം ഏത്?", options: ["ഭൂവൽക്കം", "മാന്റിൽ", "കാമ്പ്", "അകക്കാമ്പ്"], ans: 1, exp: "ഭൂമിയുടെ പിണ്ഡത്തിന്റെ ഏറ്റവും കൂടുതലുള്ള ഭാഗം മാന്റിൽ ആണ്[span_29](start_span)[span_29](end_span)." },
+            { q: "മാന്റിലിന്റെ രണ്ട് ഭാഗങ്ങൾ ഏവ?", options: ["വൻകര മാന്റിലും സമുദ്ര മാന്റിലും", "ഉപരി മാൻറിലും അധോ മാൻറിലും", "പുറക്കാമ്പും അകക്കാമ്പും", "ലിത്തോസ്ഫിയറും അസ്തനോസ്ഫിയറും"], ans: 1, exp: "ഉപരി മാന്റിൽ, അധോ മാന്റിൽ എന്നിവയാണ് മാന്റിലിന്റെ രണ്ട് ഭാഗങ്ങൾ[span_30](start_span)[span_30](end_span)." },
+            { q: "ഭൂവൽക്കവും മാന്റിലിന്റെ മുകൾ ഭാഗവും ചേർന്നു വരുന്ന ഖരാവസ്ഥയിൽ സ്ഥിതി ചെയ്യുന്ന പ്രദേശം ഏത്?", options: ["അസ്തനോസ്ഫിയർ", "ലിത്തോസ്ഫിയർ", "മീസോസ്ഫിയർ", "ബാരിസ്പിയർ"], ans: 1, exp: "ഭൂവൽക്കവും മാന്റിലിന്റെ മുകൾ ഭാഗവും ചേർന്നു വരുന്ന ഖരാവസ്ഥയിലുള്ള പ്രദേശമാണ് ലിത്തോസ്ഫിയർ (സ്ഥലമണ്ഡലം / ശിലാമണ്ഡലം)[span_31](start_span)[span_31](end_span)." },
+            { q: "സ്ഥലമണ്ഡലം അല്ലെങ്കിൽ ശിലാമണ്ഡലം എന്നറിയപ്പെടുന്ന പാളി ഏത്?", options: ["മാന്റിൽ", "കാമ്പ്", "ലിത്തോസ്ഫിയർ", "ഭൂവൽക്കം"], ans: 2, exp: "ശിലാമണ്ഡലം അല്ലെങ്കിൽ സ്ഥലമണ്ഡലം എന്നറിയപ്പെടുന്നത് ലിത്തോസ്ഫിയർ ആണ്[span_32](start_span)[span_32](end_span)." },
+            { q: "ലിത്തോസ്ഫിയറിനു താഴെയായി മാന്റിലിൽ അർദ്ധ ദ്രവാവസ്ഥയിൽ സ്ഥിതി ചെയ്യുന്ന ഭാഗം ഏത്?", options: ["അധോ മാന്റിൽ", "അസ്തനോസ്ഫിയർ", "പുറക്കാമ്പ്", "അകക്കാമ്പ്"], ans: 1, exp: "ലിത്തോസ്ഫിയറിനു താഴെയായി അർദ്ധ ദ്രവാവസ്ഥയിൽ സ്ഥിതി ചെയ്യുന്ന ഭാഗമാണ് അസ്തനോസ്ഫിയർ[span_33](start_span)[span_33](end_span)." },
+            { q: "അസ്തനോസ്ഫിയർ വ്യാപിച്ചിരിക്കുന്നത് എവിടം മുതലാണ്?", options: ["ലിത്തോസ്ഫിയറിന്റെ അതിർത്തി മുതൽ ഏകദേശം 400 km വരെ", "2900 km മുതൽ 6371 km വരെ", "ഭൂവൽക്കത്തിന്റെ അവസാനം മുതൽ 2900 km വരെ", "ഉപരിതലത്തിൽ നിന്ന് 40 km വരെ"], ans: 0, exp: "ലിത്തോസ്ഫിയറിന്റെ അതിർത്തി മുതൽ ഏകദേശം 400 km വരെയാണ് അസ്തനോസ്ഫിയർ വ്യാപിച്ചിരിക്കുന്നത്[span_34](start_span)[span_34](end_span)." },
+            { q: "ഭൂമിയിലെ മാഗ്മയുടെ ഏറ്റവും പ്രധാനപ്പെട്ട സ്രോതസ്സ് ഏത്?", options: ["ലിത്തോസ്ഫിയർ", "അസ്തനോസ്ഫിയർ", "പുറക്കാമ്പ്", "അകക്കാമ്പ്"], ans: 1, exp: "ഭൂമിയിലെ മാഗ്മയുടെ ഏറ്റവും പ്രധാനപ്പെട്ട സ്രോതസ്സ് അസ്തനോസ്ഫിയർ ആണ്[span_35](start_span)[span_35](end_span)." },
+            { q: "മാന്റിലിന്റെ ഏത് ഭാഗമാണ് ഖരാവസ്ഥയിലുള്ള ലിത്തോസ്ഫിയറിൽ ഉൾപ്പെടുന്നത്?", options: ["മുകൾ ഭാഗം", "അടിഭാഗം", "അധോ മാന്റിൽ", "പൂർണ്ണമായി മാന്റിലില്ല"], ans: 0, exp: "മാന്റിലിന്റെ മുകൾ ഭാഗമാണ് ഖരാവസ്ഥയിലുള്ള ലിത്തോസ്ഫിയറിൽ ഉൾപ്പെടുന്നത്[span_36](start_span)[span_36](end_span)." },
+            { q: "ലിത്തോസ്ഫിയറിനു താഴെയായി വരുന്ന അസ്തനോസ്ഫിയറിന്റെ അവസ്ഥ എന്താണ്?", options: ["ഖരാവസ്ഥ", "അർദ്ധ ദ്രവാവസ്ഥ", "പൂർണ്ണമായും വാതകാവസ്ഥ", "പ്ലാസ്മ അവസ്ഥ"], ans: 1, exp: "ലിത്തോസ്ഫിയറിനു താഴെയായി വരുന്ന അസ്തനോസ്ഫിയർ അർദ്ധ ദ്രവാവസ്ഥയിലാണ് കാണപ്പെടുന്നത്[span_37](start_span)[span_37](end_span)." },
+            { q: "NCERT പ്രകാരം അധോമാന്റിലിന്റെ അവസ്ഥ എന്താണ്?", options: ["അർദ്ധ ദ്രവാവസ്ഥ", "ഖരാവസ്ഥ", "ദ്രവാവസ്ഥ", "വാതകാവവസ്ഥ"], ans: 1, exp: "NCERT പ്രകാരം അധോമാന്റിൽ ഖരാവസ്ഥയിലാണ് സ്ഥിതി ചെയ്യുന്നത്[span_38](start_span)[span_38](end_span)." },
+            { q: "SCERT പ്രകാരം അധോമാന്റിലിന്റെ അവസ്ഥ എന്താണ്?", options: ["ഖരാവസ്ഥ", "അർദ്ധ ദ്രവാവസ്ഥ", "ദ്രവാവസ്ഥ", "ഖര-ദ്രവ മിശ്രിതം"], ans: 1, exp: "SCERT പ്രകാരം അധോമാന്റിൽ അർദ്ധ ദ്രവാവസ്ഥയിലാണ്[span_39](start_span)[span_39](end_span)." },
+            { q: "'മീസോസ്ഫിയർ' എന്നറിയപ്പെടുന്ന ഭൂമിയുടെ പാളി ഏത്?", options: ["ഭൂവൽക്കം", "മാന്റിൽ", "കാമ്പ്", "പുറക്കാമ്പ്"], ans: 1, exp: "മീസോസ്ഫിയർ എന്നറിയപ്പെടുന്ന ഭൂമിയുടെ പാളി മാന്റിൽ ആണ്[span_40](start_span)[span_40](end_span)." },
+            { q: "മാന്റിലിൽ മുഖ്യമായും കാണപ്പെടുന്ന സിലിക്കേറ്റുകൾ അടങ്ങിയ ശില ഏത്?", options: ["ഫെൽസ്‌പാർ", "ഒളിവിൻ", "ക്വാർട്സ്", "മൈക്ക"], ans: 1, exp: "ഒളിവിൻ എന്ന സിലിക്കേറ്റുകൾ അടങ്ങിയ ശിലകളാണ് മാന്റിലിൽ മുഖ്യമായും കാണപ്പെടുന്നത്[span_41](start_span)[span_41](end_span)." },
+            { q: "ഭൂവൽക്കത്തേക്കാൾ സാന്ദ്രത കൂടിയ മാന്റിലിന്റെ ശരാശരി സാന്ദ്രത എത്രയാണ്?", options: ["2.7 gm/cm³", "3 gm/cm³", "3.4 gm/cm³", "13 gm/cm³"], ans: 2, exp: "ഭൂവൽക്കത്തേക്കാൾ സാന്ദ്രത കൂടിയ മാന്റിലിന്റെ ശരാശരി സാന്ദ്രത 3.4 gm/cm³ ആണ്[span_42](start_span)[span_42](end_span)." },
+            { q: "ഉപരി മാന്റിലിന്റെയും അധോ മാന്റിലിന്റെയും അതിർത്തി അറിയപ്പെടുന്നത് എന്ത്?", options: ["കോൺറാഡ് വിച്ഛിന്നത", "മോഹോറോവിസിക് വിച്ഛിന്നത", "റെപ്പെറ്റി വിച്ഛിന്നത", "ഗുട്ടൻബർഗ് വിച്ഛിന്നത"], ans: 2, exp: "ഉപരി മാന്റിലിന്റെയും അധോ മാന്റിലിന്റെയും അതിർത്തി റെപ്പെറ്റി വിച്ഛിന്നത എന്നറിയപ്പെടുന്നു[span_43](start_span)[span_43](end_span)." },
+            { q: "മാന്റിലിന്റെയും കാമ്പിന്റെയും അതിർത്തി അറിയപ്പെടുന്നത് എന്ത്?", options: ["ലേമാൻ വിച്ഛിന്നത", "ഗുട്ടൻബർഗ് വിച്ഛിന്നത", "കോൺറാഡ് വിച്ഛിന്നത", "മോഹോറോവിസിക് വിച്ഛിന്നത"], ans: 1, exp: "മാന്റിലിന്റെയും കാമ്പിന്റെയും അതിർത്തി അറിയപ്പെടുന്നത് ഗുട്ടൻബർഗ് വിച്ഛിന്നത എന്നാണ്[span_44](start_span)[span_44](end_span)." },
+            { q: "മാന്റിലിനു താഴെയായി കാണപ്പെടുന്ന മണ്ഡലം ഏത്?", options: ["ഭൂവൽക്കം", "കാമ്പ് (Core)", "ലിത്തോസ്ഫിയർ", "അസ്തനോസ്ഫിയർ"], ans: 1, exp: "മാന്റിലിനു താഴെയായി കാണപ്പെടുന്ന മണ്ഡലമാണ് കാമ്പ് (Core)[span_45](start_span)[span_45](end_span)." },
+            { q: "ഭൂമിയുടെ കേന്ദ്രഭാഗം എന്നറിയപ്പെടുന്ന പാളി ഏത്?", options: ["മാന്റിൽ", "കാമ്പ്", "ഭൂവൽക്കം", "ഉപരി മാന്റിൽ"], ans: 1, exp: "ഭൂമിയുടെ കേന്ദ്രഭാഗം എന്നറിയപ്പെടുന്നത് കാമ്പ് ആണ്[span_46](start_span)[span_46](end_span)." },
+            { q: "കാമ്പ് വ്യാപിച്ചു കിടക്കുന്നത് ഏത് ദൂര പരിധിയിലാണ്?", options: ["0 കിലോമീറ്റർ മുതൽ 40 കിലോമീറ്റർ വരെ", "40 കിലോമീറ്റർ മുതൽ 2900 കിലോമീറ്റർ വരെ", "2900 km മുതൽ 6371 km വരെ", "400 km മുതൽ 2900 km വരെ"], ans: 2, exp: "മാന്റിലിന്റെ താഴെ തുടങ്ങി 2900 km മുതൽ 6371 km വരെയാണ് കാമ്പ് വ്യാപിച്ചു കിടക്കുന്നത്[span_47](start_span)[span_47](end_span)." },
+            { q: "'ബാരിസ്പിയർ' എന്നറിയപ്പെടുന്ന ഭൂമിയുടെ പാളി ഏത്?", options: ["ഭൂവൽക്കം", "മാന്റിൽ", "കാമ്പ്", "ലിത്തോസ്ഫിയർ"], ans: 2, exp: "ബാരിസ്പിയർ എന്നറിയപ്പെടുന്ന ഭൂമിയുടെ പാളിയാണ് കാമ്പ്[span_48](start_span)[span_48](end_span)." },
+            { q: "ഭൂമിയിലെ കേന്ദ്ര ഭാഗത്ത് അനുഭവപ്പെടുന്ന ശരാശരി താപനില എത്രയാണ്?", options: ["ഏകദേശം 1000 ഡിഗ്രി സെൽഷ്യസ്", "ഏകദേശം 3000 ഡിഗ്രി സെൽഷ്യസ്", "ഏകദേശം 5000 ഡിഗ്രി സെൽഷ്യസ്", "ഏകദേശം 10000 ഡിഗ്രി സെൽഷ്യസ്"], ans: 2, exp: "ഭൂമിയുടെ കേന്ദ്ര ഭാഗത്ത് അനുഭവപ്പെടുന്ന ശരാശരി താപനില ഏകദേശം 5000 ഡിഗ്രി സെൽഷ്യസ് ആണ്[span_49](start_span)[span_49](end_span)." },
+            { q: "കാമ്പിന്റെ രണ്ട് ഭാഗങ്ങൾ ഏതൊക്കെ?", options: ["ഉപരി കാമ്പും അധോ കാമ്പും", "പുറക്കാമ്പും അകക്കാമ്പും", "വൻകര കാമ്പും സമുദ്ര കാമ്പും", "ബാഹ്യ കാമ്പും പ്ലാസ്മാ കാമ്പും"], ans: 1, exp: "പുറക്കാമ്പ് (Outer core), അകക്കാമ്പ് (Inner core) എന്നിവയാണ് കാമ്പിന്റെ രണ്ട് ഭാഗങ്ങൾ[span_50](start_span)[span_50](end_span)." },
+            { q: "ഭൂമിയിലെ ഏറ്റവും സാന്ദ്രത കൂടിയ പാളി ഏത്?", options: ["ഭൂവൽക്കം", "മാന്റിൽ", "പുറക്കാമ്പ്", "അകക്കാമ്പ്"], ans: 3, exp: "ഭൂമിയിലെ ഏറ്റവും സാന്ദ്രത കൂടിയ പാളി അകക്കാമ്പ് ആണ്[span_51](start_span)[span_51](end_span)." },
+            { q: "അകക്കാമ്പിലെ / ഭൂമിയുടെ കേന്ദ്ര ഭാഗത്തെ ശരാശരി സാന്ദ്രത എത്രയാണ്?", options: ["2.7 g/cm³", "3 g/cm³", "3.4 g/cm³", "13 g/cm³"], ans: 3, exp: "അകക്കാമ്പിലെ അല്ലെങ്കിൽ ഭൂമിയുടെ കേന്ദ്ര ഭാഗത്തെ ശരാശരി സാന്ദ്രത 13 g/cm³ ആണ്[span_52](start_span)[span_52](end_span)." },
+            { q: "പുറക്കാമ്പിന്റെയും അകക്കാമ്പിന്റെയും അതിർവരമ്പ് അറിയപ്പെടുന്നത് എന്ത്?", options: ["കോൺറാഡ് വിച്ഛിന്നത", "മോഹോറോവിസിക് വിച്ഛിന്നത", "ഗുട്ടൻബർഗ് വിച്ഛിന്നത", "ലേമാൻ വിച്ഛിന്നത"], ans: 3, exp: "പുറക്കാമ്പിന്റെയും അകക്കാമ്പിന്റെയും അതിർവരമ്പ് ലേമാൻ വിച്ഛിന്നത എന്നറിയപ്പെടുന്നു[span_53](start_span)[span_53](end_span)." },
+            { q: "പുറക്കാമ്പിലെ പദാർത്ഥങ്ങളുടെ അവസ്ഥ എന്താണ്?", options: ["ഖരാവസ്ഥ", "ഉരുകിയ അവസ്ഥ (Liquid)", "അർദ്ധ ദ്രവാവസ്ഥ", "വാതകാവവസ്ഥ"], ans: 1, exp: "പുറക്കാമ്പിൽ പദാർത്ഥങ്ങൾ ഉരുകിയ അവസ്ഥയിലാണ് (Liquid) കാണപ്പെടുന്നത്[span_54](start_span)[span_54](end_span)." },
+            { q: "അകക്കാമ്പിലെ പദാർത്ഥങ്ങളുടെ അവസ്ഥ എന്താണ്?", options: ["ഉരുകിയ അവസ്ഥ", "ഖരാവസ്ഥ (Solid)", "അർദ്ധ ദ്രവാവസ്ഥ", "വാതകാവവസ്ഥ"], ans: 1, exp: "അകക്കാമ്പിലെ പദാർത്ഥങ്ങൾ ഖരാവസ്ഥയിലാണ് (Solid) സ്ഥിതി ചെയ്യുന്നത്[span_55](start_span)[span_55](end_span)." },
+            { q: "കാമ്പ് നിർമ്മിക്കപ്പെട്ടിരിക്കുന്ന പ്രധാന പദാർത്ഥങ്ങൾ ഏവ?", options: ["സിലിക്കയും അലുമിനയും", "സിലിക്കയും മഗ്നീഷ്യവും", "ഇരുമ്പും നിക്കലും", "കാൽസ്യവും സൾഫറും"], ans: 2, exp: "ഇരുമ്പും നിക്കലും ചേർന്നാണ് കാമ്പ് നിർമ്മിക്കപ്പെട്ടിരിക്കുന്നത്[span_56](start_span)[span_56](end_span)." },
+            { q: "കാമ്പ് അറിയപ്പെടുന്ന മറ്റൊരു പേര് എന്ത്?", options: ["SIAL ലെയർ", "SIMA ലെയർ", "NIFE ലെയർ", "LITHOSPHERE ലെയർ"], ans: 2, exp: "ഇരുമ്പും നിക്കലും അടങ്ങിയിരിക്കുന്നതിനാൽ കാമ്പ് 'NIFE ലെയർ' എന്നും അറിയപ്പെടുന്നു[span_57](start_span)[span_57](end_span)." }
+        ];
+
+        let activeDeck = [];
+        let currentIndex = 0;
+        let userAnswers = {}; 
+        let bookmarks = new Set();
+        let timerInterval = null;
+        let timeLeft = 0;
+        let isPaused = false;
+
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initExam(subset = null) {
+            if (subset === 'wrong') {
+                let wrongItems = activeDeck.filter((item) => {
+                    let origIdx = rawData.indexOf(item);
+                    return userAnswers[origIdx] !== undefined && userAnswers[origIdx] !== item.ans;
+                });
+                if (wrongItems.length === 0) {
+                    alert('തെറ്റായ ഉത്തരങ്ങൾ ഒന്നും ഇല്ല!');
+                    return;
+                }
+                activeDeck = wrongItems;
+            } else if (subset === 'unattempted') {
+                let unAtt = activeDeck.filter((item) => {
+                    let origIdx = rawData.indexOf(item);
+                    return userAnswers[origIdx] === undefined;
+                });
+                if (unAtt.length === 0) {
+                    alert('അറ്റൻഡ് ചെയ്യാത്ത ചോദ്യങ്ങൾ ഒന്നും ഇല്ല!');
+                    return;
+                }
+                activeDeck = unAtt;
+            } else if (subset === 'wrong-unattempted') {
+                let targetItems = activeDeck.filter((item) => {
+                    let origIdx = rawData.indexOf(item);
+                    return userAnswers[origIdx] === undefined || userAnswers[origIdx] !== item.ans;
+                });
+                if (targetItems.length === 0) {
+                    alert('തെറ്റായോ അറ്റൻഡ് ചെയ്യാതെയോ ഉള്ള ചോദ്യങ്ങൾ ഒന്നും ഇല്ല!');
+                    return;
+                }
+                activeDeck = targetItems;
+            } else {
+                activeDeck = shuffleArray(rawData);
+                userAnswers = {};
+                bookmarks.clear();
+            }
+
+            currentIndex = 0;
+            timeLeft = activeDeck.length * 45; 
+            
+            document.getElementById('result-screen').classList.remove('active');
+            document.getElementById('exam-screen').classList.add('active');
+
+            startTimer();
+            renderQuestion();
+            renderPalette();
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        submitExam();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            document.getElementById('timer-display').innerText = `സമയം: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+        }
+
+        function renderQuestion() {
+            if (currentIndex < 0) currentIndex = 0;
+            if (currentIndex >= activeDeck.length) currentIndex = activeDeck.length - 1;
+
+            let currentQ = activeDeck[currentIndex];
+            let origIndex = rawData.indexOf(currentQ);
+
+            document.getElementById('q-counter').innerText = `ചോദ്യം ${currentIndex + 1} / ${activeDeck.length}`;
+            document.getElementById('question-text').innerText = `${currentIndex + 1}. ${currentQ.q}`;
+
+            let bBtn = document.getElementById('bookmark-toggle');
+            if (bookmarks.has(origIndex)) {
+                bBtn.classList.add('bookmarked');
+                bBtn.innerText = '★';
+            } else {
+                bBtn.classList.remove('bookmarked');
+                bBtn.innerText = '☆';
+            }
+
+            let optsHtml = '';
+            currentQ.options.forEach((opt, oIdx) => {
+                let isSelected = userAnswers[origIndex] === oIdx ? 'selected' : '';
+                let optLetter = ['എ', 'ബി', 'സി', 'ഡി'][oIdx] || '';
+                optsHtml += `<div class="option-item ${isSelected}" onclick="selectOption(${oIdx})">${optLetter}) ${opt}</div>`;
+            });
+            document.getElementById('options-container').innerHTML = optsHtml;
+
+            updatePaletteUI();
+        }
+
+        function selectOption(optIndex) {
+            let currentQ = activeDeck[currentIndex];
+            let origIndex = rawData.indexOf(currentQ);
+            
+            userAnswers[origIndex] = optIndex;
+            renderQuestion();
+
+            setTimeout(() => {
+                if (currentIndex < activeDeck.length - 1) {
+                    currentIndex++;
+                    renderQuestion();
+                }
+            }, 250);
+        }
+
+        function toggleBookmark() {
+            let currentQ = activeDeck[currentIndex];
+            let origIndex = rawData.indexOf(currentQ);
+            if (bookmarks.has(origIndex)) {
+                bookmarks.delete(origIndex);
+            } else {
+                bookmarks.add(origIndex);
+            }
+            renderQuestion();
+            renderPalette();
+        }
+
+        function renderPalette() {
+            let gridHtml = '';
+            activeDeck.forEach((item, idx) => {
+                let origIndex = rawData.indexOf(item);
+                let isAns = userAnswers[origIndex] !== undefined ? 'answered' : '';
+                let isCurr = idx === currentIndex ? 'current' : '';
+                let isMark = bookmarks.has(origIndex) ? 'bookmarked-pal' : '';
+
+                gridHtml += `<button class="palette-btn ${isAns} ${isCurr} ${isMark}" onclick="jumpToQuestion(${idx})">${idx + 1}</button>`;
+            });
+            document.getElementById('palette-grid').innerHTML = gridHtml;
+        }
+
+        function updatePaletteUI() {
+            let btns = document.querySelectorAll('.palette-btn');
+            btns.forEach((btn, idx) => {
+                if (idx === currentIndex) {
+                    btn.classList.add('current');
+                } else {
+                    btn.classList.remove('current');
+                }
+            });
+        }
+
+        function jumpToQuestion(idx) {
+            currentIndex = idx;
+            renderQuestion();
+        }
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        window.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        window.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture();
+        }, {passive: true});
+
+        function handleSwipeGesture() {
+            let threshold = 60;
+            if (document.getElementById('exam-screen').classList.contains('active') && !isPaused) {
+                if (touchEndX < touchStartX - threshold) {
+                    if (currentIndex < activeDeck.length - 1) {
+                        currentIndex++;
+                        renderQuestion();
+                    }
+                } else if (touchEndX > touchStartX + threshold) {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        renderQuestion();
+                    }
+                }
+            }
+        }
+
+        function confirmSubmit() {
+            if (confirm('നിങ്ങൾക്ക് തീർച്ചയായും എക്സാം സമർപ്പിക്കണമെന്നുണ്ടോ?')) {
+                submitExam();
+            }
+        }
+
+        function submitExam() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('exam-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            calculateResults('all');
+        }
+
+        function calculateResults(filter) {
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unattemptedCount = 0;
+
+            rawData.forEach((item, idx) => {
+                let userAns = userAnswers[idx];
+                if (userAns === undefined) {
+                    unattemptedCount++;
+                } else if (userAns === item.ans) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            let totalScore = (correctCount * 1.0) - (wrongCount * 0.33);
+
+            document.getElementById('res-total-score').innerText = totalScore.toFixed(2);
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-wrong').innerText = wrongCount;
+            document.getElementById('res-unattempted').innerText = unattemptedCount;
+
+            renderReviewList(filter);
+        }
+
+        function filterReview(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+            event.target.classList.add('active-filter');
+            calculateResults(filter);
+        }
+
+        function renderReviewList(filter) {
+            let reviewHtml = '';
+            rawData.forEach((item, idx) => {
+                let userAns = userAnswers[idx];
+                let status = '';
+
+                if (userAns === undefined) {
+                    status = 'unattempted';
+                } else if (userAns === item.ans) {
+                    status = 'correct';
+                } else {
+                    status = 'wrong';
+                }
+
+                if (filter !== 'all' && filter !== status) return;
+
+                let bgClass = '';
+                if (status === 'correct') bgClass = 'correct-bg';
+                else if (status === 'wrong') bgClass = 'wrong-bg';
+                else bgClass = 'unattempted-bg';
+
+                let userOptText = userAns !== undefined ? item.options[userAns] : 'അറ്റൻഡ് ചെയ്തിട്ടില്ല';
+                let correctOptText = item.options[item.ans];
+
+                reviewHtml += `
+                    <div class="review-item ${bgClass}">
+                        <strong>ചോദ്യം ${idx + 1}:</strong> ${item.q}<br>
+                        <span style="color: #334155;">നിങ്ങളുടെ ഉത്തരം: <strong>${userOptText}</strong></span><br>
+                        <span style="color: #047857;">ശരിയായ ഉത്തരം: <strong>${correctOptText}</strong></span>
+                        <div class="explanation">
+                            <strong>വിശദീകരണം:</strong> ${item.exp}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('review-container').innerHTML = reviewHtml;
+        }
+
+        function restartExam(type) {
+            initExam(type);
+        }
+
+        window.onload = function() {
+            initExam('all');
+        };
+    </script>
+</body>
+</html>

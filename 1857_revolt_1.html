@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>കേരള പി.എസ്.സി മോക്ക് ടെസ്റ്റ് - 1857 ലെ കലാപം</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #9ca3af;
+            transition: color 0.2s;
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning-color);
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background: #f8fafc;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: #eef2ff;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .option-input {
+            margin-right: 12px;
+        }
+
+        .palette-section {
+            border-top: 1px solid var(--border-color);
+            padding: 15px 25px;
+            background: #f9fafb;
+        }
+
+        .palette-grid {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .palette-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .palette-btn.current {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+
+        .palette-btn.answered {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .palette-btn.bookmarked-badge {
+            position: relative;
+        }
+
+        .palette-btn.bookmarked-badge::after {
+            content: '⭐';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.6rem;
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 25px;
+            border-top: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .screen h2 {
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .screen p {
+            margin-bottom: 25px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .results-container {
+            width: 100%;
+            text-align: left;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .score-card {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        .score-item div:first-child {
+            font-size: 0.85rem;
+            color: #4b5563;
+        }
+
+        .score-item div:last-child {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .review-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .review-card.correct { border-left: 5px solid var(--success-color); }
+        .review-card.wrong { border-left: 5px solid var(--danger-color); }
+        .review-card.unattempted { border-left: 5px solid var(--warning-color); }
+
+        .explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .pause-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 1000;
+        }
+        .pause-overlay.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h2>കേരള പി.എസ്.സി മോക്ക് ടെസ്റ്റ്</h2>
+            <p>1857 ലെ കലാപം (ഒന്നാം സ്വാതന്ത്ര്യ സമരം)<br>ആകെ ചോദ്യങ്ങൾ: 108<br>ഓരോ ചോദ്യത്തിനും 45 സെക്കൻഡ് വെച്ച് മൊത്തം സമയം.<br>ശരി ഉത്തരത്തിന് +1, തെറ്റിന് -0.33 മാർക്ക് നെഗറ്റീവ് മാർക്കിംഗ്.</p>
+            <button class="btn" onclick="startExam()">എക്സാം ആരംഭിക്കുക</button>
+        </div>
+
+        <!-- Exam Screen -->
+        <div id="exam-screen" style="display: none; flex-direction: column; flex-grow: 1;">
+            <header>
+                <div class="header-title">മോക്ക് ടെസ്റ്റ് - 1857 സമരം</div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="timer-container">
+                        <span>⏱️ <span id="timer-display">00:00</span></span>
+                    </div>
+                    <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="togglePause()">Pause</button>
+                </div>
+            </header>
+
+            <div class="main-content" id="swipe-area">
+                <div>
+                    <div class="question-meta">
+                        <span>ചോദ്യം <span id="current-q-num">1</span> / <span id="total-q-num">108</span></span>
+                        <button class="bookmark-btn" id="bookmark-btn" onclick="toggleBookmark()">⭐</button>
+                    </div>
+                    <div class="question-text" id="question-text">ചോദ്യം ഇവിടെ വരു...</div>
+                    <div class="options-list" id="options-list">
+                        <!-- Options injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="palette-section">
+                <div class="palette-grid" id="palette-grid">
+                    <!-- Palette items injected via JS -->
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <button class="btn" onclick="submitExamModal()">എക്സാം സബ്മിറ്റ് ചെയ്യുക</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <h2>എക്സാം ഫലം</h2>
+            <div class="results-container">
+                <div class="score-card">
+                    <div class="score-item"><div>ആകെ സ്കോർ</div><div id="res-score">0</div></div>
+                    <div class="score-item"><div>ശരി ഉത്തരങ്ങൾ</div><div id="res-correct" style="color: var(--success-color);">0</div></div>
+                    <div class="score-item"><div>തെറ്റായ ഉത്തരങ്ങൾ</div><div id="res-wrong" style="color: var(--danger-color);">0</div></div>
+                    <div class="score-item"><div>അറ്റൻഡ് ചെയ്യാത്തവ</div><div id="res-unattempted" style="color: var(--warning-color);">0</div></div>
+                </div>
+
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterReview('all', this)">എല്ലാം</button>
+                    <button class="filter-btn" onclick="filterReview('correct', this)">ശരി</button>
+                    <button class="filter-btn" onclick="filterReview('wrong', this)">തെറ്റ്</button>
+                    <button class="filter-btn" onclick="filterReview('unattempted', this)">അറ്റൻഡ് ചെയ്യാത്തവ</button>
+                </div>
+
+                <div id="review-list">
+                    <!-- Review items injected via JS -->
+                </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn" onclick="restartExam('all')">മുഴുവൻ വീണ്ടും</button>
+                <button class="btn btn-secondary" onclick="restartExam('wrong')">തെറ്റായവ മാത്രം</button>
+                <button class="btn btn-secondary" onclick="restartExam('unattempted')">അറ്റൻഡ് ചെയ്യാത്തവ മാത്രം</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div class="pause-overlay" id="pause-overlay">
+        <h2>എക്സാം താത്കാലികമായി നിർത്തിവെച്ചിരിക്കുന്നു</h2>
+        <p>തുടരാൻ താഴെയുള്ള ബട്ടണിൽ ക്ലിക്ക് ചെയ്യുക</p>
+        <button class="btn" onclick="togglePause()">വീണ്ടും തുടരുക (Resume)</button>
+    </div>
+
+    <script>
+        const rawQuestionsData = [
+            {
+                question: "മംഗൾ പാണ്ഡെയുടെ ജനനവുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകളിൽ ശരിയായത് ഏത്?",
+                options: [
+                    "ഉത്തർപ്രദേശിലെ ബല്ലിയയിലാണ് അദ്ദേഹം ജനിച്ചത്.",
+                    "ബംഗാളിലെ ബർകപുരിലാണ് അദ്ദേഹം ജനിച്ചത്.",
+                    "മധ്യപ്രദേശിലെ ശിവപുരിയിലാണ് അദ്ദേഹം ജനിച്ചത്.",
+                    "ഉത്തർപ്രദേശിലെ ഫൈസാബാദിലാണ് അദ്ദേഹം ജനിച്ചത്."
+                ],
+                answer: 0,
+                explanation: "ഉത്തർപ്രദേശിലെ ബല്ലിയയിലാണ് മംഗൾ പാണ്ഡെ ജനിച്ചത്[span_0](start_span)[span_0](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെ ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥനെതിരെ വെടിവെപ്പ് നടത്തിയ തീയതി ഏത്?",
+                options: [
+                    "1857 ഫെബ്രുവരി 26",
+                    "1857 മാർച്ച് 29",
+                    "1857 ഏപ്രിൽ 6",
+                    "1857 ഏപ്രിൽ 8"
+                ],
+                answer: 1,
+                explanation: "1857 മാർച്ച് 29-നാണ് അദ്ദേഹം ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥനെതിരെ വെടിവെപ്പ് നടത്തിയത്[span_1](start_span)[span_1](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെയെ സൈനിക കോടതി വിസ്തരിച്ചതിനെ തുടർന്ന് ബർകപുരിൽ വെച്ച് തൂക്കിക്കൊന്ന വർഷവും തീയതിയും ഏത്?",
+                options: [
+                    "1857 മാർച്ച് 29",
+                    "1857 ഏപ്രിൽ 6",
+                    "1857 ഏപ്രിൽ 8",
+                    "1857 മെയ് 10"
+                ],
+                answer: 2,
+                explanation: "1857 ഏപ്രിൽ 6-ന് വിസ്തരിക്കുകയും ഏപ്രിൽ 8-ന് ബർകപുരിൽ തൂക്കിക്കൊല്ലുകയും ചെയ്തു[span_2](start_span)[span_2](end_span)."
+            },
+            {
+                question: "ഇന്ത്യ ഗവൺമെന്റ് മംഗൾ പാണ്ഡെയെ ആദരിച്ചുകൊണ്ട് സ്റ്റാമ്പ് പുറത്തിറക്കിയ വർഷം ഏത്, സ്റ്റാമ്പിന്റെ മൂല്യം എത്രയായിരുന്നു?",
+                options: [
+                    "1980 - 25 പൈസ",
+                    "1984 - 50 പൈസ",
+                    "1990 - 1 രൂപ",
+                    "1984 - 2 രൂപ"
+                ],
+                answer: 1,
+                explanation: "1984-ൽ ഇന്ത്യ ഗവൺമെന്റ് 50 പൈസയുടെ സ്റ്റാമ്പാണ് പുറത്തിറക്കിയത്[span_3](start_span)[span_3](end_span)."
+            },
+            {
+                question: "'മംഗൾ പാണ്ഡെ ദ റൈസിംഗ്' എന്ന ചലച്ചിത്രം സംവിധാനം ചെയ്തത് ആര്?",
+                options: [
+                    "ശ്യാം ബെനഗൽ",
+                    "കേതൻ മെഹ്ത",
+                    "സത്യജിത് റേ",
+                    "അടൂർ ഗോപാലകൃഷ്ണൻ"
+                ],
+                answer: 1,
+                explanation: "'മംഗൾ പാണ്ഡെ ദ റൈസിംഗ്' സംവിധാനം ചെയ്തത് കേതൻ മെഹ്തയാണ്[span_4](start_span)[span_4](end_span)."
+            },
+            {
+                question: "താഴെ പറയുന്നവയിൽ നാനാ സാഹിബുമായി ബന്ധപ്പെട്ട തെറ്റായ പ്രസ്താവന ഏത്?",
+                options: [
+                    "അദ്ദേഹം കാൺപൂരിലെ ഭരണാധിപനായിരുന്ന ഭാജിറാവുവിന്റെ ദത്തുപുത്രനാണ്.",
+                    "1857 ലെ വിപ്ലവത്തിന്റെ ബുദ്ധികേന്ദ്രം എന്നറിയപ്പെടുന്നു.",
+                    "'മൂന്നാം നെപ്പോളിയൻ' എന്ന വിശേഷണം അദ്ദേഹത്തിന് ഉണ്ട്.",
+                    "1857-ൽ തന്നെ അദ്ദേഹം ബ്രിട്ടീഷുകാരാൽ തൂക്കിക്കൊല്ലപ്പെട്ടു."
+                ],
+                answer: 3,
+                explanation: "അദ്ദേഹം തൂക്കിക്കൊല്ലപ്പെടുകയല്ല, 1859-ൽ നേപ്പാളിലേക്ക് നാടുകടത്തപ്പെടുകയാണ് ഉണ്ടായത്[span_5](start_span)[span_5](end_span)."
+            },
+            {
+                question: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തിലെ ഗൊറില്ല യുദ്ധമുറ ഉപയോഗിച്ച വിപ്ലവകാരി ആര്?",
+                options: [
+                    "താന്തിയാതോപ്പി",
+                    "മംഗൾ പാണ്ഡെ",
+                    "നാനാ സാഹിബ്",
+                    "കൺവർ സിംഗ്"
+                ],
+                answer: 0,
+                explanation: "ഗൊറില്ല യുദ്ധമുറ ഉപയോഗിച്ചത് താന്തിയാതോപ്പിയാണ്[span_6](start_span)[span_6](end_span)."
+            },
+            {
+                question: "താന്തിയാതോപ്പിയുടെ യഥാർത്ഥ നാമം എന്ത്?",
+                options: [
+                    "രാമചന്ദ്ര പാണ്ഡുരംഗ",
+                    "അസിമുള്ള ഖാൻ",
+                    "വാജിദ് അലി ഷാ",
+                    "അഹ്മദുള്ള ഷാ"
+                ],
+                answer: 0,
+                explanation: "താന്തിയാതോപ്പിയുടെ യഥാർത്ഥ നാമം രാമചന്ദ്ര പാണ്ഡുരംഗ എന്നാണ്[span_7](start_span)[span_7](end_span)."
+            },
+            {
+                question: "താഴെ പറയുന്നവരിൽ താന്തിയാതോപ്പിയെ പിടികൂടാൻ ബ്രിട്ടീഷുകാരെ സഹായിച്ച കൂട്ടുകാരൻ ആര്?",
+                options: [
+                    "മാനസിംഹൻ",
+                    "ഹെന്റി ലോറൻസ്",
+                    "വില്യം ഹോഡ്സൺ",
+                    "ഹ്യൂഗ് റോസ്"
+                ],
+                answer: 0,
+                explanation: "മാനസിംഹന്റെ സഹായത്തോടെയാണ് താന്തിയാതോപ്പിയെ പിടികൂടിയത്[span_8](start_span)[span_8](end_span)."
+            },
+            {
+                question: "താന്തിയാതോപ്പി സ്മാരകം സ്ഥിതി ചെയ്യുന്നത് എവിടെ?",
+                options: [
+                    "ബർകപൂർ",
+                    "ശിവപുരി",
+                    "കാൺപൂർ",
+                    "ഗ്വാളിയോർ"
+                ],
+                answer: 1,
+                explanation: "മധ്യപ്രദേശിലെ ശിവപുരിയിലാണ് താന്തിയാതോപ്പി സ്മാരകം സ്ഥിതി ചെയ്യുന്നത്[span_9](start_span)[span_9](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണി ലക്ഷ്മിഭായിയുടെ യഥാർത്ഥ നാമം എന്തായിരുന്നു?",
+                options: [
+                    "ചബേലി",
+                    "മണികർണ്ണിക (മനുഭായ്)",
+                    "ഹസ്റത്ത് മഹൽ",
+                    "സാരംഗി"
+                ],
+                answer: 1,
+                explanation: "റാണി ലക്ഷ്മിഭായിയുടെ യഥാർത്ഥ നാമം മണികർണ്ണിക എന്നാണ്[span_10](start_span)[span_10](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണി കലാപത്തിൽ ഉൾപ്പെടാൻ പ്രധാന കാരണമായ ബ്രിട്ടീഷ് നിയമം ഏത്?",
+                options: [
+                    "റൗലറ്റ് ആക്ട്",
+                    "പിറ്റ്സ് ഇന്ത്യ ആക്ട്",
+                    "ദത്തവകാശ നിരോധന നിയമം",
+                    "ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട്"
+                ],
+                answer: 2,
+                explanation: "ദത്തവകാശ നിരോധന നിയമ പ്രകാരം ഝാൻസിയെ ബ്രിട്ടീഷുകാർ പിടിച്ചെടുക്കാൻ ശ്രമിച്ചതാണ് കാരണം[span_11](start_span)[span_11](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണിയെ വധിച്ച ബ്രിട്ടീഷ് പട്ടാള മേധാവി ആര്?",
+                options: [
+                    "ഹ്യൂഗ് റോസ്",
+                    "വില്യം ഹോഡ്സൺ",
+                    "സർ കോളിൻ കാംബെൽ",
+                    "ജോൺ ലോറൻസ്"
+                ],
+                answer: 0,
+                explanation: "ഗ്വാളിയോറിൽ വെച്ച് ഹ്യൂഗ് റോസ് ആണ് ഝാൻസി റാണിയെ വധിച്ചത്[span_12](start_span)[span_12](end_span)."
+            },
+            {
+                question: "\"ഇരുണ്ട പശ്ചാത്തലത്തിലെ പ്രകാശമാനമായ ബിന്ദു\" എന്ന് ഝാൻസി റാണിയെ വിശേഷിപ്പിച്ച പ്രമുഖൻ ആര്?",
+                options: [
+                    "മഹാത്മാ ഗന്ധി",
+                    "ജവഹർലാൽ നെഹ്റു",
+                    "വി ഡി സവർക്കർ",
+                    "കാറൽ മാർക്സ്"
+                ],
+                answer: 1,
+                explanation: "ജവഹർലാൽ നെഹ്റുവാണ് 'വിശ്വ ചരിത്ര അവലോകനം' എന്ന കൃതിയിൽ ഇപ്രകാരം വിശേഷിപ്പിച്ചത്[span_13](start_span)[span_13](end_span)."
+            },
+            {
+                question: "കലാപകാലത്ത് ഝാൻസി റാണി സഞ്ചരിച്ച കുതിരയുടെ പേര് എന്ത്?",
+                options: [
+                    "ബാദൽ",
+                    "സാരംഗി",
+                    "പവൻ",
+                    "ചേതക്"
+                ],
+                answer: 0,
+                explanation: "കലാപകാലത്ത് റാണി സഞ്ചരിച്ച കുതിരയുടെ പേര് 'ബാദൽ' എന്നായിരുന്നു[span_14](start_span)[span_14](end_span)."
+            },
+            {
+                question: "അവസാന മുഗൾ ഭരണാധികാരിയായ ബഹദൂർഷാ II നെ കീഴടക്കാൻ നേതൃത്വം കൊടുത്ത വ്യക്തി ആര്?",
+                options: [
+                    "വില്യം ഹോഡ്സൺ",
+                    "ഹ്യൂഗ് റോസ്",
+                    "കാനിങ് പ്രഭു",
+                    "ഹെന്റി ലോറൻസ്"
+                ],
+                answer: 0,
+                explanation: "വില്യം ഹോഡ്സൺ ആണ് ബഹദൂർഷാ II നെ കീഴടക്കാൻ നേതൃത്വം കൊടുത്തത്[span_15](start_span)[span_15](end_span)."
+            },
+            {
+                question: "ബഹദൂർഷാ രണ്ടാമൻ ഏത് ചരിത്ര സ്മാരകത്തിൽ വെച്ചാണ് ബ്രിട്ടീഷുകാരുടെ പിടിയിലായത്?",
+                options: [
+                    "താജ്മഹൽ",
+                    "കുത്തബ് മിനാർ",
+                    "ഹുമയൂണിന്റെ ശവകുടീരം",
+                    "ചെങ്കോട്ട"
+                ],
+                answer: 2,
+                explanation: "ഹുമയൂണിന്റെ ശവകുടീരത്തിൽ വെച്ചാണ് അദ്ദേഹം ബ്രിട്ടീഷുകാരുടെ പിടിയിലായത്[span_16](start_span)[span_16](end_span)."
+            },
+            {
+                question: "ബഹദൂർഷാ II തന്റെ കവിതകൾ എഴുതാൻ ഉപയോഗിച്ചിരുന്ന തൂലികാനാമം എന്ത്?",
+                options: [
+                    "സഫർ",
+                    "ജിഹാദ്",
+                    "ദൻകാ",
+                    "മിർസ"
+                ],
+                answer: 0,
+                explanation: "'സഫർ' എന്ന തൂലികാനാമത്തിലാണ് അദ്ദേഹം കവിതകൾ എഴുതിയിരുന്നത്[span_17](start_span)[span_17](end_span)."
+            },
+            {
+                question: "അവദിലെ ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകിയ ബീഗം ഹസ്റത്ത് മഹൽ ആരുടെ പത്നിയായിരുന്നു?",
+                options: [
+                    "വാജിദ് അലി ഷാ",
+                    "രാജ ഗംഗാധർ റാവു",
+                    "ബഹദൂർഷാ II",
+                    "നാനാ സാഹിബ്"
+                ],
+                answer: 0,
+                explanation: "അവദിലെ നവാബായ വാജിദ് അലി ഷായുടെ പത്നിയാണ് ബീഗം ഹസ്റത്ത് മഹൽ[span_18](start_span)[span_18](end_span)."
+            },
+            {
+                question: "ഉത്തർപ്രദേശിലെ ബരൗട്ട് പർഗാനിയിൽ കലാപത്തിന് നേതൃത്വം നൽകിയ ഷാ മൽ, ഒരു ഇംഗ്ലീഷ് ഉദ്യോഗസ്ഥന്റെ ബംഗ്ലാവ് പിടിച്ചെടുത്ത് അതിന് നൽകിയ പേര് എന്ത്?",
+                options: [
+                    "ഹാൾ ഓഫ് ജസ്റ്റിസ് (നീതിയുടെ ഹാൾ)",
+                    "ദർബാർ ഹാൾ",
+                    "വിക്ടോറിയ ഹാൾ",
+                    "റെബൽ ഹെഡ്ക്വാർട്ടേഴ്സ്"
+                ],
+                answer: 0,
+                explanation: "പിടിച്ചെടുത്ത ബംഗ്ലാവിന് അദ്ദേഹം 'നീതിയുടെ ഹാൾ' എന്ന് പേരിട്ടു[span_19](start_span)[span_19](end_span)."
+            },
+            {
+                question: "ചെണ്ടമേളക്കാർ മുമ്പിലും അനുയായികൾ പിന്നിലുമായി പല്ലക്കിൽ സഞ്ചരിച്ചതിനാൽ 'ദൻകാ ഷാ' എന്നറിയപ്പെട്ട വിപ്ലവകാരി ആര്?",
+                options: [
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "അസിമുള്ള ഖാൻ",
+                    "കൺവർ സിംഗ്",
+                    "ഷാ മൽ"
+                ],
+                answer: 0,
+                explanation: "'ദൻകാ ഷാ' എന്നറിയപ്പെട്ടത് മൗലവി അഹമ്മദുള്ള ഷാ ആണ്[span_20](start_span)[span_20](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തിന്റെ 'പ്രവാചകൻ' അല്ലെങ്കിൽ 'അംബാസിഡർ' എന്ന വിശേഷണമുള്ള വ്യക്തി ആര്?",
+                options: [
+                    "അസിമുള്ളഖാൻ",
+                    "കൺവർ സിംഗ്",
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "താന്തിയാതോപ്പി"
+                ],
+                answer: 0,
+                explanation: "1857 ലെ വിപ്ലവത്തിന്റെ പ്രവാചകൻ/അംബാസിഡർ എന്നറിയപ്പെടുന്നത് അസിമുള്ളഖാൻ ആണ്[span_21](start_span)[span_21](end_span)."
+            },
+            {
+                question: "1857 ലെ കലാപത്തിന്റെ ഫലമായി താഴെ പറയുന്നവയിൽ ഏതാണ് സംഭവിച്ചത്?",
+                options: [
+                    "മുഗൾ രാജവംശത്തിന് പൂർണ്ണമായ അന്ത്യം കുറിച്ചു.",
+                    "ഈസ്റ്റ് ഇന്ത്യാ കമ്പനിയുടെ ഭരണം അവസാനിച്ച് ബ്രിട്ടീഷ് രാജ്ഞി ഭരണം ഏറ്റെടുത്തു.",
+                    "സാമ്രാജ്യത്വ വികസന നയം ഉപേക്ഷിച്ച് സാമ്പത്തിക ചൂഷണത്തിന് ഊന്നൽ നൽകി.",
+                    "മുകളിൽ നൽകിയിരിക്കുന്നയെല്ലാം ശരിയാണ്."
+                ],
+                answer: 3,
+                explanation: "മുഗൾ വംശാവലി അവസാനിച്ചു, കമ്പനി ഭരണം മാറി രാജ്ഞി ഏറ്റെടുത്തു, സാമ്രാജ്യത്വ നയം ഉപേക്ഷിച്ചു[span_22](start_span)[span_22](end_span)."
+            },
+            {
+                question: "\"1857 ഫസ്റ്റ് വാർ ഓഫ് ഇൻഡിപെൻഡൻസ്\" എന്ന പ്രശസ്ത ഗ്രന്ഥം രചിച്ചത് ആര്?",
+                options: [
+                    "വി ഡി സവർക്കർ",
+                    "അശോക് മേത്ത",
+                    "ആർ സി മജുൻദർ",
+                    "താരാചന്ദ്"
+                ],
+                answer: 0,
+                explanation: "വി ഡി സവർക്കറാണ് ഈ ഗ്രന്ഥം രചിച്ചത്[span_23](start_span)[span_23](end_span)."
+            },
+            {
+                question: "നാനാ സാഹിബിന്റെ ജീവിതത്തെ ആസ്പദമാക്കി 'ദ ഡെവിൾസ് വിൻഡ്' എന്ന നോവൽ രചിച്ചതാര്?",
+                options: [
+                    "മലയാറ്റൂർ രാമകൃഷ്ണൻ",
+                    "മനോഹർ മൽഗോർക്കാർ",
+                    "മഹാശ്വേതാ ദേവി",
+                    "വിഷ്ണുഭട്ട് ഗോഡ്സെ"
+                ],
+                answer: 1,
+                explanation: "മനോഹർ മൽഗോർക്കാർ ആണ് ഈ നോവൽ രചിച്ചത്[span_24](start_span)[span_24](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെയെ ബ്രിട്ടീഷ് സൈനിക ഘടകം പിടികൂടാൻ ശ്രമിച്ചപ്പോൾ സംഭവിച്ചത് എന്ത്?",
+                options: [
+                    "അദ്ദേഹം ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥരോട് കീഴടങ്ങി.",
+                    "അദ്ദേഹം സ്വയം വെടിയുതിർത്തു എങ്കിലും ജീവനോടെ പിടികൂടി.",
+                    "അദ്ദേഹം ഓടിപ്പോയി ഒളിച്ചു.",
+                    "അദ്ദേഹം കാടുകളിലേക്ക് രക്ഷപെട്ടു."
+                ],
+                answer: 1,
+                explanation: "സ്വയം വെടിയുതിർത്തെങ്കിലും ബ്രിട്ടീഷുകാർ അദ്ദേഹത്തെ ജീവനോടെ പിടികൂടി[span_25](start_span)[span_25](end_span)."
+            },
+            {
+                question: "നാനാ സാഹിബ് 1859-ൽ ഏത് രാജ്യത്തേക്ക് ആണ് നാടുകടത്തപ്പെട്ടത്?",
+                options: [
+                    "ബർമ",
+                    "നേപ്പാൾ",
+                    "ഭൂട്ടാൻ",
+                    "ടിബറ്റ്"
+                ],
+                answer: 1,
+                explanation: "1859-ൽ നാനാ സാഹിബ് നേപ്പാളിലേക്ക് നാടുകടത്തപ്പെട്ടു[span_26](start_span)[span_26](end_span)."
+            },
+            {
+                question: "താന്തിയാതോപ്പിയെ പരാജയപ്പെടുത്താൻ ബ്രിട്ടീഷ് പട്ടാള മേധാവി സർ കോളിൻ കാംബെലിനെ സഹായിച്ച വ്യക്തി ആര്?",
+                options: [
+                    "മാനസിംഹൻ",
+                    "അസിമുള്ള ഖാൻ",
+                    "ഷാ മൽ",
+                    "വില്യം ഹോഡ്സൺ"
+                ],
+                answer: 0,
+                explanation: "മാനസിംഹന്റെ സഹായത്തോടെയാണ് താന്തിയാതോപ്പിയെ പിടികൂടിയത്[span_27](start_span)[span_27](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണി ലക്ഷ്മിഭായിയുടെ ഭർത്താവായ ഝാൻസിയിലെ രാജാവ് ആര്?",
+                options: [
+                    "രാജ ഗംഗാധർ റാവു",
+                    "വാജിദ് അലി ഷാ",
+                    "ഭാജിറാവു",
+                    "ബഹദൂർഷാ II"
+                ],
+                answer: 0,
+                explanation: "റാണി ലക്ഷ്മിഭായിയുടെ ഭർത്താവാണ് രാജ ഗംഗാധർ റാവു[span_28](start_span)[span_28](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തിൽ \"ജൊവാൻ ഓഫ് ആർക്ക്\" എന്നറിയപ്പെടുന്നത് ആര്?",
+                options: [
+                    "ബീഗം ഹസ്റത്ത് മഹൽ",
+                    "റാണി ലക്ഷ്മി ഭായ്",
+                    "മഹാശ്വേതാ ദേവി",
+                    "മണികർണ്ണിക"
+                ],
+                answer: 1,
+                explanation: "1857 ലെ വിപ്ലവത്തിൽ 'ജൊവാൻ ഓഫ് ആർക്ക്' എന്നറിയപ്പെടുന്നത് റാണി ലക്ഷ്മിഭായിയാണ്[span_29](start_span)[span_29](end_span)."
+            },
+            {
+                question: "താഴെ പറയുന്നവയിൽ ഝാൻസി റാണിയുടെ കുതിരകളിൽ ഉൾപ്പെടാത്തത് ഏത്?",
+                options: [
+                    "ബാദൽ",
+                    "സാരംഗി",
+                    "പവൻ",
+                    "ചേതക്"
+                ],
+                answer: 3,
+                explanation: "ബാദൽ, സാരംഗി, പവൻ എന്നിവയാണ് റാണിയുടെ കുതിരകൾ; ചേതക് മഹാറാണാ പ്രതാപിന്റെ കുതിരയാണ്[span_30](start_span)[span_30](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണി വധിക്കപ്പെട്ട വർഷവും തീയതിയും ഏത്?",
+                options: [
+                    "1857 ജൂൺ 18",
+                    "1858 ജൂൺ 18",
+                    "1859 ഏപ്രിൽ 18",
+                    "1862 നവംബർ 1"
+                ],
+                answer: 1,
+                explanation: "റാണി ലക്ഷ്മിഭായ് വീരമൃത്യു വരിച്ചത് 1858 ജൂൺ 18-നാണ്[span_31](start_span)[span_31](end_span)."
+            },
+            {
+                question: "ബഹദൂർഷാ രണ്ടാമനെ നാടുകടത്തിയത് എവിടേക്കാണ്, ഏതു വർഷമാണ് അദ്ദേഹം അവിടെ വെച്ച് അന്തരിച്ചത്?",
+                options: [
+                    "റംഗൂൺ, 1862",
+                    "കാൺപൂർ, 1858",
+                    "നേപ്പാൾ, 1859",
+                    "ലഖ്നൗ, 1860"
+                ],
+                answer: 0,
+                explanation: "ബർമയിലെ റംഗൂണിലേക്ക് നാടുകടത്തപ്പെട്ട അദ്ദേഹം 1862-ൽ അവിടെ വെച്ച് അന്തരിച്ചു[span_32](start_span)[span_32](end_span)."
+            },
+            {
+                question: "1856-ൽ ബ്രിട്ടീഷുകാർ വാജിദ് അലി ഷായെ നാടുകടത്തിയതിനെ തുടർന്ന് ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകിയത് ആര്?",
+                options: [
+                    "ബീഗം ഹസ്റത്ത് മഹൽ",
+                    "റാണി ലക്ഷ്മി ഭായ്",
+                    "മണികർണ്ണിക",
+                    "മഹാശ്വേതാ ദേവി"
+                ],
+                answer: 0,
+                explanation: "ബീഗം ഹസ്റത്ത് മഹൽ ആണ് നേതൃത്വം നൽകിയത്[span_33](start_span)[span_33](end_span)."
+            },
+            {
+                question: "പ്രശസ്തമായ ചിൻഹട്ട് യുദ്ധത്തിൽ പോരാടുകയും ഹെന്റി ലോറൻസിന്റെ കീഴിലുള്ള ബ്രിട്ടീഷ് സൈനികരെ തോൽപ്പിക്കുകയും ചെയ്ത വിപ്ലവകാരി ആര്?",
+                options: [
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "അസിമുള്ള ഖാൻ",
+                    "ഷാ മൽ",
+                    "കൺവർ സിംഗ്"
+                ],
+                answer: 0,
+                explanation: "ചിൻഹട്ട് യുദ്ധത്തിൽ ബ്രിട്ടീഷ് സൈന്യത്തെ തോൽപ്പിച്ചത് മൗലവി അഹമ്മദുള്ള ഷാ ആണ്[span_34](start_span)[span_34](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തിന്റെ 'വന്ദ്യവയോധികൻ' എന്നറിയപ്പെടുന്നത് ആര്?",
+                options: [
+                    "കൺവർ സിംഗ്",
+                    "അസിമുള്ള ഖാൻ",
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "ബഹദൂർഷാ II"
+                ],
+                answer: 0,
+                explanation: "1857 ലെ വിപ്ലവത്തിന്റെ 'വന്ദ്യവയോധികൻ' കൺവർ സിംഗ് ആണ്[span_35](start_span)[span_35](end_span)."
+            },
+            {
+                question: "ബ്രിട്ടീഷ് ഭരണകൂടം സാമ്രാജ്യത്വ വികസന നയം ഉപേക്ഷിച്ച് എന്തിന് മേ립니다 കൂടുതൽ ഊന്നൽ നൽകിയത്?",
+                options: [
+                    "സാമൂഹിക പരിഷ്കരണങ്ങൾക്ക്",
+                    "സാമ്പത്തിക ചൂഷണത്തിന്",
+                    "മതപരമായ പ്രചാരണങ്ങൾക്ക്",
+                    "പുതിയ നിയമങ്ങൾ നിർമ്മിക്കുന്നതിന്"
+                ],
+                answer: 1,
+                explanation: "സാമ്രാജ്യത്വ വികസന നയം ഉപേക്ഷിച്ച് സാമ്പത്തിക ചൂഷണത്തിന് ഊന്നൽ നൽകി[span_36](start_span)[span_36](end_span)."
+            },
+            {
+                question: "തോമസ് ജോൺസ് ബാർക്കർ (1859) വരച്ച പ്രശസ്തമായ ചിത്രം ഏത്?",
+                options: [
+                    "റിലീഫ് ഓഫ് ലക്‌നൗ",
+                    "ഇൻ മെമ്മോറിയം",
+                    "മിസ് വീലർ",
+                    "മാത്സ് പ്രവാസ്"
+                ],
+                answer: 0,
+                explanation: "തോമസ് ജോൺസ് ബാർക്കർ 1859-ൽ വരച്ച ചിത്രമാണിത്[span_37](start_span)[span_37](end_span)."
+            },
+            {
+                question: "ജോസഫ് നോയൽ പേറ്റൻ (1858/59) വരച്ച ചിത്രം ഏത്?",
+                options: [
+                    "റിലീഫ് ഓഫ് ലക്‌നൗ",
+                    "ഇൻ മെമ്മോറിയം",
+                    "മിസ് വീലർ",
+                    "ദി ലാസ്റ്റ് മുഗൾ"
+                ],
+                answer: 1,
+                explanation: "ജോസഫ് നോയൽ പേറ്റൻ വരച്ച ചിത്രമാണിത്[span_38](start_span)[span_38](end_span)."
+            },
+            {
+                question: "1858 ലെ ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് പ്രകാരം ഇന്ത്യൻ ജനതയെ ഭരിക്കാനായി ബ്രിട്ടീഷ് ഗവൺമെന്റ് ഏർപ്പെടുത്തിയ പുതിയ പദവി എന്ത്?",
+                options: [
+                    "വൈസ്രോയി",
+                    "സെക്രട്ടറി ഓഫ് സ്റ്റേറ്റ്",
+                    "ഗവർണർ ജനറൽ",
+                    "ടാക്സ് കളക്ടർ"
+                ],
+                answer: 1,
+                explanation: "ഇന്ത്യൻ ജനതയെ ഭരിക്കാനായി പുതിയതായി നിലവിൽ വന്ന പദവിയാണ് സെക്രട്ടറി ഓഫ് സ്റ്റേറ്റ്[span_39](start_span)[span_39](end_span)."
+            },
+            {
+                question: "ബ്രിട്ടീഷ് രാജ്ഞിയുടെ 1858 ലെ വിളംബരം അലഹബാദിൽ വായിച്ച വ്യക്തി ആര്?",
+                options: [
+                    "കാനിങ് പ്രഭു",
+                    "ഹ്യൂഗ് റോസ്",
+                    "വില്യം ഹോഡ്സൺ",
+                    "ഹെന്റി ലോറൻസ്"
+                ],
+                answer: 0,
+                explanation: "അലഹബാദിൽ വിളംബരം വായിച്ചത് കാനിങ് പ്രഭുവാണ്[span_40](start_span)[span_40](end_span)."
+            },
+            {
+                question: "ബ്രിട്ടീഷ് രാജ്ഞിയുടെ വിളംബരത്തിനെതിരെ എതിർ വിളംബരം പുറപ്പെടുവിച്ച വിപ്ലവകാരി ആര്?",
+                options: [
+                    "ബീഗം ഹസ്റത്ത് മഹൽ",
+                    "റാണി ലക്ഷ്മി ഭായ്",
+                    "നാനാ സാഹിബ്",
+                    "മൗലവി അഹമ്മദുള്ള ഷാ"
+                ],
+                answer: 0,
+                explanation: "രാജ്ഞിയുടെ വിളംബരത്തിനെതിരെ എതിർ വിളംബരം പുറപ്പെടുവിച്ചത് ബീഗം ഹസ്റത്ത് മഹൽ ആണ്[span_41](start_span)[span_41](end_span)."
+            },
+            {
+                question: "ഗവർണർ ജനറൽ ഓഫ് ഇന്ത്യ എന്ന പദവി ഏതു തീയതി മുതലാണ് 'വൈസ്രോയി' ആയി അറിയപ്പെടാൻ തുടങ്ങിയത്?",
+                options: [
+                    "1858 നവംബർ 1",
+                    "1858 ഓഗസ്റ്റ് 2",
+                    "1857 മെയ് 10",
+                    "1859 ഏപ്രിൽ 18"
+                ],
+                answer: 1,
+                explanation: "1858 ഓഗസ്റ്റ് 2-ലെ ആക്ട് പ്രകാരമാണ് ഗവർണർ ജനറൽ 'വൈസ്രോയി' എന്നറിയപ്പെടാൻ തുടങ്ങിയത്[span_42](start_span)[span_42](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ശിപായി ലഹള\" എന്ന് വിശേഷിപ്പിച്ച പ്രമുഖർ ആര്?",
+                options: [
+                    "വി ഡി സവർക്കർ",
+                    "ജോൺ ലോറൻസ്, സീലി",
+                    "ബെഞ്ചമിൻ ഡിസ്രേലി",
+                    "കാറൽ മാർക്സ്"
+                ],
+                answer: 1,
+                explanation: "വിപ്ലവത്തെ 'ശിപായി ലഹള' എന്ന് വിശേഷിപ്പിച്ചത് ജോൺ ലോറൻസും സീലിയുമാണ്[span_43](start_span)[span_43](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ആഭ്യന്തര കലാപം\" എന്ന് വിശേഷിപ്പിച്ചത് ആര്?",
+                options: [
+                    "എസ് ബി ചൗധരി",
+                    "ടി ആർ ഹോംസ്",
+                    "എം എൻ റോയ്",
+                    "പെഴ്സിവിയൽ സ്പിയർ"
+                ],
+                answer: 0,
+                explanation: "'ആഭ്യന്തര കലാപം' എന്ന് വിശേഷിപ്പിച്ചത് എസ് ബി ചൗധരിയാണ്[span_44](start_span)[span_44](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ദേശീയ ഉയർത്തെഴുന്നേൽപ്പ്\" എന്ന് വിശേഷിപ്പിച്ചത് ആര്?",
+                options: [
+                    "ബെഞ്ചമിൻ ഡിസ്രേലി",
+                    "താരാ ചന്ദ്",
+                    "എസ് എൻ സെൻ",
+                    "ജവഹർലാൽ നെഹ്റു"
+                ],
+                answer: 0,
+                explanation: "'ദേശീയ ഉയർത്തെഴുന്നേൽപ്പ്' എന്ന് വിശേഷിപ്പിച്ചത് ബെഞ്ചമിൻ ഡിസ്രേലിയാണ്[span_45](start_span)[span_45](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"പരിഷ്കൃതവും അപരിഷ്കൃതവും തമ്മിലുള്ള സംഘർഷം\" എന്ന് വിശേഷിപ്പിച്ചത് ആര്?",
+                options: [
+                    "ടി ആർ ഹോംസ്",
+                    "എം എൻ റോയ്",
+                    "പെഴ്സിവിയൽ സ്പിയർ",
+                    "എസ് എൻ സെൻ"
+                ],
+                answer: 0,
+                explanation: "'പരിഷ്കൃതവും അപരിഷ്കൃതവും തമ്മിലുള്ള സംഘർഷം' എന്ന് വിശേഷിപ്പിച്ചത് ടി ആർ ഹോംസ് ആണ്[span_46](start_span)[span_46](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ഫ്യൂഡൽ റിവോൾട്ട്\" എന്ന് വിശേഷിപ്പിച്ചത് ആരുടെ കൃതിയിലാണ്?",
+                options: [
+                    "എം എൻ റോയ് - പീപ്പിൾസ് പ്ലാൻ",
+                    "താരാ ചന്ദ് - ഹിസ്റ്ററി ഓഫ് ഫ്രീഡം മൂവ്മെന്റ്",
+                    "വില്യം ഡാൽറിംപിൾസ് - ദി ലാസ്റ്റ് മുഗൾ",
+                    "എസ് എൻ സെൻ - 1857"
+                ],
+                answer: 0,
+                explanation: "എം എൻ റോയിയുടെ കൃതിയിലാണ് ഫ്യൂഡൽ റിവോൾട്ട് എന്ന് വിശേഷിപ്പിച്ചത്[span_47](start_span)[span_47](end_span)."
+            },
+            {
+                question: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തെ ആസ്പദമാക്കി 'മാത്സ് പ്രവാസ്' എന്ന മറാത്ത ഗ്രന്ഥം രചിച്ചത് ആര്?",
+                options: [
+                    "വിഷ്ണുഭട്ട് ഗോഡ്സെ",
+                    "മലയാറ്റൂർ രാമകൃഷ്ണൻ",
+                    "മഹാശ്വേതാ ദേവി",
+                    "മനോഹർ മൽഗോർക്കാർ"
+                ],
+                answer: 0,
+                explanation: "'മാത്സ് പ്രവാസ്' രചിച്ചത് വിഷ്ണുഭട്ട് ഗോഡ്സെ ആണ്[span_48](start_span)[span_48](end_span)."
+            },
+            {
+                question: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തെ ആസ്പദമാക്കി 'അമൃതം തേടി' എന്ന കൃതി രചിച്ച വ്യക്തി ആര്?",
+                options: [
+                    "മലയാറ്റൂർ രാമകൃഷ്ണൻ",
+                    "വിഷ്ണുഭട്ട് ഗോഡ്സെ",
+                    "കുമാരനാശാൻ",
+                    "ഉള്ളൂർ എസ്. പരമേശ്വര അയ്യർ"
+                ],
+                answer: 0,
+                explanation: "'അമൃതം തേടി' എന്ന കൃതി രചിച്ചത് മലയാറ്റൂർ രാമകൃഷ്ണനാണ്[span_49](start_span)[span_49](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെയെ ബ്രിട്ടീഷ് സൈനിക ഘടകം പിടികൂടാൻ ശ്രമിച്ചപ്പോൾ ഉണ്ടായ സംഭവവികാസങ്ങളിൽ ശരിയായത് ഏത്?",
+                options: [
+                    "അദ്ദേഹം ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥരോട് കീഴടങ്ങി",
+                    "അദ്ദേഹം സ്വയം വെടിയുതിർത്തു എങ്കിലും ബ്രിട്ടീഷുകാർ ജീവനോടെ പിടികൂടി",
+                    "അദ്ദേഹം ഓടിപ്പോയി ഒളിച്ചു",
+                    "അദ്ദേഹം വിദേശത്തേക്ക് രക്ഷപെട്ടു"
+                ],
+                answer: 1,
+                explanation: "സ്വയം വെടിയുതിർത്തെങ്കിലും ബ്രിട്ടീഷുകാർ അദ്ദേഹത്തെ ജീവനോടെ പിടികൂടി[span_50](start_span)[span_50](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവ കാലത്ത് ബ്രിട്ടീഷ് രാജ്ഞിയുടെ വിളംബരത്തിനെതിരെ എതിർ വിളംബരം പുറപ്പെടുവിച്ച വിപ്ലവകാരി ആര്?",
+                options: [
+                    "ബീഗം ഹസ്റത്ത് മഹൽ",
+                    "റാണി ലക്ഷ്മി ഭായ്",
+                    "നാനാ സാഹിബ്",
+                    "മൗലവി അഹമ്മദുള്ള ഷാ"
+                ],
+                answer: 0,
+                explanation: "ബീഗം ഹസ്റത്ത് മഹൽ ആണ് എതിർ വിളംബരം പുറപ്പെടുവിച്ചത്[span_51](start_span)[span_51](end_span)."
+            },
+            {
+                question: "ഉത്തർപ്രദേശിലെ ബരൗട്ട് പർഗാനിയിൽ ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകിയ വ്യക്തി ആര്?",
+                options: [
+                    "ഷാ മൽ",
+                    "കൺവർ സിംഗ്",
+                    "അസിമുള്ള ഖാൻ",
+                    "വാജിദ് അലി ഷാ"
+                ],
+                answer: 0,
+                explanation: "ബരൗട്ട് പർഗാനിയിൽ നേതൃത്വം നൽകിയത് ഷാ മൽ ആണ്[span_52](start_span)[span_52](end_span)."
+            },
+            {
+                question: "ഷാ മൽ പിടിച്ചെടുത്ത ഇംഗ്ലീഷ് ഉദ്യോഗസ്ഥന്റെ ബംഗ്ലാവിന് നൽകിയ പേര് എന്ത്?",
+                options: [
+                    "നീതിയുടെ ഹാൾ (Hall of Justice)",
+                    "റെബൽ ഓഫീസ്",
+                    "ദർബാർ ഹാൾ",
+                    "സ്വാതന്ത്ര്യ ഭവൻ"
+                ],
+                answer: 0,
+                explanation: "പിടിച്ചെടുത്ത ബംഗ്ലാവിന് 'നീതിയുടെ ഹാൾ' എന്ന് പേരിട്ടു[span_53](start_span)[span_53](end_span)."
+            },
+            {
+                question: "ഫൈസാബാദിൽ ബ്രിട്ടീഷ് വിരുദ്ധ കലാപത്തിന് നേതൃത്വം നൽകുകയും ഗ്രാമങ്ങൾ തോറും സഞ്ചരിച്ച് ജിഹാദിന് പ്രേരിപ്പിക്കുകയും ചെയ്തത് ആര്?",
+                options: [
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "ബഹദൂർഷാ II",
+                    "താന്തിയാതോപ്പി",
+                    "മംഗൾ പാണ്ഡെ"
+                ],
+                answer: 0,
+                explanation: "ഫൈസാബാദിൽ കലാപത്തിന് നേതൃത്വം നൽകി ജിഹാദിന് പ്രേരിപ്പിച്ചത് മൗലവി അഹമ്മദുള്ള ഷാ ആണ്[span_54](start_span)[span_54](end_span)."
+            },
+            {
+                question: "ചെണ്ടമേളക്കാർ മുമ്പിലും അനുയായികൾ പിന്നിലുമായി ഒരു പല്ലക്കിൽ സഞ്ചരിച്ചിരുന്നതിനാൽ 'ദൻകാ ഷാ' എന്നറിയപ്പെട്ടതാര്?",
+                options: [
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "കൺവർ സിംഗ്",
+                    "അസിമുള്ള ഖാൻ",
+                    "ഷാ മൽ"
+                ],
+                answer: 0,
+                explanation: "'ദൻകാ ഷാ' എന്നറിയപ്പെട്ടത് മൗലവി അഹമ്മദുള്ള ഷാ ആണ്[span_55](start_span)[span_55](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തിന്റെ 'പ്രവാചകൻ' അല്ലെങ്കിൽ 'അംബാസിഡർ' എന്നറിയപ്പെടുന്ന വ്യക്തി ആര്?",
+                options: [
+                    "അസിമുള്ളഖാൻ",
+                    "കൺവർ സിംഗ്",
+                    "മൗലവി അഹമ്മദുള്ള ഷാ",
+                    "താന്തിയാതോപ്പി"
+                ],
+                answer: 0,
+                explanation: "വിപ്ലവത്തിന്റെ പ്രവാചകൻ അല്ലെങ്കിൽ അംബാസിഡർ എന്നറിയപ്പെടുന്നു[span_56](start_span)[span_56](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തിന്റെ 'വന്ദ്യവയോധികൻ' എന്ന വിശേഷണമുള്ള വിപ്ലവകാരി ആര്?",
+                options: [
+                    "കൺവർ സിംഗ്",
+                    "അസിമുള്ള ഖാൻ",
+                    "നാനാ സാഹിബ്",
+                    "ബഹദൂർഷാ II"
+                ],
+                answer: 0,
+                explanation: "വിപ്ലവത്തിന്റെ 'വന്ദ്യവയോധികൻ' കൺവർ സിംഗ് ആണ്[span_57](start_span)[span_57](end_span)."
+            },
+            {
+                question: "താഴെ പറയുന്നവയിൽ 1857 ലെ വിപ്ലവത്തിന്റെ പരാജയ കാരണങ്ങളിൽ ഉൾപ്പെടാത്തത് ഏത്?",
+                options: [
+                    "കലാപം പ്രാദേശികമായിരുന്നു, ദേശവ്യാപകമായി പടർന്നില്ല",
+                    "ഭൂരിഭാഗം നാട്ടുരാജ്യങ്ങളും ജന്മിമാരും മാറി നിന്നു",
+                    "കലാപകാരികൾക്ക് ആധുനിക ആയുധങ്ങൾ ഉണ്ടായിരുന്നു",
+                    "ശിപായിമാർക്കിടയിൽ അച്ചടക്ക രാഹിത്യവും ആസൂത്രണക്കുറവും ഉണ്ടായിരുന്നു"
+                ],
+                answer: 2,
+                explanation: "കലാപകാരികൾക്ക് ആധുനിക ആയുധങ്ങൾ ഉണ്ടായിരുന്നില്ല എന്നത് പരാജയത്തിന് കാരണമാണ്[span_58](start_span)[span_58](end_span)."
+            },
+            {
+                question: "1857 ലെ കലാപത്തിന്റെ ഫലമായി താഴെ പറയുന്നവയിൽ സംഭവിക്കാത്തത് ഏത്?",
+                options: [
+                    "മുഗൾ രാജവംശത്തിന് പൂർണ്ണ അന്ത്യം കുറിച്ചു",
+                    "ഈസ്റ്റ് ഇന്ത്യാ കമ്പനിയുടെ ഭരണം അവസാനിച്ചു",
+                    "സാമ്രാജ്യത്വ വികസന നയം ശക്തമാക്കി സാമൂഹിക പരിഷ്കരണങ്ങൾ നടപ്പിലാക്കി",
+                    "ഹിന്ദു മുസ്ളീം ഐക്യത്തിൽ വിള്ളലുകൾ ഉണ്ടാക്കി"
+                ],
+                answer: 2,
+                explanation: "സാമ്രാജ്യത്വ വികസന നയം ഉപേക്ഷിക്കുകയാണ് ചെയ്തത്[span_59](start_span)[span_59](end_span)."
+            },
+            {
+                question: "1857 ദി ഗ്രേറ്റ് റെബെല്ലിയൻ എന്ന ഗ്രന്ഥത്തിന്റെ രചയിതാവ് ആര്?",
+                options: [
+                    "അശോക് മേത്ത",
+                    "വി ഡി സവർക്കർ",
+                    "ആർ സി മജുൻദർ",
+                    "താരാചന്ദ്"
+                ],
+                answer: 0,
+                explanation: "'1857 ദി ഗ്രേറ്റ് റെബെല്ലിയൻ' രചിച്ചത് അശോക് മേത്തയാണ്[span_60](start_span)[span_60](end_span)."
+            },
+            {
+                question: "ശിപായി മുട്ടണി ആൻഡ് റിവോൾട്ട് ഓഫ് 1857 എന്ന കൃതി രചിച്ചത് ആര്?",
+                options: [
+                    "ആർ സി മജുൻദർ",
+                    "എച്ച് ബി ചതോപാധ്യായ",
+                    "മഹാശ്വേതാ ദേവി",
+                    "അശോക് മേത്ത"
+                ],
+                answer: 0,
+                explanation: "ഈ കൃതി രചിച്ചത് ആർ സി മജുൻദർ ആണ്[span_61](start_span)[span_61](end_span)."
+            },
+            {
+                question: "ശിപായി മ്യൂട്ടിണി 1857 എന്ന ഗ്രന്ഥം രചിച്ച വ്യക്തി ആര്?",
+                options: [
+                    "എച്ച് ബി ചതോപാധ്യായ",
+                    "താരാചന്ദ്",
+                    "വി ഡി സവർക്കർ",
+                    "എം എൻ റോയ്"
+                ],
+                answer: 0,
+                explanation: "ഈ ഗ്രന്ഥം രചിച്ചത് എച്ച് ബി ചതോപാധ്യായ ആണ്[span_62](start_span)[span_62](end_span)."
+            },
+            {
+                question: "പ്രശസ്തമായ 'ക്വീൻ ഓഫ് ഝാൻസി' എന്ന കൃതിയുടെ രചയിതാവ് ആര്?",
+                options: [
+                    "മഹാശ്വേതാ ദേവി",
+                    "മലയാറ്റൂർ രാമകൃഷ്ണൻ",
+                    "വിഷ്ണുഭട്ട് ഗോഡ്സെ",
+                    "മനോഹർ മൽഗോർക്കാർ"
+                ],
+                answer: 0,
+                explanation: "'ക്വീൻ ഓഫ് ഝാൻസി' രചിച്ചത് മഹാശ്വേതാ ദേവിയാണ്[span_63](start_span)[span_63](end_span)."
+            },
+            {
+                question: "ഇന്ത്യൻ സ്വാതന്ത്ര്യ സമരങ്ങളുടെ ചരിത്രം എന്ന ഗ്രന്ഥം രചിച്ചത് ആര്?",
+                options: [
+                    "താരാചന്ദ്",
+                    "എസ് എൻ സെൻ",
+                    "ടി ആർ ഹോംസ്",
+                    "പെഴ്സിവിയൽ സ്പിയർ"
+                ],
+                answer: 0,
+                explanation: "ഈ ഗ്രന്ഥം രചിച്ചത് താരാചന്ദ് ആണ്[span_64](start_span)[span_64](end_span)."
+            },
+            {
+                question: "തോമസ് ജോൺസ് ബാർക്കർ 1859-ൽ വരച്ച പ്രശസ്തമായ ചിത്രം ഏത്?",
+                options: [
+                    "റിലീഫ് ഓഫ് ലക്‌നൗ",
+                    "ഇൻ മെമ്മോറിയം",
+                    "മിസ് വീലർ",
+                    "മാത്സ് പ്രവാസ്"
+                ],
+                answer: 0,
+                explanation: "തോമസ് ജോൺസ് ബാർക്കർ 1859-ൽ വരച്ച ചിത്രമാണിത്[span_65](start_span)[span_65](end_span)."
+            },
+            {
+                question: "ജോസഫ് നോയൽ പേറ്റൻ 1858/59 കാലഘട്ടത്തിൽ വരച്ച ചിത്രം ഏത്?",
+                options: [
+                    "ഇൻ മെമ്മോറിയം",
+                    "റിലീഫ് ഓഫ് ലക്‌നൗ",
+                    "മിസ് വീലർ",
+                    "ദി ലാസ്റ്റ് മുഗൾ"
+                ],
+                answer: 0,
+                explanation: "ജോസഫ് നോയൽ പേറ്റൻ വരച്ച ചിത്രമാണിത്[span_66](start_span)[span_66](end_span)."
+            },
+            {
+                question: "1858 ലെ ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് അനുസരിച്ച് നിലവിൽ വന്ന പുതിയ ഉദ്യോഗസ്ഥ പദവി ഏത്?",
+                options: [
+                    "സെക്രട്ടറി ഓഫ് സ്റ്റേറ്റ്",
+                    "വൈസ്രോയി",
+                    "ഗവർണർ ജനറൽ",
+                    "ചീഫ് കമ്മീഷണർ"
+                ],
+                answer: 0,
+                explanation: "1858 ലെ ആക്ട് പ്രകാരം നിലവിൽ വന്ന പുതിയ പദവിയാണ് സെക്രട്ടറി ഓഫ് സ്റ്റേറ്റ്[span_67](start_span)[span_67](end_span)."
+            },
+            {
+                question: "ഈസ്റ്റ് ഇന്ത്യാ കമ്പനിയുടെ ഭരണം അവസാനിപ്പിക്കാൻ കാരണമായ പ്രധാന ആക്ട് ഏത്?",
+                options: [
+                    "ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് 1858",
+                    "പിറ്റ്സ് ഇന്ത്യ ആക്ട് 1784",
+                    "റെഗുലേറ്റിംഗ് ആക്ട് 1773",
+                    "ഇന്ത്യൻ കൗൺസിൽസ് ആക്ട് 1861"
+                ],
+                answer: 0,
+                explanation: "കമ്പനി ഭരണം അവസാനിപ്പിച്ചത് ഈ ആക്ടാണ്[span_68](start_span)[span_68](end_span)."
+            },
+            {
+                question: "ഭരണമാറ്റത്തിന്റെ ഫലമായി പിൻവലിക്കപ്പെട്ട ഈസ്റ്റ് ഇന്ത്യ കമ്പനിയുടെ നിയമം ഏത്?",
+                options: [
+                    "ദത്തവകാശ നിരോധന നിയമം",
+                    "റൗലറ്റ് ആക്ട്",
+                    "പത്രസ്വാതന്ത്ര്യ നിയമം",
+                    "ആയുധ നിയമം"
+                ],
+                answer: 0,
+                explanation: "ഭരണമാറ്റത്തിന്റെ ഫലമായി പിൻവലിക്കപ്പെട്ട നിയമമാണിത്[span_69](start_span)[span_69](end_span)."
+            },
+            {
+                question: "'ആക്ട് ഫോർ ദ ബെറ്റർ ഗവൺമെൻ്റ് ഓഫ് ഇന്ത്യ' എന്ന് പ്രഖ്യാപിക്കപ്പെട്ട ആക്ട് ഏത്?",
+                options: [
+                    "ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് 1858",
+                    "ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് 1919",
+                    "ഗവൺമെന്റ് ഓഫ് ഇന്ത്യ ആക്ട് 1935",
+                    "ഇന്ത്യൻ ഇൻഡിപെൻഡൻസ് ആക്ട് 1947"
+                ],
+                answer: 0,
+                explanation: "ഈ ആക്ടാണ് 'ആക്ട് ഫോർ ദ ബെറ്റർ ഗവൺമെൻ്റ് ഓഫ് ഇന്ത്യ' എന്നറിയപ്പെടുന്നത്[span_70](start_span)[span_70](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ഉയർത്തെഴുനേൽപ്പ്\" എന്ന് വിശേഷിപ്പിച്ചത് ആരുടെ കൃതിയിലാണ്?",
+                options: [
+                    "വില്യം ഡാൽറിംപിൾസ് - ദി ലാസ്റ്റ് മുഗൾ",
+                    "എം എൻ റോയ് - പീപ്പിൾസ് പ്ലാൻ",
+                    "താരാ ചന്ദ് - ഹിസ്റ്ററി ഓഫ് ഫ്രീഡം മൂവ്മെന്റ്",
+                    "എസ് എൻ സെൻ - 1857"
+                ],
+                answer: 0,
+                explanation: "വില്യം ഡാൽറിംപിളിന്റെ കൃതിയിലാണ് ഇപ്രകാരം വിശേഷിപ്പിച്ചത്[span_71](start_span)[span_71](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"കൈമോശം വന്ന മഹത്വത്തെ വീണ്ടെടുക്കാനുള്ള ഘടകങ്ങളുടെ ശ്രമം\" എന്ന് വിശേഷിപ്പിച്ചത് ആര്?",
+                options: [
+                    "പെഴ്സിവിയൽ സ്പിയർ",
+                    "ടി ആർ ഹോംസ്",
+                    "എസ് എൻ സെൻ",
+                    "ബെഞ്ചമിൻ ഡിസ്രേലി"
+                ],
+                answer: 0,
+                explanation: "പെഴ്സിവിയൽ സ്പിയർ ആണ് ഇപ്രകാരം വിശേഷിപ്പിച്ചത്[span_72](start_span)[span_72](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"കാലത്തെ തിരിച്ച് വെക്കുവാനുള്ള യാഥാസ്ഥിതിക ഘടകങ്ങളുടെ ശ്രമം\" എന്ന് വിലയിരുത്തിയത് ആര്?",
+                options: [
+                    "എസ് എൻ സെൻ",
+                    "ജവഹർലാൽ നെഹ്റു",
+                    "കാറൽ മാർക്സ്",
+                    "എം എൻ റോയ്"
+                ],
+                answer: 0,
+                explanation: "എസ് എൻ സെൻ ആണ് ഇങ്ങനെ വിലയിരുത്തിയത്[span_73](start_span)[span_73](end_span)."
+            },
+            {
+                question: "1857 ലെ വിപ്ലവത്തെ \"ഫ്യൂഡൽ ഇന്ത്യയുടെ അവസാന ചിറകടി\" എന്ന് വിശേഷിപ്പിച്ച പ്രമുഖൻ ആര്?",
+                options: [
+                    "ജവഹർലാൽ നെഹ്റു",
+                    "കാറൽ മാർക്സ്",
+                    "ബെഞ്ചമിൻ ഡിസ്രേലി",
+                    "വി ഡി സവർക്കർ"
+                ],
+                answer: 0,
+                explanation: "ജവഹർലാൽ നെഹ്റുവാണ് ഇപ്രകാരം വിശേഷിപ്പിച്ചത്[span_74](start_span)[span_74](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെ എത്രയാം ബംഗാൾ നേറ്റീവ് ഇൻഫെൻന്ററി റെജിമെന്റിലെ സൈനികനായിരുന്നു?",
+                options: [
+                    "34-ാം റെജിമെന്റ് (ബർകപൂർ)",
+                    "32-ാം റെജിമെന്റ്",
+                    "40-ാം റെജിമെന്റ്",
+                    "20-ാം റെജിമെന്റ്"
+                ],
+                answer: 0,
+                explanation: "മംഗൾ പാണ്ഡെ 34-ാം ബംഗാൾ നേറ്റീവ് ഇൻഫെൻന്ററി റെജിമെന്റിലെ സൈനികനായിരുന്നു[span_75](start_span)[span_75](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെയെ സൈനിക കോടതി വിസ്തരിച്ച തീയതി എന്നായിരുന്നു?",
+                options: [
+                    "1857 ഏപ്രിൽ 6",
+                    "1857 മാർച്ച് 29",
+                    "1857 ഏപ്രിൽ 8",
+                    "1857 മെയ് 10"
+                ],
+                answer: 0,
+                explanation: "സൈനിക കോടതി അദ്ദേഹത്തെ വിസ്തരിച്ചത് ഏപ്രിൽ 6-നാണ്[span_76](start_span)[span_76](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെയെ ബർകപുരിൽ വെച്ച് തൂക്കിക്കൊന്ന തീയതി ഏത്?",
+                options: [
+                    "1857 ഏപ്രിൽ 8",
+                    "1857 മാർച്ച് 29",
+                    "1857 ഏപ്രിൽ 6",
+                    "1857 മെയ് 10"
+                ],
+                answer: 0,
+                explanation: "ബർകപുരിൽ വെച്ച് അദ്ദേഹത്തെ തൂക്കിക്കൊന്നത് ഏപ്രിൽ 8-നാണ്[span_77](start_span)[span_77](end_span)."
+            },
+            {
+                question: "താന്തിയാതോപ്പിയുടെ യഥാർത്ഥ നാമം എന്തായിരുന്നു?",
+                options: [
+                    "രാമചന്ദ്ര പാണ്ഡുരംഗ",
+                    "അസിമുള്ള ഖാൻ",
+                    "വാജിദ് അലി ഷാ",
+                    "അഹ്മദുള്ള ഷാ"
+                ],
+                answer: 0,
+                explanation: "താന്തിയാതോപ്പിയുടെ യഥാർത്ഥ നാമം രാമചന്ദ്ര പാണ്ഡുരംഗ എന്നാണ്[span_78](start_span)[span_78](end_span)."
+            },
+            {
+                question: "ഒന്നാം സ്വാതന്ത്ര്യ സമരത്തിലെ പ്രമുഖനായ താന്തിയാതോപ്പിയെ പരസ്യമായി തൂക്കിക്കൊന്ന തീയതി എന്നാണ്?",
+                options: [
+                    "1859 ഏപ്രിൽ 18",
+                    "1857 ഏപ്രിൽ 8",
+                    "1858 ജൂൺ 18",
+                    "1862 നവംബർ 1"
+                ],
+                answer: 0,
+                explanation: "അദ്ദേഹത്തെ പരസ്യമായി തൂക്കിക്കൊന്നത് 1859 ഏപ്രിൽ 18-നാണ്[span_79](start_span)[span_79](end_span)."
+            },
+            {
+                question: "ഝാൻസി റാണി ലക്ഷ്മിഭായ് വീരമൃത്യു വരിച്ച (വധിക്കപ്പെട്ട) തീയതി ഏത്?",
+                options: [
+                    "1858 ജൂൺ 18",
+                    "1857 ജൂൺ 18",
+                    "1859 ഏപ്രിൽ 18",
+                    "1862 നവംബർ 1"
+                ],
+                answer: 0,
+                explanation: "റാണി ലക്ഷ്മിഭായ് വീരമൃത്യു വരിച്ചത് 1858 ജൂൺ 18-നാണ്[span_80](start_span)[span_80](end_span)."
+            },
+            {
+                question: "മുഗൾ ഭരണാധികാരിയായ ബഹദൂർഷാ II നെ റംഗൂണിലേക്ക് നാടുകടത്തിയ തീയതി ഏത്?",
+                options: [
+                    "1858 ഒക്ടോബർ 7",
+                    "1858 നവംബർ 1",
+                    "1857 ഏപ്രിൽ 8",
+                    "1859 ഏപ്രിൽ 18"
+                ],
+                answer: 0,
+                explanation: "ബഹദൂർഷാ II നെ റംഗൂണിലേക്ക് നാടുകടത്തിയത് 1858 ഒക്ടോബർ 7-നാണ്[span_81](start_span)[span_81](end_span)."
+            },
+            {
+                question: "1857-ലെ ഒന്നാം സ്വാതന്ത്ര്യ സമരം ഔദ്യോഗികമായി ആദ്യം ആരംഭിച്ച തീയതിയും സ്ഥലവും ഏത്?",
+                options: [
+                    "1857 മെയ് 10, മീററ്റ് (ഉത്തർപ്രദേശ്)",
+                    "1857 മാർച്ച് 29, ബാരക്‌പുർ (പശ്ചിമ ബംഗാൾ)",
+                    "1857 മെയ് 12, ഡൽഹി",
+                    "1857 ജൂൺ 18, ഗ്വാളിയോർ"
+                ],
+                answer: 0,
+                explanation: "സമരം ആദ്യം തുടങ്ങിയത് മീററ്റിലാണ്."
+            },
+            {
+                question: "1857-ലെ വിപ്ലവവുമായി ബന്ധപ്പെട്ട താഴെ പറയുന്ന പ്രസ്താവനകൾ വിലയിരുത്തുക:\n1. ശിപായി എന്ന പദം 'സിപ' (Sipa) എന്ന പേർഷ്യൻ വാക്കിൽ നിന്നാണ് ഉണ്ടായത്, അതിനർത്ഥം സൈന്യം എന്നാണ്.\n2. കലാപകാരികൾ ആശയങ്ങൾ രഹസ്യമായി കൈമാറാൻ പ്രധാന ഉപാധിയായി ഉപയോഗിച്ചത് 'ചപ്പാത്തി' ആയിരുന്നു.\n3. നാനാ സാഹിബിന്റെ ഗുരുവായ ഗുരു ദാസബാബാണ് ചപ്പാത്തി വഴി നിർദ്ദേശങ്ങൾ കൈമാറുന്ന രീതിക്ക് തുടക്കം കുറിച്ചത്.",
+                options: [
+                    "1 ഉം 2 ഉം മാത്രം",
+                    "2 ഉം 3 ഉം മാത്രം",
+                    "1 ഉം 3 ഉം മാത്രം",
+                    "1, 2, 3 എന്നിവയെല്ലാം ശരിയാണ്"
+                ],
+                answer: 3,
+                explanation: "നൽകിയിരിക്കുന്ന മൂന്ന് പ്രസ്താവനകളും പൂർണ്ണമായും ശരിയാണ്."
+            },
+            {
+                question: "പട്ടിക I-ൽ നൽകിയിരിക്കുന്ന പ്രദേശങ്ങളെ പട്ടിക II-ൽ അവയ്ക്ക് നേതൃത്വം നൽകിയ നേതാക്കളുമായി ശരിയായി ചേര്‍ക്കുക:\nപട്ടിക I: I. അലഹബാദ്, II. ബറേലി / റോഹിൽഖണ്ഡ്, III. ബിഹാർ / ജഗദീഷ്പൂർ / ആര\nപട്ടിക II: A. ഖാൻ ബഹദൂർഖാൻ, B. ലിയാഖത് അലി, C. കൺവർ സിംഗ്",
+                options: [
+                    "I-B, II-A, III-C",
+                    "I-A, II-B, III-C",
+                    "I-C, II-A, III-B",
+                    "I-B, II-C, III-A"
+                ],
+                answer: 0,
+                explanation: "അലഹബാദ് - ലിയാഖത് അലി, ബറേലി - ഖാൻ ബഹദൂർഖാൻ, ബിഹാർ - കൺവർ സിംഗ്."
+            },
+            {
+                question: "ദത്തവകാശ നിരോധന നിയമ പ്രകാരം നാട്ടുരാജ്യങ്ങൾ ബ്രിട്ടീഷ് ഇന്ത്യയോട് കൂട്ടിച്ചേർത്ത വർഷങ്ങളുമായി ബന്ധപ്പെട്ട് താഴെ നൽകിയിരിക്കുന്നവയിൽ തെറ്റായ ജോഡി ഏത്?",
+                options: [
+                    "സത്താറ - 1848",
+                    "ജയ്പൂർ - 1849",
+                    "ഉദയ്പൂർ - 1853",
+                    "ഝാൻസി - 1854"
+                ],
+                answer: 2,
+                explanation: "ഉദയ്പൂർ കൂട്ടിച്ചേർത്തത് 1852-ലാണ് (1853 അല്ല)."
+            },
+            {
+                question: "ദത്തവകാശ നിരോധന നിയമ പ്രകാരം ബ്രിട്ടീഷുകാർ പിടിച്ചെടുത്ത താഴെ പറയുന്ന നാട്ടുരാജ്യങ്ങൾ കാലക്രമത്തിൽ ക്രമീകരിക്കുക:\n1. സാമ്പൽപൂർ\n2. സത്താറ\n3. നാഗ്‌പൂർ\n4. ഝാൻസി",
+                options: [
+                    "2, 1, 3, 4",
+                    "1, 2, 4, 3",
+                    "2, 4, 1, 3",
+                    "4, 3, 2, 1"
+                ],
+                answer: 0,
+                explanation: "സത്താറ (1848), സാമ്പൽപൂർ (1850), നാഗ്‌പൂർ (1853), ഝാൻസി (1854)."
+            },
+            {
+                question: "Assertion (A): ദത്തവകാശ നിരോധന നിയമ പ്രകാരം ഒരു നാട്ടുരാജാവ് പുരുഷ അനന്തരാവകാശിയില്ലാതെ മരണപ്പെട്ടാൽ ആ നാട്ടുരാജ്യം ബ്രിട്ടീഷ് ഇന്ത്യയോട് കൂട്ടിച്ചേർക്കപ്പെട്ടു.\nReason (R): ദുർഭരണം ചുമത്തി 1856-ൽ ഔധ് രാജ്യം ബ്രിട്ടീഷ് അധീനതയിൽ കൂട്ടിച്ചേർത്തു.",
+                options: [
+                    "(A)-യും (R)-ഉം ശരിയാണ്, കൂടാതെ (R) എന്നത് (A)-യുടെ ശരിയായ വിശദീകരണമല്ല.",
+                    "(A)-യും (R)-ഉം ശരിയാണ്, (R) എന്നത് (A)-യുടെ ശരിയായ വിശദീകരണമാണ്",
+                    "(A) ശരിയാണ്, എന്നാൽ (R) തെറ്റാണ്",
+                    "(A) തെറ്റാണ്, എന്നാൽ (R) ശരിയാണ്"
+                ],
+                answer: 0,
+                explanation: "രണ്ടും ശരിയാണെങ്കിലും ഔധ് കേസ് ദത്തവകാശ നിയമത്തിന് കീഴിലല്ല വരുന്നത്."
+            },
+            {
+                question: "1857-ലെ കലാപകാലത്ത് താഴെ പറയുന്നവരിൽ കാൺപൂർ കേന്ദ്രമാക്കി സമരം നയിച്ച നേതാവ് അല്ലാത്തത് ആര്?",
+                options: [
+                    "നാനാസാഹിബ്",
+                    "താന്തിയാതോപ്പി",
+                    "ഭക്തഖാൻ",
+                    "മുകളിൽ നൽകിയിരിക്കുന്നവരിൽ ആരുമല്ല"
+                ],
+                answer: 2,
+                explanation: "ഭക്തഖാൻ ഡൽഹിയിലെ നേതാവാണ്."
+            },
+            {
+                question: "1857-ലെ വിപ്ലവവുമായി ബന്ധപ്പെട്ട് താഴെ പറയുന്ന പ്രസ്താവനകൾ പരിശോധിക്കുക:\n1. \"ഒരു ദിവസം നമ്മുടെ വായിൽ വീഴാൻ പോകുന്ന ഒരു ചെറി\" എന്ന് ഔധിനെ വിശേഷിപ്പിച്ചത് ഡൽഹൗസി പ്രഭുവാണ്.\n2. 1856-ൽ അവധിലെ നവാബായ വാജിദ് അലി ഷായെ ദുർഭരണത്തിന്റെ പേര് പറഞ്ഞ് കൽക്കട്ടയിലേക്ക് നാടുകടത്തി.\n3. അവധ് അറിയപ്പെട്ടത് 'ബംഗാൾ ആർമിയുടെ നഴ്സറി' എന്നാണ്.",
+                options: [
+                    "1 ഉം 2 ഉം മാത്രം",
+                    "2 ഉം 3 ഉം മാത്രം",
+                    "1 ഉം 3 ഉം മാത്രം",
+                    "1, 2, 3 എന്നിവയെല്ലാം ശരിയാണ്"
+                ],
+                answer: 3,
+                explanation: "ഔധുമായി ബന്ധപ്പെട്ട നൽകിയിരിക്കുന്ന മൂന്ന് പ്രസ്താവനകളും ശരിയാണ്."
+            },
+            {
+                question: "പി.ഡി.എഫ് നോട്ടിന്റെ മാപ്പ് വിവരങ്ങൾ പ്രകാരം, 1857-ലെ കലാപം വ്യാപിക്കാത്ത പ്രധാന പ്രദേശങ്ങളിൽ ഉൾപ്പെടാത്തത് ഏത്?",
+                options: [
+                    "പഞ്ചാബ്",
+                    "ബോംബെ",
+                    "മദ്രാസ്",
+                    "ഡൽഹി"
+                ],
+                answer: 3,
+                explanation: "ഡൽഹി കലാപത്തിന്റെ പ്രധാന കേന്ദ്രമായിരുന്നു."
+            },
+            {
+                question: "1857-ലെ വിപ്ലവകാലത്ത് ബ്രിട്ടീഷ് സൈന്യത്തിന്റെ തലവന്മാരായിരുന്നതുമായി ബന്ധപ്പെട്ട് ശരിയായ ജോഡി ഏത്?",
+                options: [
+                    "കലാപം ആരംഭിക്കുമ്പോൾ: ജനറൽ ആൻസൺ, കലാപം അവസാനിക്കുമ്പോൾ: കോളിൻ ക്യാമ്പ്ബൈൽ",
+                    "കലാപം ആരംഭിക്കുമ്പോൾ: കോളിൻ ക്യാമ്പ്ബൈൽ, കലാപം അവസാനിക്കുമ്പോൾ: ജനറൽ ആൻസൺ",
+                    "കലാപം ആരംഭിക്കുമ്പോൾ: ഹ്യൂഗ് റോസ്, കലാപം അവസാനിക്കുമ്പോൾ: നിക്കോൾസൺ",
+                    "കലാപം ആരംഭിക്കുമ്പോൾ: കാനിങ് പ്രഭു, കലാപം അവസാനിക്കുമ്പോൾ: വിക്ടോറിയ രാജ്ഞി"
+                ],
+                answer: 0,
+                explanation: "സൈന്യത്തലവന്മാരെ സംബന്ധിച്ച് ഇത് കൃത്യമായ ജോഡിയാണ്."
+            },
+            {
+                question: "ബ്രിട്ടീഷ് ഭരണത്തിന്റെ സാമ്പത്തിക നയങ്ങൾ ഇന്ത്യയെ ബാധിച്ചതുമായി ബന്ധപ്പെട്ട് താഴെ പറയുന്ന പ്രസ്താവനകൾ വിലയിരുത്തുക:\n1. ബ്രിട്ടീഷുകാർ നടപ്പിലാക്കിയ സാമ്പത്തിക നയങ്ങൾ ഇന്ത്യയുടെ പരമ്പരാഗത കാർഷിക സമ്പദ്‌വ്യവസ്ഥയെ തകർത്തു.\n2. ഇന്ത്യ ബ്രിട്ടീഷ് ഉൽപ്പന്നങ്ങളുടെ കമ്പോളമായി മാറിയതോടെ കുടിൽ വ്യവസായങ്ങളും പരമ്പരാഗത നെയ്ത്ത് വ്യവസായങ്ങളും പൂർണ്ണമായി തകർന്നു.\n3. കർഷകർക്ക് ഭൂമിയുടെ മേലുള്ള അവകാശങ്ങൾ നഷ്ടപ്പെടുകയും ഉൽപ്പാദിപ്പിച്ച വിളകൾ മുഴുവൻ നികുതിയായി നൽകേണ്ടി വരികയും ചെയ്തു.",
+                options: [
+                    "1 ഉം 2 ഉം മാത്രം",
+                    "2 ഉം 3 ഉം മാത്രം",
+                    "1 ഉം 3 ഉം മാത്രം",
+                    "1, 2, 3 എന്നിവയെല്ലാം ശരിയാണ്"
+                ],
+                answer: 3,
+                explanation: "സാമ്പത്തിക കാരണങ്ങളുമായി ബന്ധപ്പെട്ട മൂന്ന് പ്രസ്താവനകളും ശരിയാണ്."
+            },
+            {
+                question: "പട്ടിക I-ൽ നൽകിയിരിക്കുന്ന കലാപ കേന്ദ്രങ്ങളെ പട്ടിക II-ൽ അവയ്ക്ക് നേതൃത്വം നൽകിയ പ്രമുഖരുമായി ശരിയായി ചേര്‍ക്കുക:\nപട്ടിക I: I. മഥുര, II. ഗ്വാളിയോർ, III. ഹരിയാന\nപട്ടിക II: A. റാണി ലക്ഷ്മിഭായ്, താന്തിയാതോപ്പി, B. ദേവി സിങ്, C. റാവു തുലാറാം",
+                options: [
+                    "I-B, II-A, III-C",
+                    "I-A, II-B, III-C",
+                    "I-C, II-A, III-B",
+                    "I-B, II-C, III-A"
+                ],
+                answer: 0,
+                explanation: "മഥുര - ദേവി സിംഗ്, ഗ്വാളിയോർ - റാണി ലക്ഷ്മിഭായ്/താന്തിയാതോപ്പി, ഹരിയാന - റാവു തുലാറാം."
+            },
+            {
+                question: "1857-ലെ വിപ്ലവവുമായി ബന്ധപ്പെട്ട രഹസ്യ മുദ്രകളും ആശയവിനിമയ ഉപാധികളും സംബന്ധിച്ച് താഴെ നൽകിയിരിക്കുന്നവയിൽ ശരിയായ ജോഡി ഏത്?",
+                options: [
+                    "സൈനികരുടെ രഹസ്യ മുദ്ര - വാളും പരിചയും",
+                    "കലാപകാരികൾ ആശയങ്ങൾ കൈമാറാൻ ഉപയോഗിച്ചത് - ചപ്പാത്തി",
+                    "നാനാ സാഹിബിന്റെ ഗുരു - മംഗൾ പാണ്ഡെ",
+                    "വിപ്ലവകാരികൾ ആദ്യം പിടിച്ചെടുത്ത പ്രദേശം - മീററ്റ്"
+                ],
+                answer: 1,
+                explanation: "ഇത് തികച്ചും ശരിയായ ജോഡിയാണ്."
+            },
+            {
+                question: "Assertion (A): 1857-ലെ വിപ്ലവകാലത്ത് യൂറോപ്യൻ കുറ്റവാളികളെ വിചാരണ ചെയ്യാൻ ഇന്ത്യൻ ജഡ്ജിമാരെ അനുവദിച്ചിരുന്നില്ല.\nReason (R): വംശീയമായി കേമന്മാരാണെന്നു കരുതിയിരുന്ന ബ്രിട്ടീഷുകാർ ഇന്ത്യക്കാരോട് അങ്ങേയറ്റത്തെ അവജ്ഞയോടുകൂടിയാണ് പെരുമാറിയിരുന്നത്.",
+                options: [
+                    "(A)-യും (R)-ഉം ശരിയാണ്, കൂടാതെ (R) എന്നത് (A)-യുടെ ശരിയായ വിശദീകരണമാണ്.",
+                    "(A)-യും (R)-ഉം ശരിയാണ്, എന്നാൽ (R) എന്നത് (A)-യുടെ ശരിയായ വിശദീകരണമല്ല.",
+                    "(A) ശരിയാണ്, എന്നാൽ (R) തെറ്റാണ്.",
+                    "(A) തെറ്റാണ്, എന്നാൽ (R) ശരിയാണ്."
+                ],
+                answer: 0,
+                explanation: "വംശീയ അവഗണന കാരണമാണ് ജഡ്ജിമാരെ അനുവദിക്കാതിരുന്നത്."
+            },
+            {
+                question: "1857-ലെ വിപ്ലവം അടിച്ചമർത്താൻ ബ്രിട്ടീഷ് പക്ഷത്ത് പ്രവർത്തിച്ച ജനറൽമാരിൽ ഡൽഹി കേന്ദ്രത്തിൽ പ്രവർത്തിക്കാത്തയാൾ ആര്?",
+                options: [
+                    "നിക്കോൾസൺ",
+                    "ഹഡ്സൺ",
+                    "ഹ്യുഗ് റോസ്",
+                    "മുകളിൽ നൽകിയിരിക്കുന്നവരിൽ ആരുമല്ല"
+                ],
+                answer: 2,
+                explanation: "ഹ്യുഗ് റോസ് ഝാൻസിയിലാണ് പ്രവർത്തിച്ചത്."
+            },
+            {
+                question: "ബഹദൂർഷാ II (ബഹദൂർഷാ സഫർ)-യുമായി ബന്ധപ്പെട്ട താഴെ പറയുന്ന പ്രസ്താവനകൾ പരിശോധിക്കുക:\n1. കലാപകാരികൾ അദ്ദേഹത്തെ ഇന്ത്യയുടെ ചക്രവർത്തിയായി പ്രഖ്യാപിക്കുമ്പോൾ അദ്ദേഹത്തിന് 82 വയസ്സായിരുന്നു പ്രായം.\n2. 'സഫർ' എന്ന തൂലികാനാമത്തിലാണ് അദ്ദേഹം കവിതകൾ എഴുതിയത്.\n3. ഹുമയൂണിന്റെ ശവകുടീരത്തിൽ വെച്ചാണ് അദ്ദേഹം ബ്രിട്ടീഷുകാരുടെ പിടിയിലായത്.",
+                options: [
+                    "1 ഉം 2 ഉം മാത്രം",
+                    "2 ഉം 3 ഉം മാത്രം",
+                    "1 ഉം 3 ഉം മാത്രം",
+                    "1, 2, 3 എന്നിവയെല്ലാം ശരിയാണ്"
+                ],
+                answer: 3,
+                explanation: "ബഹദൂർഷാ II സംബന്ധിച്ച എല്ലാ പ്രസ്താവനകളും ശരിയാണ്[span_82](start_span)[span_82](end_span)."
+            },
+            {
+                question: "സൈനിക കാരണങ്ങളുമായി ബന്ധപ്പെട്ട് 1857-ലെ വിപ്ലവത്തിന് കാരണമായ സാഹചര്യങ്ങൾ ഏവ?\n1. ശിപായിമാർക്കിടയിൽ ക്രിസ്തുമതം പ്രചരിപ്പിക്കുകയും താടി, തലപ്പാവ് തുടങ്ങിയ ജാതി അടയാളങ്ങൾ ധരിക്കുന്നത് വിലക്കുകയും ചെയ്തു.\n2. വിദേശ സേവനം നിർബന്ധമാക്കിക്കൊണ്ടുള്ള നിയമം കൊണ്ടുവരികയും വിദേശ ബത്ത നിർത്തലാക്കുകയും ചെയ്തു.\n3. ശിപായിമാർക്ക് വിതരണം ചെയ്തിരുന്ന റൊട്ടിയിൽ എല്ലുപൊടി ചേർത്ത ഗോതബ് ആണെന്ന വാർത്ത പരന്നു.",
+                options: [
+                    "1 ഉം 2 ഉം മാത്രം",
+                    "2 ഉം 3 ഉം മാത്രം",
+                    "1 ഉം 3 ഉം മാത്രം",
+                    "1, 2, 3 എന്നിവയെല്ലാം ശരിയാണ്"
+                ],
+                answer: 3,
+                explanation: "സൈനിക കാരണങ്ങളായ ഈ മൂന്ന് കാര്യങ്ങളും നോട്ടിൽ ഉള്ളതാണ്."
+            },
+            {
+                question: "1857-ലെ കലാപകാലത്ത് ബ്രിട്ടീഷ് പ്രധാനമന്ത്രിയായിരുന്ന വ്യക്തി ആര്?",
+                options: [
+                    "പാൽമേഴ്‌സ്‌റ്റൺ പ്രഭു",
+                    "കാനിങ് പ്രഭു",
+                    "ഡൽഹൗസി പ്രഭു",
+                    "വെല്ലസ്ലി പ്രഭു"
+                ],
+                answer: 0,
+                explanation: "കലാപകാലത്തെ ബ്രിട്ടീഷ് പ്രധാനമന്ത്രി പാൽമേഴ്‌സ്‌റ്റൺ പ്രഭുവാണ്."
+            },
+            {
+                question: "പട്ടിക I-ൽ നൽകിയിരിക്കുന്ന കലാപ കേന്ദ്രങ്ങളെ പട്ടിക II-ൽ അവ അടിച്ചമർത്തിയ ബ്രിട്ടീഷ് ജനറൽമാരുമായി ശരിയായി ചേര്‍ക്കുക:\nപട്ടിക I: I. കാൺപൂർ, II. ഝാൻസി, III. ആര (ബിഹാർ)\nപട്ടിക II: A. ഹ്യുഗ് റോസ്, B. കാംബെൽ, ഹാവ്ലോക്, C. വില്യം ടൈലർ",
+                options: [
+                    "I-B, II-A, III-C",
+                    "I-A, II-B, III-C",
+                    "I-C, II-A, III-B",
+                    "I-B, II-C, III-A"
+                ],
+                answer: 0,
+                explanation: "കാൺപൂർ - കാംബെൽ/ഹാവ്ലോക്, ഝാൻസി - ഹ്യുഗ് റോസ്, ആര - വില്യം ടൈലർ."
+            },
+            {
+                question: "ഗോത്രവർഗ്ഗ കലാപങ്ങളും നേതാക്കളുമായി ബന്ധപ്പെട്ട് താഴെ നൽകിയിരിക്കുന്നവയിൽ ശരിയായ ജോഡി ഏത്?",
+                options: [
+                    "ഛോട്ടാനാഗ്പൂരിലെ സിങ്ങ് ഭൂമിലെ കോൾ ഗോത്രവർഗ്ഗക്കാരുടെ കലാപം - ഗോനു (Gonoo)",
+                    "ആസാമിലെ കലാപത്തിന്റെ നേതാവ് - കൺവർ സിംഗ്",
+                    "മാണ്ഡസോർ കലാപത്തിന്റെ നേതാവ് - ലിയാഖത് അലി",
+                    "ഹരിയാനയിലെ കലാപത്തിന്റെ നേതാവ് - ദേവി സിംഗ്"
+                ],
+                answer: 0,
+                explanation: "ഇത് കൃത്യമായ ജോഡിയാണ്."
+            },
+            {
+                question: "സൈന്യത്തിനകത്തെ നിയമങ്ങളും ചട്ടങ്ങളും സംഘടിതമായി ലംഘിക്കുന്നതിനെ എന്ത് വിളിക്കുന്നു?",
+                options: [
+                    "Mutiny",
+                    "Revolt",
+                    "Firangi",
+                    "Summary settlement"
+                ],
+                answer: 0,
+                explanation: "സൈന്യത്തിനകത്തെ ചട്ടലംഘനത്തെ Mutiny എന്ന് വിളിക്കുന്നു[span_83](start_span)[span_83](end_span)."
+            },
+            {
+                question: "സ്ഥാപിതമായ അധികാരത്തിനും ശക്തിക്കുമെതിരെയുള്ള ജനങ്ങളുടെ കലാപത്തെ (കർഷകർ, ജന്മിമാർ തുടങ്ങിയവർ നടത്തിയത്) സൂചിപ്പിക്കാൻ ഉപയോഗിക്കുന്ന പദം ഏത്?",
+                options: [
+                    "Mutiny",
+                    "Revolt",
+                    "Ball of Arms",
+                    "Summary settlement"
+                ],
+                answer: 1,
+                explanation: "ജനങ്ങൾ നടത്തുന്ന കലാപത്തെ Revolt എന്ന് വിളിക്കുന്നു[span_84](start_span)[span_84](end_span)."
+            },
+            {
+                question: "ആയുധങ്ങൾ സൂക്ഷിച്ചു വെച്ചിരുന്ന സംഭരണശാല അറിയപ്പെട്ടിരുന്ന പേര് എന്ത്?",
+                options: [
+                    "ബെൽ ഓഫ് ആംസ് (Ball of Arms)",
+                    "ഫിരൻഗി രാജ്",
+                    "സമ്മറി വ്യവസ്ഥ",
+                    "കമ്പോളം"
+                ],
+                answer: 0,
+                explanation: "ആയുധങ്ങൾ സൂക്ഷിച്ച സംഭരണശാലയാണ് ബെൽ ഓഫ് ആംസ്[span_85](start_span)[span_85](end_span)."
+            },
+            {
+                question: "വിദേശികളെ വിശേഷിപ്പിക്കുന്നതിനു വേണ്ടി ഹിന്ദിയിലും ഉറുദുവിലും ഉപയോഗിച്ചിരുന്ന, പേർഷ്യൻ ഭാഷയിൽ നിന്നുത്ഭവിച്ച പദം ഏത്?",
+                options: [
+                    "ഫിരൻഗി (Firangi)",
+                    "സിപ (Sipa)",
+                    "സഫർ",
+                    "ദൻകാ"
+                ],
+                answer: 0,
+                explanation: "വിദേശികളെ വിശേഷിപ്പിക്കാൻ ഉപയോഗിച്ച പേർഷ്യൻ പദമാണിത്[span_86](start_span)[span_86](end_span)."
+            },
+            {
+                question: "മംഗൾ പാണ്ഡെ വധിച്ച ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥൻ ആര്?",
+                options: [
+                    "അഡ്ജൂട്ടന്റ് ബോഗ്",
+                    "ജെയ്സ് ഹ്യൂസൺ",
+                    "ജോൺ ഹെയ്സി",
+                    "വില്യം ഹോഡ്സൺ"
+                ],
+                answer: 0,
+                explanation: "മംഗൾ പാണ്ഡെ വധിച്ച ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥനാണ് അഡ്ജൂട്ടന്റ് ബോഗ്."
+            },
+            {
+                question: "1857-ലെ ഒന്നാം സ്വാതന്ത്ര്യ സമരം ഔദ്യോഗികമായി അടിച്ചമർത്തപ്പെട്ട തീയതി എന്നാണ്?",
+                options: [
+                    "1858 ജൂലൈ 8",
+                    "1857 മെയ് 10",
+                    "1859 ഏപ്രിൽ 18",
+                    "1862 നവംബർ 1"
+                ],
+                answer: 0,
+                explanation: "ഒന്നാം സ്വാതന്ത്ര്യ സമരം ഔദ്യോഗികമായി അടിച്ചമർത്തപ്പെട്ടത് 1858 ജൂലൈ 8-നാണ്."
+            }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let bookmarks = new Set();
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isPaused = false;
+
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startExam() {
+            questions = shuffleArray(rawQuestionsData);
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            bookmarks.clear();
+            timerSeconds = questions.length * 45;
+
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('exam-screen').style.display = 'flex';
+            document.getElementById('total-q-num').textContent = questions.length;
+
+            buildPalette();
+            loadQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        submitExam();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timer-display').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const overlay = document.getElementById('pause-overlay');
+            if (isPaused) {
+                overlay.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = questions[index];
+
+            document.getElementById('current-q-num').textContent = index + 1;
+            document.getElementById('question-text').textContent = q.question;
+
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = 'option-item';
+                if (userAnswers[index] === i) {
+                    div.classList.add('selected');
+                }
+
+                div.innerHTML = `
+                    <input type="radio" name="option" class="option-input" ${userAnswers[index] === i ? 'checked' : ''} onchange="selectOption(${i})">
+                    <span>${opt}</span>
+                `;
+                div.onclick = () => selectOption(i);
+                optionsList.appendChild(div);
+            });
+
+            const bBtn = document.getElementById('bookmark-btn');
+            if (bookmarks.has(index)) {
+                bBtn.classList.add('bookmarked');
+            } else {
+                bBtn.classList.remove('bookmarked');
+            }
+
+            updatePaletteUI();
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            const options = document.querySelectorAll('.option-item');
+            options.forEach((opt, idx) => {
+                const radio = opt.querySelector('input');
+                if (idx === optionIndex) {
+                    opt.classList.add('selected');
+                    radio.checked = true;
+                } else {
+                    opt.classList.remove('selected');
+                    radio.checked = false;
+                }
+            });
+
+            updatePaletteUI();
+
+            setTimeout(() => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    loadQuestion(currentQuestionIndex + 1);
+                }
+            }, 300);
+        }
+
+        function toggleBookmark() {
+            if (bookmarks.has(currentQuestionIndex)) {
+                bookmarks.delete(currentQuestionIndex);
+                document.getElementById('bookmark-btn').classList.remove('bookmarked');
+            } else {
+                bookmarks.add(currentQuestionIndex);
+                document.getElementById('bookmark-btn').classList.add('bookmarked');
+            }
+            updatePaletteUI();
+        }
+
+        function buildPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'palette-btn';
+                btn.textContent = idx + 1;
+                btn.onclick = () => loadQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePaletteUI() {
+            const buttons = document.querySelectorAll('.palette-btn');
+            buttons.forEach((btn, idx) => {
+                btn.classList.remove('current', 'answered', 'bookmarked-badge');
+                if (idx === currentQuestionIndex) {
+                    btn.classList.add('current');
+                }
+                if (userAnswers[idx] !== undefined) {
+                    btn.classList.add('answered');
+                }
+                if (bookmarks.has(idx)) {
+                    btn.classList.add('bookmarked-badge');
+                }
+            });
+        }
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        const swipeArea = document.getElementById('swipe-area');
+        swipeArea.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        swipeArea.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        let mouseStartX = 0;
+        swipeArea.addEventListener('mousedown', e => {
+            mouseStartX = e.clientX;
+        });
+        swipeArea.addEventListener('mouseup', e => {
+            let mouseEndX = e.clientX;
+            if (mouseStartX - mouseEndX > 50) {
+                if (currentQuestionIndex < questions.length - 1) {
+                    loadQuestion(currentQuestionIndex + 1);
+                }
+            } else if (mouseEndX - mouseStartX > 50) {
+                if (currentQuestionIndex > 0) {
+                    loadQuestion(currentQuestionIndex - 1);
+                }
+            }
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                if (currentQuestionIndex < questions.length - 1) {
+                    loadQuestion(currentQuestionIndex + 1);
+                }
+            }
+            if (touchEndX > touchStartX + 50) {
+                if (currentQuestionIndex > 0) {
+                    loadQuestion(currentQuestionIndex - 1);
+                }
+            }
+        }
+
+        function submitExamModal() {
+            if (confirm("നിങ്ങൾ തീർച്ചയായും എക്സാം സബ്മിറ്റ് ചെയ്യാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?")) {
+                submitExam();
+            }
+        }
+
+        function submitExam() {
+            clearInterval(timerInterval);
+            document.getElementById('exam-screen').style.display = 'none';
+            document.getElementById('result-screen').classList.add('active');
+
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unattemptedCount = 0;
+
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === undefined) {
+                    unattemptedCount++;
+                } else if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            let score = (correctCount * 1) - (wrongCount * 0.33);
+            score = Math.max(0, score).toFixed(2);
+
+            document.getElementById('res-score').textContent = score;
+            document.getElementById('res-correct').textContent = correctCount;
+            document.getElementById('res-wrong').textContent = wrongCount;
+            document.getElementById('res-unattempted').textContent = unattemptedCount;
+
+            renderReviewList('all');
+        }
+
+        let currentFilter = 'all';
+
+        function filterReview(type, btnElement) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderReviewList(type);
+        }
+
+        function renderReviewList(filter) {
+            const listContainer = document.getElementById('review-list');
+            listContainer.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                let status = 'unattempted';
+                if (userAns !== undefined) {
+                    status = (userAns === q.answer) ? 'correct' : 'wrong';
+                }
+
+                if (filter !== 'all' && filter !== status) {
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.className = `review-card ${status}`;
+
+                let userAnsText = userAns !== undefined ? q.options[userAns] : 'അറ്റൻഡ് ചെയ്തിട്ടില്ല';
+                let correctAnsText = q.options[q.answer];
+
+                card.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px;">ചോദ്യം ${idx + 1}: ${q.question}</div>
+                    <div style="font-size: 0.9rem; margin-bottom: 4px; color: ${status === 'correct' ? 'var(--success-color)' : (status === 'wrong' ? 'var(--danger-color)' : 'var(--warning-color)')}">
+                        നിങ്ങളുടെ ഉത്തരം: ${userAnsText}
+                    </div>
+                    <div style="font-size: 0.9rem; margin-bottom: 8px; color: var(--success-color);">
+                        ശരിയായ ഉത്തരം: ${correctAnsText}
+                    </div>
+                    <div class="explanation">
+                        <strong>വിശദീകരണം:</strong> ${q.explanation}
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function restartExam(type) {
+            if (type === 'all') {
+                document.getElementById('result-screen').classList.remove('active');
+                startExam();
+            } else if (type === 'wrong' || type === 'unattempted') {
+                let filtered = [];
+                questions.forEach((q, idx) => {
+                    const userAns = userAnswers[idx];
+                    let status = userAns === undefined ? 'unattempted' : (userAns === q.answer ? 'correct' : 'wrong');
+                    if (type === status) {
+                        filtered.push(q);
+                    }
+                });
+
+                if (filtered.length === 0) {
+                    alert("ഈ വിഭാഗത്തിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല!");
+                    return;
+                }
+
+                rawQuestionsData.length = 0;
+                rawQuestionsData.push(...filtered);
+                document.getElementById('result-screen').classList.remove('active');
+                startExam();
+            }
+        }
+    </script>
+</body>
+</html>

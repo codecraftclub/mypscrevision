@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala PSC Revision Exam - വാക്യശുദ്ധി (ഭാഗം 2)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            user-select: none;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .quiz-box, .score-box {
+            display: none;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .timer-bar {
+            font-size: 16px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .question-area {
+            min-height: 220px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        .question-text br {
+            display: block;
+            margin: 6px 0;
+            content: "";
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .option-btn.selected {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+        }
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .bookmark-btn {
+            padding: 10px 15px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .bookmark-btn.bookmarked {
+            background-color: #d35400;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-buttons button, .start-btn, .submit-btn {
+            padding: 12px 20px;
+            background-color: #475569;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .nav-buttons button:hover, .start-btn:hover {
+            background-color: #334155;
+        }
+        .start-btn {
+            background-color: #27ae60;
+            font-size: 18px;
+        }
+        .start-btn:hover {
+            background-color: #219653;
+        }
+        .submit-btn {
+            background-color: #d97706;
+            margin-top: 15px;
+        }
+        .submit-btn:hover {
+            background-color: #b45309;
+        }
+        .palette-container {
+            margin-top: 25px;
+            border-top: 2px solid #eee;
+            padding-top: 15px;
+        }
+        .palette-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #475569;
+        }
+        .palette-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+        .palette-btn {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .palette-btn.answered {
+            background-color: #22c55e;
+            color: white;
+            border-color: #16a34a;
+        }
+        .palette-btn.bookmarked {
+            background-color: #f59e0b;
+            color: white;
+            border-color: #d97706;
+        }
+        .palette-btn.current {
+            border: 2px solid #1e293b;
+        }
+        .swipe-hint {
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+        .review-card {
+            background: #f9f9f9;
+            border-left: 5px solid #ccc;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .review-card.correct { border-color: #27ae60; }
+        .review-card.wrong { border-color: #e74c3c; }
+        .review-card.skipped { border-color: #f39c12; }
+        .retry-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="setupSection" style="text-align: center; padding: 20px;">
+        <h2>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ്</h2>
+        <p style="margin-bottom: 10px; color: #64748b;">മലയാളം - വാക്യശുദ്ധി (ഭാഗം 2)</p>
+        <p style="margin-bottom: 30px; color: #e74c3c; font-weight: bold;">നെഗറ്റീവ് മാർക്ക്: ശരിയായ വാക്യം തിരഞ്ഞെടുക്കുക (ശരിക്ക് +1, തെറ്റിന് -0.33)</p>
+        <button class="start-btn" onclick="startExam(originalQuestions)">എക്സാം ആരംഭിക്കുക (Start Exam)</button>
+    </div>
+    
+    <div class="quiz-box" id="quizBox">
+        <div class="top-bar">
+            <span id="questionIndicator" style="font-weight: bold; color: #334155;">ചോദ്യം 1 / 1</span>
+            <div class="timer-bar">സമയം ബാക്കി: <span id="timeLeft">00:00</span></div>
+        </div>
+        
+        <div class="question-area" id="questionArea">
+            <div class="question-text" id="questionText">ചോദ്യം ഇവിടെ വരുന്നു...</div>
+            <div id="optionsContainer"></div>
+        </div>
+
+        <div class="swipe-hint">💡 സ്ക്രീനിന്റെ എവിടെ സ്വൈപ്പ് ചെയ്താലും ചോദ്യങ്ങൾ മാറുന്നതാണ്</div>
+
+        <div class="action-row">
+            <button class="bookmark-btn" id="bookmarkBtn" onclick="toggleBookmark()">⭐ ബുക്ക്മാർക്ക് ചെയ്യുക</button>
+        </div>
+        
+        <div class="nav-buttons">
+            <button onclick="prevQuestion()">മുൻപത്തെ ചോദ്യം</button>
+            <button onclick="nextQuestion()">അടുത്ത ചോദ്യം</button>
+        </div>
+        <button class="submit-btn" onclick="confirmSubmit()">എക്സാം സബ്മിറ്റ് ചെയ്യുക</button>
+        <div class="palette-container">
+            <div class="palette-title">ചോദ്യങ്ങളുടെ പട്ടിക (ക്ലിക്ക് ചെയ്ത് നേരിട്ട് പോകാം):</div>
+            <div class="palette-grid" id="paletteGrid"></div>
+        </div>
+    </div>
+
+    <div class="score-box" id="scoreBox">
+        <h2>എക്സാം റിസൾട്ട്</h2>
+        <h3 id="finalScoreText" style="color: #2c3e50;"></h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <button style="background-color: #475569; flex: 1;" onclick="filterReview('all')">എല്ലാം കാണുക</button>
+            <button style="background-color: #22c55e; flex: 1;" onclick="filterReview('correct')">ശരിയായവ</button>
+            <button style="background-color: #ef4444; flex: 1;" onclick="filterReview('wrong')">തെറ്റായവ</button>
+            <button style="background-color: #f59e0b; flex: 1;" onclick="filterReview('skipped')">വിട്ടുപോയവ</button>
+        </div>
+        
+        <div id="reviewContainer" style="max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 15px;"></div>
+        
+        <div class="retry-options">
+            <button class="start-btn" onclick="retryExam('all')" style="font-size: 15px; background-color: #2563eb;">🔄 മുഴുവൻ ചോദ്യങ്ങളും വീണ്ടും</button>
+            <button class="start-btn" onclick="retryExam('wrong')" style="font-size: 15px; background-color: #ef4444;">❌ തെറ്റായവ മാത്രം</button>
+            <button class="start-btn" onclick="retryExam('skipped')" style="font-size: 15px; background-color: #f59e0b;">⏳ വിട്ടുപോയവ മാത്രം</button>
+            <button class="start-btn" onclick="retryExam('wrong_skipped')" style="font-size: 15px; background-color: #7c3aed;">⚠️ തെറ്റും വിട്ടുപോയവയും</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const originalQuestions = [
+        {
+            "q": "ശരിയായ വാക്യം തിരഞ്ഞെടുക്കുക.",
+            "options": ["ഓരോരുത്തർക്കും ഓരോ പുസ്തകം കൊടുക്കണം", "ഓരോരുത്തർക്കും പ്രത്യേകമായി ഓരോ പുസ്തകം കൊടുക്കണം"],
+            "answer": 0
+        },
+        {
+            "q": "'അമേരിക്കൻ പ്രസിഡന്റ്റ് സ്വന്തം പത്നിയോടൊപ്പം ഇന്ത്യയിൽ എത്തിച്ചേർന്നു'. വാക്യം ശരിയാകാൻ ഒഴിവാക്കേണ്ട പദമേത്?",
+            "options": ["അമേരിക്കൻ പ്രസിഡന്റ്റ് പത്നിയോടൊപ്പം ഇന്ത്യയിൽ എത്തിച്ചേർന്നു.", "അമേരിക്കൻ പ്രസിഡന്റ്റ് സ്വന്തം പത്നിയോടൊപ്പം ഇന്ത്യയിൽ എത്തിച്ചേർന്നു."],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം തിരഞ്ഞെടുത്ത് എഴുതുക.",
+            "options": ["കൈക്കൂലി വാങ്ങുവാനും ആദർശം പ്രസംഗിക്കുവാനും ഇന്നത്തെ നേതാക്കന്മാർക്ക് മടിയില്ല.", "കൈക്കൂലി വാങ്ങാനും ആദർശം പ്രസംഗിക്കുകയും ചെയ്യാൻ ഇന്നത്തെ നേതാക്കന്മാർക്ക് മടിയില്ല."],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം തിരഞ്ഞെടുത്ത് എഴുതുക.",
+            "options": ["രണ്ടു കുതിരകളെ കെട്ടിയ വണ്ടിയിൽ നാലു ഭടന്മാർ കയറി വന്നു.", "രണ്ടു കുതിരകളെ കെട്ടിയ വണ്ടിയിൽ നാലു ഭടൻ കയറി വന്നു."],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം കണ്ടെത്തിയെഴുതുക:",
+            "options": ["ഗത്യന്തരമില്ലാതെയായപ്പോൾ ലീലയ്ക്ക് വീട് വിൽക്കേണ്ടി വന്നു", "മറ്റു ഗത്യന്തരമില്ലാതെയായപ്പോൾ ലീലയ്ക്ക് വീട് വിൽക്കേണ്ടി വന്നു"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യമേത്?",
+            "options": ["ഹൃദയത്തിന്റെ ഭാഷയിൽ സ്വാഗതം ചെയ്യുന്നു", "ഹൃദയത്തിന്റെ ഭാഷയിൽ ഹാർദ്ദമായി സ്വാഗതം ചെയ്യുന്നു"],
+            "answer": 0
+        },
+        {
+            "q": "തന്നിരിക്കുന്ന വാക്യത്തിൽ തെറ്റായ ഭാഗം ഏത്? <br>എല്ലാ മാസംതോറും നിശ്ചിത തുക ബാങ്കിൽ നിക്ഷേപിക്കാൻ അയാൾ ശ്രദ്ധിച്ചു",
+            "options": ["എല്ലാ മാസംതോറും", "നിശ്ചിത തുക"],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യങ്ങൾ / വാക്യം തെരഞ്ഞെടുക്കുക:<br>i) സത്യം പറയുക എന്നത് ആവശ്യമാണ്<br>ii) സ്വഭാഷയെ ദുഷിപ്പിക്കാതിരിക്കേണ്ടത് നമ്മുടെ കടമയാണ്<br>iii) നിത്യവും വ്യായാമം ചെയ്യണമെന്നുള്ളത് അത്യാവശ്യമാണ്",
+            "options": ["i, ii, iii എന്നിവ ശരിയാണ്", "i, iii മാത്രം ശരിയാണ്"],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം തെരഞ്ഞെടുക്കുക.",
+            "options": ["അന്യരുടെ കുറ്റം പരസ്യമായി പറയുന്നത് നല്ല നയമല്ലെന്ന കാര്യം എപ്പോഴും ഓർക്കണം", "അന്യരുടെ കുറ്റം പരസ്യമായി വെട്ടിത്തുറന്ന് പറയുന്നത് നല്ല നയമല്ലെന്ന കാര്യം എപ്പോഴും ഓർക്കണം"],
+            "answer": 0
+        },
+        {
+            "q": "വാക്യശുദ്ധി ഉള്ളത് തിരഞ്ഞെടുക്കുക:",
+            "options": ["കുറഞ്ഞത് പതിനായിരത്തോളം പേരെങ്കിലും സമ്മേളനത്തിൽ പങ്കെടുത്തു കാണും", "ഏകദേശം പതിനായിരത്തോളം പേരെങ്കിലും സമ്മേളനത്തിൽ പങ്കെടുത്തു കാണും"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യം ഏത്?",
+            "options": ["പോലീസുകാർ പിടിച്ച കള്ളനെ കോടതിയിൽ ഹാജരാക്കി", "കള്ളനെ പിടിച്ച പോലീസുകാർ കോടതിയിൽ ഹാജരാക്കി"],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയല്ലാത്ത പ്രയോഗം ഏത്?",
+            "options": ["അതുകൊണ്ടാണ് ഞാൻ ഇങ്ങനെ അഭിപ്രായപ്പെടാൻ കാരണം", "അതാണ് ഞാൻ ഇങ്ങനെ അഭിപ്രായപ്പെടുന്നത്"],
+            "answer": 0
+        },
+        {
+            "q": "തെറ്റായ പ്രയോഗമേത്?",
+            "options": ["ഭയങ്കര ഫലപ്രദമായ മരുന്ന്", "അതിഫലപ്രദമായ മരുന്ന്"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യമേത്?",
+            "options": ["ജ്യേഷ്ഠൻ ശ്രീരാമനും അനുജൻ ലക്ഷ്മണനും ആണ്", "ശ്രീരാമൻ ജ്യേഷ്ഠനും അനുജൻ ലക്ഷ്മണനും ആണ്"],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം ഏത്?",
+            "options": ["എന്റെ ഒരു സഹപ്രവർത്തകനെ യാത്രാമദ്ധ്യേ കണ്ടുമുട്ടി", "എന്റെ കൂടെ ജോലി ചെയ്യുന്ന ഒരു സഹപ്രവർത്തകനെ യാത്രാമദ്ധ്യേ കണ്ടുമുട്ടി"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ നിന്ന് ശരിയായ വാക്യം തെരഞ്ഞെടുത്തെഴുതുക.",
+            "options": ["എനിക്ക് പത്തു തേങ്ങ വേണം.", "എനിക്ക് പത്തു തേങ്ങകൾ വേണം"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യം ഏത്?",
+            "options": ["നമ്മുടെ നാട്ടിൽ എല്ലായിടത്തും അഴിമതിയാണ്", "നമ്മുടെ നാട്ടിൽ എല്ലായിടത്തും സർവ്വത്ര അഴിമതിയാണ്"],
+            "answer": 0
+        },
+        {
+            "q": "‘ഇരുട്ടത്ത് കണ്ണ് കാണാൻ പ്രയാസമാണ്' - എന്ന വാക്യത്തിന്റെ ശരിയായ രൂപം താഴെ കൊടുക്കുന്നവയിൽ നിന്നും തിരഞ്ഞെടുക്കുക.",
+            "options": ["പ്രയാസമാണ് ഇരുട്ടത്ത് കാണാൻ", "കണ്ണ് ഇരുട്ടത്ത് കാണാൻ പ്രയാസമാണ്."],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായത് തിരഞ്ഞെടുക്കുക:",
+            "options": ["മഴ പെയ്തതോടെ ദുഷ്കരമായ യാത്ര ചെയ്യേണ്ടി വന്നു", "മഴ പെയ്തതോടെ ദുഷ്കരം പിടിച്ച യാത്ര ചെയ്യേണ്ടി വന്നു"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യമേത്?",
+            "options": ["പാടുന്നത് അവൾക്കും കേൾക്കാം", "പാടുന്നത് അവൾക്കും കൂടി കേൾക്കാം"],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യം ഏത്?",
+            "options": ["അവർ അമ്പലത്തിന് പ്രദക്ഷിണം വച്ചു", "അവർ അമ്പലത്തിന് ചുറ്റും പ്രദക്ഷിണം വച്ചു"],
+            "answer": 0
+        },
+        {
+            "q": "ശരിയായ വാക്യം ഏത്?<br>1. ഈ പാഠത്തിലെ ചില വാക്കുകൾക്ക് താഴെ അടിവരയിട്ടിരിക്കുന്നത് ശ്രദ്ധിക്കുക.<br>2. ഈ പാഠത്തിലെ ചില വാക്കുകൾക്ക് അടിവരയിട്ടിരിക്കുന്നത് ശ്രദ്ധിക്കുക",
+            "options": ["ഈ പാഠത്തിലെ ചില വാക്കുകൾക്ക് അടിവരയിട്ടിരിക്കുന്നത് ശ്രദ്ധിക്കുക", "ഈ പാഠത്തിലെ ചില വാക്കുകൾക്ക് താഴെ അടിവരയിട്ടിരിക്കുന്നത് ശ്രദ്ധിക്കുക."],
+            "answer": 0
+        },
+        {
+            "q": "ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ശരിയായ വാക്യമേത്?",
+            "options": ["അവൾ മരിക്കുമ്പോൾ 40 വയസ്സ് കഴിഞ്ഞിരുന്നു", "അവൾ മരിക്കുമ്പോൾ അവൾക്ക് 40 വയസ്സ് കഴിഞ്ഞിരുന്നു"],
+            "answer": 0
+        },
+        {
+            "q": "ലോകത്തെ മുഴുവൻ കണ്ണീരിലാഴ്ത്തിക്കൊണ്ട് എൺപതുകൊല്ലം നീണ്ടുനിന്ന ആ ജീവിതം സമാപിച്ചു. ഈ വാക്യം ശരിയായി തിരുത്തിയെഴുതുമ്പോൾ:<br>1. എൺപതുകൊല്ലം നീണ്ടുനിന്ന ആ ജീവിതം ലോകത്തെ മുഴുവൻ കണ്ണീരിലാഴ്ത്തിക്കൊണ്ടു സമാപിച്ചു.<br>2. മുഴുവൻ ലോകത്തെയും എൺപതുകൊല്ലം കണ്ണീരിലാഴ്ത്തി നീണ്ടുനിന്ന ആ ജീവിതം സമാപിച്ചു<br>3. ലോകത്തെ മുഴുവൻ കണ്ണീരിലാഴ്ത്തിക്കൊണ്ട്, എൺപതുകൊല്ലം നീണ്ടുനിന്ന ആ ജീവിതം സമാപിച്ചു<br>4. എൺപതുകൊല്ലം ലോകത്തെ മുഴുവൻ കണ്ണീരിലാഴ്ത്തിയ ആ ജീവിതം സമാപിച്ചു<br>മേൽപ്പറഞ്ഞ വാക്യങ്ങളിൽ തെറ്റില്ലാത്ത വാക്യങ്ങൾ ഏതെല്ലാം?",
+            "options": ["1, 3 എന്നിവ", "2 മാത്രം"],
+            "answer": 0
+        },
+        {
+            "q": "മഹാപണ്ഡിതനായ കേരളപാണിനിയും ഞാനും തമ്മിൽ അജഗജാന്തര വ്യത്യാസമുണ്ട് - ഈ വാക്യം ശരിയായി എഴുതുക :",
+            "options": ["ഞാനും മഹാപണ്ഡിതനായ കേരളപാണിനിയും തമ്മിൽ അജഗജാന്തരമുണ്ട്.", "മഹാപണ്ഡിതനായ കേരളപാണിനിയും ഞാനും തമ്മിൽ അജഗജാന്തരമുണ്ട്."],
+            "answer": 0
+        }
+    ];
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let totalTimer;
+    let totalSecondsLeft = 0;
+    let userAnswers = [];
+    let bookmarks = [];
+
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function startExam(questionSource) {
+        questions = shuffleArray(questionSource);
+        userAnswers = new Array(questions.length).fill(null);
+        bookmarks = new Array(questions.length).fill(false);
+        totalSecondsLeft = questions.length * 30;
+        
+        document.getElementById('setupSection').style.display = 'none';
+        document.getElementById('scoreBox').style.display = 'none';
+        document.getElementById('quizBox').style.display = 'block';
+        
+        buildPalette();
+        loadQuestion();
+        if (totalTimer) clearInterval(totalTimer);
+        startTotalTimer();
+        initGlobalSwipeGestures();
+    }
+
+    function startTotalTimer() {
+        totalTimer = setInterval(() => {
+            if (totalSecondsLeft <= 0) {
+                clearInterval(totalTimer);
+                alert("സമയം കഴിഞ്ഞിരിക്കുന്നു! എക്സാം ഓട്ടോമാറ്റിക്കായി സബ്മിറ്റ് ചെയ്യുന്നു.");
+                showScore();
+                return;
+            }
+            totalSecondsLeft--;
+            let minutes = Math.floor(totalSecondsLeft / 60);
+            let seconds = totalSecondsLeft % 60;
+            document.getElementById('timeLeft').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
+    function buildPalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.innerHTML = '';
+        questions.forEach((q, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'palette-btn';
+            btn.id = `palette-${i}`;
+            btn.innerText = i + 1;
+            btn.onclick = () => goToQuestion(i);
+            grid.appendChild(btn);
+        });
+        updatePalette();
+    }
+
+    function updatePalette() {
+        questions.forEach((q, i) => {
+            const btn = document.getElementById(`palette-${i}`);
+            if (!btn) return;
+            
+            btn.className = 'palette-btn';
+            if (i === currentQuestionIndex) {
+                btn.classList.add('current');
+            }
+            if (bookmarks[i]) {
+                btn.classList.add('bookmarked');
+            } else if (userAnswers[i] !== null) {
+                btn.classList.add('answered');
+            }
+        });
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex < 0) currentQuestionIndex = 0;
+        if (currentQuestionIndex >= questions.length) currentQuestionIndex = questions.length - 1;
+        const qObj = questions[currentQuestionIndex];
+        document.getElementById('questionIndicator').innerText = `ചോദ്യം ${currentQuestionIndex + 1} / ${questions.length}`;
+        document.getElementById('questionText').innerHTML = `${currentQuestionIndex + 1}. ${qObj.q}`;
+        
+        const optContainer = document.getElementById('optionsContainer');
+        optContainer.innerHTML = '';
+        qObj.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            if (userAnswers[currentQuestionIndex] === index) {
+                btn.classList.add('selected');
+            }
+            btn.innerHTML = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optContainer.appendChild(btn);
+        });
+        const bmBtn = document.getElementById('bookmarkBtn');
+        if (bookmarks[currentQuestionIndex]) {
+            bmBtn.innerText = "⭐ ബുക്ക്മാർക്ക് മാറ്റുക (Remove)";
+            bmBtn.classList.add('bookmarked');
+        } else {
+            bmBtn.innerText = "⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)";
+            bmBtn.classList.remove('bookmarked');
+        }
+        updatePalette();
+    }
+
+    function selectOption(index, btn) {
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        userAnswers[currentQuestionIndex] = index;
+        updatePalette();
+    }
+
+    function toggleBookmark() {
+        bookmarks[currentQuestionIndex] = !bookmarks[currentQuestionIndex];
+        loadQuestion();
+    }
+
+    function goToQuestion(index) {
+        currentQuestionIndex = index;
+        loadQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        }
+    }
+
+    function initGlobalSwipeGestures() {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            let distance = touchEndX - touchStartX;
+            
+            if (Math.abs(distance) < minSwipeDistance) return;
+
+            if (document.getElementById('quizBox').style.display === 'block') {
+                if (distance < 0) {
+                    nextQuestion();
+                } else {
+                    prevQuestion();
+                }
+            }
+        }, {passive: true});
+    }
+
+    function confirmSubmit() {
+        if (confirm("എക്സാം സബ്മിറ്റ് ചെയ്യണമെന്ന് ഉറപ്പാണോ?")) {
+            clearInterval(totalTimer);
+            showScore();
+        }
+    }
+
+    function calculateResults() {
+        let correctCount = 0;
+        let wrongCount = 0;
+        let skippedCount = 0;
+        questions.forEach((q, i) => {
+            if (userAnswers[i] === null) {
+                skippedCount++;
+            } else if (userAnswers[i] === q.answer) {
+                correctCount++;
+            } else {
+                wrongCount++;
+            }
+        });
+        let totalMarks = (correctCount * 1) - (wrongCount * 0.33);
+        return { correctCount, wrongCount, skippedCount, totalMarks };
+    }
+
+    function showScore() {
+        clearInterval(totalTimer);
+        document.getElementById('quizBox').style.display = 'none';
+        document.getElementById('scoreBox').style.display = 'block';
+        
+        const res = calculateResults();
+        document.getElementById('finalScoreText').innerHTML = `
+            ശരി ഉത്തരങ്ങൾ: ${res.correctCount} | തെറ്റായവ: ${res.wrongCount} | അറ്റൻഡ് ചെയ്യാത്തവ: ${res.skippedCount}<br>
+            <span style="font-size: 20px; color: #27ae60;">ആകെ സ്കോർ: ${res.totalMarks.toFixed(2)} / ${questions.length}</span>
+        `;
+        filterReview('all');
+    }
+
+    function filterReview(filterType) {
+        const container = document.getElementById('reviewContainer');
+        container.innerHTML = '';
+        questions.forEach((q, i) => {
+            const userAns = userAnswers[i];
+            const correctAns = q.answer;
+            
+            let status = 'skipped';
+            if (userAns !== null) {
+                status = (userAns === correctAns) ? 'correct' : 'wrong';
+            }
+            if (filterType !== 'all' && filterType !== status) return;
+            const card = document.createElement('div');
+            card.className = `review-card ${status}`;
+            
+            let userText = userAns !== null ? q.options[userAns] : '<span style="color:#f39c12">അറ്റൻഡ് ചെയ്തില്ല</span>';
+            let correctText = q.options[correctAns];
+            card.innerHTML = `
+                <b>ചോദ്യം ${i + 1}:</b> ${q.q}<br><br>
+                <b>താങ്കൾ നൽകിയ ഉത്തരം:</b> ${userText}<br>
+                <b>ശരിയായ ഉത്തരം:</b> <span style="color: #27ae60;">${correctText}</span>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function retryExam(type) {
+        let selectedQuestions = [];
+
+        if (type === 'all') {
+            selectedQuestions = originalQuestions;
+        } else {
+            questions.forEach((q, i) => {
+                const userAns = userAnswers[i];
+                const correctAns = q.answer;
+                let isWrong = (userAns !== null && userAns !== correctAns);
+                let isSkipped = (userAns === null);
+
+                if (type === 'wrong' && isWrong) {
+                    selectedQuestions.push(q);
+                } else if (type === 'skipped' && isSkipped) {
+                    selectedQuestions.push(q);
+                } else if (type === 'wrong_skipped' && (isWrong || isSkipped)) {
+                    selectedQuestions.push(q);
+                }
+            });
+        }
+
+        if (selectedQuestions.length === 0) {
+            alert("ഈ വിഭാഗത്തിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല!");
+            return;
+        }
+
+        currentQuestionIndex = 0;
+        startExam(selectedQuestions);
+    }
+</script>
+</body>
+</html>

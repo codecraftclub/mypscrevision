@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1857 സമരം - ഫ്ലാഷ് കാർഡ് റിവിഷൻ</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 3px;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .flashcard-wrapper {
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.4s ease, opacity 0.3s ease;
+            cursor: pointer;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard.slide-left {
+            transform: translateX(-120px) rotate(-12deg);
+            opacity: 0;
+        }
+
+        .flashcard.slide-right {
+            transform: translateX(120px) rotate(12deg);
+            opacity: 0;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            border-radius: 14px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: #eef2ff;
+            color: #312e81;
+            border-color: #c7d2fe;
+        }
+
+        .card-face h3 {
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .card-face p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        /* Bottom Action Buttons (Red & Green) */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 12px;
+            font-size: 1.1rem;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-red {
+            background-color: var(--danger-color);
+        }
+
+        .btn-green {
+            background-color: var(--success-color);
+        }
+
+        .instructions {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .score-box {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .score-item {
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .score-item div:first-child {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .score-item div:last-child {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Flashcard App Screen -->
+        <div id="app-screen" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="header">
+                <h1>1857 ലെ കലാപം - ഫ്ലാഷ് കാർഡുകൾ-1</h1>
+                <div class="progress-text">കാർഡ് <span id="current-card">1</span> / <span id="total-cards">0</span></div>
+            </div>
+
+            <div class="flashcard-wrapper" id="swipe-area">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="card-face card-front">
+                        <h3 id="card-question">ലോഡ് ആകുന്നു...</h3>
+                        <span class="hint">(ഉത്തരം കാണാൻ കാർഡിൽ തൊടുക)</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <h3>ഉത്തരം:</h3>
+                        <p id="card-answer">ഉത്തരം ഇവിടെ വരുന്നു...</p>
+                        <span class="hint">(മറുവശത്തേക്ക് തിരിക്കാൻ വീണ്ടും തൊടുക)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clear Action Buttons below the card -->
+            <div class="action-buttons">
+                <button class="action-btn btn-red" onclick="markCard('unlearned')">❌ ഓർമ്മയില്ല</button>
+                <button class="action-btn btn-green" onclick="markCard('learned')">✔️ അറിയാം</button>
+            </div>
+
+            <div class="instructions">
+                <p>കാർഡിൽ തൊട്ട് ഉത്തരം നോക്കാം. മുകളിലെ ബട്ടണുകൾ ഉപയോഗിക്കുകയോ സ്ക്രീനിൽ സ്വൈപ്പ് ചെയ്യുകയോ ചെയ്യാം.</p>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <h2>റിവിഷൻ പൂർത്തിയായി!</h2>
+            <p>നിങ്ങളുടെ പ്രകടനത്തിന്റെ സംഗ്രഹം താഴെ നൽകുന്നു:</p>
+            <div class="score-box">
+                <div class="score-item">
+                    <div>പഠിച്ചവ (Green)</div>
+                    <div id="res-learned" style="color: var(--success-color);">0</div>
+                </div>
+                <div class="score-item">
+                    <div>പഠിക്കാത്തവ (Red)</div>
+                    <div id="res-unlearned" style="color: var(--danger-color);">0</div>
+                </div>
+            </div>
+            <button class="btn" id="retry-btn" onclick="retryUnlearned()" style="display: none;">പഠിക്കാത്തവ മാത്രം വീണ്ടും പഠിക്കുക</button>
+            <button class="btn" onclick="restartAll()" style="background: #6b7280;">എല്ലാം ആദ്യമേ മുതൽ റിവിഷൻ ചെയ്യുക</button>
+        </div>
+    </div>
+
+    <script>
+        const cardsData = [
+            { q: "1857-ലെ ഒന്നാം സ്വാതന്ത്ര്യ സമരം ഔദ്യോഗികമായി ആദ്യം ആരംഭിച്ച തീയതിയും സ്ഥലവും ഏത്?", a: "1857 മെയ് 10, മീററ്റ് (ഉത്തർപ്രദേശ്)." },
+            { q: "'ശിപായി' എന്ന പദത്തിന്റെ ഉത്ഭവം ഏത് ഭാഷയിൽ നിന്നാണ്? അർത്ഥം എന്ത്?", a: "'സിപ' (Sipa) എന്ന പേർഷ്യൻ വാക്കിൽ നിന്ന്. അർത്ഥം: സൈന്യം." },
+            { q: "'Mutiny' എന്നത് എന്തിനെയാണ് സൂചിപ്പിക്കുന്നത്?", a: "സൈന്യത്തിനകത്തെ നിയമങ്ങളും ചട്ടങ്ങളും സംഘടിതമായി ലംഘിക്കുന്നതിനെ." },
+            { q: "'Revolt' എന്നത് എന്തിനെയാണ് സൂചിപ്പിക്കുന്നത്?", a: "സ്ഥാപിതമായ അധികാരത്തിന്റെയും ശക്തിക്കുമെതിരെയുള്ള ജനങ്ങളുടെ (കർഷകർ, ജന്മിമാർ തുടങ്ങിയവർ) കലാപത്തെ." },
+            { q: "'ബെൽ ഓഫ് ആംസ്' (Ball of Arms) എന്നാൽ എന്ത്?", a: "ആയുധങ്ങൾ സൂക്ഷിച്ചു വെച്ചിരുന്ന ഒരു സംഭരണശാല." },
+            { q: "വിദേശികളെ വിശേഷിപ്പിക്കാൻ ഹിന്ദിയിലും ഉറുദുവിലും ഉപയോഗിച്ച 'ഫിരൻഗി' (Firangi) എന്ന പദം ഏത് ഭാഷയിൽ നിന്നുള്ളതാണ്?", a: "പേർഷ്യൻ ഭാഷയിൽ നിന്ന്." },
+            { q: "'ഫിരൻഗി രാജ്' (Firangi Raj) എന്നാൽ എന്ത്?", a: "വിദേശ ഭരണത്തെ സൂചിപ്പിക്കുന്ന പദം." },
+            { q: "1857 ലെ കലാപം ഏതൊക്കെ പ്രദേശങ്ങൾ വരെ വ്യാപിച്ചിരുന്നു?", a: "വടക്ക് പഞ്ചാബ് മുതൽ തെക്ക് നർമ്മദ വരെയും, കിഴക്ക് ബീഹാർ മുതൽ പടിഞ്ഞാറ് രാജപുത്താന വരെയും." },
+            { q: "ഡൽഹൗസി പ്രഭു ദത്തവകാശ നിരോധന നിയമം (Doctrine of Lapse) നടപ്പിലാക്കിയ വർഷം ഏത്?", a: "1848." },
+            { q: "ദത്തവകാശ നിരോധന നിയമ പ്രകാരം ആദ്യമായി കൂട്ടിച്ചേർക്കപ്പെട്ട നാട്ടുരാജ്യം ഏത്? വർഷം?", a: "സത്താറ (1848)." },
+            { q: "ദത്തവകാശ നിരോധന നിയമ പ്രകാരം കൂട്ടിച്ചേർക്കപ്പെട്ട മറ്റ് പ്രധാന നാട്ടുരാജ്യങ്ങളും വർഷങ്ങളും ഏവ?", a: "ജയ്പൂർ (1849), സാമ്പൽപൂർ (1850), ഉദയ്പൂർ (1852), നാഗ്‌പൂർ (1853), ഝാൻസി (1854)." },
+            { q: "ദുർഭരണം ചുമത്തി ഔധ് ബ്രിട്ടീഷ് അധീനതയിൽ കൂട്ടിച്ചേർത്ത വർഷം ഏത്?", a: "1856." },
+            { q: "അവധ് മേൽ സൈനിക സഹായവ്യവസ്ഥ അടിച്ചേൽപ്പിച്ച വർഷം ഏത്?", a: "1801." },
+            { q: "\"ഒരു ദിവസം നമ്മുടെ വായിൽ വീഴാൻ പോകുന്ന ഒരു ചെറി\" എന്ന് ഔധിനെ വിശേഷിപ്പിച്ചത് ആര്?", a: "ഡൽഹൗസി പ്രഭു." },
+            { q: "അവധ് അറിയപ്പെട്ടിരുന്ന വിശേഷണം എന്ത്?", a: "ബംഗാൾ ആർമിയുടെ നഴ്സറി." },
+            { q: "ദുർഭരണത്തിന്റെ പേരിൽ അവധിൽ നിന്ന് നാടുകടത്തപ്പെട്ട നവാബ് ആര്?", a: "വാജിദ് അലി ഷാ." },
+            { q: "അവദിലെ താലൂക്ക്‌ദാർമാരെ നീക്കം ചെയ്യാൻ ബ്രിട്ടീഷുകാർ 1856-ൽ നടപ്പിലാക്കിയ വ്യവസ്ഥ ഏത്?", a: "സമ്മറി വ്യവസ്ഥ (Summary settlement) / താൽക്കാലിക വ്യവസ്ഥ." },
+            { q: "1857 ലെ വിപ്ലവത്തിലെ സൈനികരുടെ രഹസ്യ മുദ്രകൾ ഏവ?", a: "ചപ്പാത്തിയും ചുവന്ന താമരയും." },
+            { q: "കലാപകാരികളുടെ മുദ്രാവാക്യം എന്തായിരുന്നു?", a: "സംഘടിക്കുക, ഉണരുക, വിദേശികളെ പുറത്താക്കുക." },
+            { q: "ചപ്പാത്തി വഴി ആശയങ്ങൾ കൈമാറുന്ന രീതിക്ക് തുടക്കം കുറിച്ചത് ആര്?", a: "ഗുരു ദാസബാബ് (നാനാ സാഹിബിന്റെ ഗുരു)." },
+            { q: "മംഗൾ പാണ്ഡെയുടെ നേതൃത്വത്തിൽ ആദ്യത്തെ വെടിവെപ്പ് നടന്ന സ്ഥലം എവിടെ?", a: "ബാരക്‌പുർ (പശ്ചിമ ബംഗാൾ)." },
+            { q: "വിപ്ലവകാരികൾ ആദ്യം പിടിച്ചെടുത്ത പ്രദേശം ഏത്?", a: "ഡൽഹി (1857 മെയ് 12)." },
+            { q: "കലാപകാരികൾ ഇന്ത്യയുടെ ചക്രവർത്തിയായി പ്രഖ്യാപിച്ച മുഗൾ ചക്രവർത്തി ആര്?", a: "ബഹദൂർഷാ II (82-ാം വയസ്സിൽ)." },
+            { q: "ബഹദൂർഷാ സഫറുടെ വിലാപ വരികൾ എന്തായിരുന്നു?", a: "\"ജീവിതത്തിന്റെ പകൽ തീരാറായി... ജനിച്ച മണ്ണിൽ ലയിക്കാൻ ആറടി പോലും ലഭിക്കാത്ത സഫർ, നീ എത്ര നിർഭാഗ്യവാൻ\"." },
+            { q: "1857 ലെ വിപ്ലവത്തിലെ ആദ്യ രക്തസാക്ഷി ആര്?", a: "മംഗൾ പാണ്ഡെ." },
+            { q: "മംഗൾ പാണ്ഡെ വധിച്ച ബ്രിട്ടീഷ് ഉദ്യോഗസ്ഥൻ ആര്? തീയതി?", a: "അഡ്ജൂട്ടന്റ് ബോഗ് (1857 മാർച്ച് 29)." },
+            { q: "മംഗൾ പാണ്ഡെ വധിക്കാൻ ശ്രമിച്ച മറ്റൊരാൾ ആര്?", a: "ജെയിംസ് ഹ്യൂസൺ." },
+            { q: "മംഗൾ പാണ്ഡെയെ അറസ്റ്റ് ചെയ്യാൻ ഉത്തരവ് നൽകിയത് ആര്?", a: "ജോൺ ഹെയ്‌സി." },
+            { q: "മംഗൾ പാണ്ഡെയെ ബ്രിട്ടീഷുകാർ തൂക്കിക്കൊന്ന തീയതി?", a: "1857 ഏപ്രിൽ 8." },
+            { q: "1857 ലെ ഒന്നാം സ്വാതന്ത്ര്യ സമരം ഔദ്യോഗികമായി അടിച്ചമർത്തപ്പെട്ടത് എന്ന്?", a: "1858 ജൂലൈ 8." },
+            { q: "1857-ലെ കലാപകാലത്ത് ഇന്ത്യയുടെ ഗവർണർ ജനറൽ ആരായിരുന്നു?", a: "കാനിങ് പ്രഭു." },
+            { q: "കലാപം ആരംഭിക്കുമ്പോൾ ബ്രിട്ടീഷ് സൈന്യ തലവൻ ആരായിരുന്നു?", a: "ജനറൽ ആൻസൺ." },
+            { q: "കലാപം അവസാനിക്കുമ്പോൾ ബ്രിട്ടീഷ് സൈന്യ തലവൻ ആരായിരുന്നു?", a: "കോളിൻ ക്യാമ്പ്ബൈൽ." },
+            { q: "കലാപകാലത്ത് ബ്രിട്ടീഷ് പ്രധാനമന്ത്രിയും രാജ്ഞിയും ആരായിരുന്നു?", a: "പ്രധാനമന്ത്രി: പാൽമേഴ്‌സ്‌റ്റൺ പ്രഭു; രാജ്ഞി: വിക്ടോറിയ രാജ്ഞി." },
+            { q: "കാൺപൂരിലെ കലാപത്തിന് നേതൃത്വം നൽകിയവർ ആരെല്ലാം?", a: "നാനാസാഹിബ്, താന്തിയാതോപ്പി." },
+            { q: "ഡൽഹിയിൽ കലാപം നയിച്ച പ്രമുഖർ ആര്?", a: "ഭക്തഖാൻ, ബഹദൂർഷാ II." },
+            { q: "ഝാൻസിയിലും ഗ്വാളിയോറിലും കലാപം നയിച്ച പ്രമുഖർ ആര്?", a: "റാണി ലക്ഷ്മിഭായ്, താന്തിയാതോപ്പി." },
+            { q: "ലഖ്നൗ, ഔധ്, ആഗ്ര എന്നിവിടങ്ങളിൽ കലാപം നയിച്ചത് ആര്?", a: "ബീഗം ഹസ്റത്ത് മഹൽ." },
+            { q: "ബിഹാർ, ജഗദീഷ്പൂർ, ആര എന്നിവിടങ്ങളിൽ കലാപം നയിച്ചത് ആര്?", a: "കൺവർ സിംഗ്." },
+            { q: "ഫൈസാബാദിൽ കലാപം നയിച്ചത് ആര്?", a: "മൗലവി അഹമ്മദുള്ള." },
+            { q: "മീററ്റിൽ കലാപം നയിച്ചത് ആര്?", a: "കദം സിങ്." },
+            { q: "അലഹബാദിൽ കലാപം നയിച്ചത് ആര്?", a: "ലിയാഖത് അലി." },
+            { q: "മഥുരയിൽ കലാപം നയിച്ചത് ആര്?", a: "ദേവി സിങ്." },
+            { q: "ഹരിയാനയിൽ കലാപം നയിച്ചത് ആര്?", a: "റാവു തുലാറാം." },
+            { q: "ആസാമിൽ കലാപം നയിച്ചത് ആര്?", a: "മണിറാം ദത്ത." },
+            { q: "ബറേലിയിലും റോഹിൽഖണ്ഡിലും കലാപം നയിച്ചത് ആര്?", a: "ഖാൻ ബഹദൂർഖാൻ." },
+            { q: "മാണ്ഡസോറിൽ കലാപം നയിച്ചത് ആര്?", a: "ഫിറോത്ഷാ." },
+            { q: "ഉത്തർപ്രദേശിലെ ബരൗട്ട് പർഗാനിയിൽ കലാപം നയിച്ചത് ആര്?", a: "ഷാ മൽ (Shah Mal)." },
+            { q: "ഛോട്ടാനാഗ്പൂരിലെ സിങ്ങ് ഭൂമിലെ കോൾ ഗോത്രവർഗ്ഗക്കാരുടെ കലാപം നയിച്ചത് ആര്?", a: "ഗോനു (Gonoo)." },
+            { q: "1857 ലെ കലാപം വ്യാപിക്കാത്ത പ്രധാന പ്രദേശങ്ങൾ ഏതൊക്കെ?", a: "പഞ്ചാബ്, ബോംബെ, മദ്രാസ്." },
+            { q: "ഡൽഹിയിൽ കലാപം അടിച്ചമർത്തിയ ബ്രിട്ടീഷ് ജനറൽമാർ ആര്?", a: "നിക്കോൾസൺ, ഹഡ്സൺ." },
+            { q: "കാൺപൂരിലും ലഖ്നൗവിലും ബറേലിയിലും കലാപം അടിച്ചമർത്തിയത് ആര്?", a: "കാംബെൽ (കോളിൻ ക്യാമ്പ്ബൈൽ)." },
+            { q: "ഝാൻസിയിൽ കലാപം അടിച്ചമർത്തിയത് ആര്?", a: "ഹ്യുഗ് റോസ്." },
+            { q: "ആര (ബിഹാർ) ഭാഗത്ത് കലാപം അടിച്ചമർത്തിയത് ആര്?", a: "വില്യം ടൈലർ." }
+        ];
+
+        let activeCards = [];
+        let currentIndex = 0;
+        let unlearnedCards = [];
+
+        const cardElement = document.getElementById('flashcard');
+        const questionElement = document.getElementById('card-question');
+        const answerElement = document.getElementById('card-answer');
+        const currentCardSpan = document.getElementById('current-card');
+        const totalCardsSpan = document.getElementById('total-cards');
+        
+        const appScreen = document.getElementById('app-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        // Fisher-Yates Shuffle Function to randomize cards order
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function loadCard() {
+            if (currentIndex < activeCards.length) {
+                cardElement.classList.remove('flipped', 'slide-left', 'slide-right');
+                questionElement.textContent = activeCards[currentIndex].q;
+                answerElement.textContent = activeCards[currentIndex].a;
+                currentCardSpan.textContent = currentIndex + 1;
+                totalCardsSpan.textContent = activeCards.length;
+            } else {
+                showResults();
+            }
+        }
+
+        function flipCard() {
+            cardElement.classList.toggle('flipped');
+        }
+
+        function markCard(status) {
+            if (status === 'unlearned') {
+                unlearnedCards.push(activeCards[currentIndex]);
+                cardElement.classList.add('slide-left');
+            } else {
+                cardElement.classList.add('slide-right');
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                loadCard();
+            }, 300);
+        }
+
+        function showResults() {
+            appScreen.style.display = 'none';
+            resultScreen.classList.add('active');
+
+            const learnedCount = activeCards.length - unlearnedCards.length;
+            document.getElementById('res-learned').textContent = learnedCount;
+            document.getElementById('res-unlearned').textContent = unlearnedCards.length;
+
+            const retryBtn = document.getElementById('retry-btn');
+            if (unlearnedCards.length > 0) {
+                retryBtn.style.display = 'block';
+            } else {
+                retryBtn.style.display = 'none';
+            }
+        }
+
+        function retryUnlearned() {
+            activeCards = [...unlearnedCards];
+            unlearnedCards = [];
+            currentIndex = 0;
+            resultScreen.classList.remove('active');
+            appScreen.style.display = 'flex';
+            loadCard();
+        }
+
+        function restartAll() {
+            // Shuffle cards every time the user restarts the full session
+            activeCards = shuffleArray(cardsData);
+            unlearnedCards = [];
+            currentIndex = 0;
+            resultScreen.classList.remove('active');
+            appScreen.style.display = 'flex';
+            loadCard();
+        }
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const swipeArea = document.getElementById('swipe-area');
+
+        swipeArea.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        swipeArea.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        let mouseStartX = 0;
+        swipeArea.addEventListener('mousedown', e => {
+            mouseStartX = e.clientX;
+        });
+
+        swipeArea.addEventListener('mouseup', e => {
+            let mouseEndX = e.clientX;
+            if (mouseStartX - mouseEndX > 50) {
+                markCard('unlearned');
+            } else if (mouseEndX - mouseStartX > 50) {
+                markCard('learned');
+            }
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                markCard('unlearned');
+            }
+            if (touchEndX > touchStartX + 50) {
+                markCard('learned');
+            }
+        }
+
+        // Initialize first card with shuffled data on page load
+        activeCards = shuffleArray(cardsData);
+        loadCard();
+    </script>
+</body>
+</html>

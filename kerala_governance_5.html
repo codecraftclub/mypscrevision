@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ് - കേരള സിവിൽ സർവീസ് ചട്ടങ്ങളും സംവിധാനങ്ങളും</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f6f9; color: #333; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 480px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; padding: 20px; position: relative; }
+        
+        /* Welcome Screen */
+        #welcomeScreen { text-align: center; padding: 30px 10px; }
+        #welcomeScreen h1 { font-size: 1.5rem; color: #1e293b; margin-bottom: 15px; line-height: 1.4; font-weight: 700; }
+        #welcomeScreen p { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+        .start-btn { background: #22c55e; color: white; border: none; padding: 14px 24px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; transition: background 0.2s; }
+        .start-btn:hover { background: #16a34a; }
+
+        /* Exam Screen Header */
+        .exam-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: bold; color: #b91c1c; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .timer-box { display: flex; align-items: center; gap: 8px; }
+        .pause-btn { background: #e2e8f0; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #334155; }
+        .pause-btn:hover { background: #cbd5e1; }
+
+        /* Question Palette Grid */
+        .palette-toggle { background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%; }
+        .palette-grid { display: none; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 150px; overflow-y: auto; }
+        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; border-radius: 4px; cursor: pointer; background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
+        .grid-item.answered { background: #22c55e; color: white; border-color: #16a34a; }
+        .grid-item.bookmarked { background: #f59e0b; color: white; border-color: #d97706; }
+        .grid-item.current { border: 2px solid #1e3a8a; }
+        
+        /* Question Section */
+        .q-title { font-size: 1.12rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        .option-box { border: 2px solid #cbd5e1; border-radius: 12px; padding: 14px; background: white; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; font-size: 0.95rem; color: #1e293b; font-weight: 500; }
+        .option-box.selected { border-color: #3b82f6; background: #eff6ff; }
+        .option-box:hover { border-color: #94a3b8; }
+
+        /* Swipe Hint */
+        .swipe-hint { text-align: center; font-size: 0.8rem; color: #64748b; margin: 15px 0; }
+
+        /* Action Buttons */
+        .action-btn { width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 0.95rem; border: none; cursor: pointer; margin-bottom: 10px; text-align: center; }
+        .bookmark-action { background: #f59e0b; color: white; }
+        .bookmark-action.bookmarked { background: #d97706; }
+        .submit-action { background: #d97706; color: white; }
+
+        /* Pause Overlay Modal */
+        .pause-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 10; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .pause-overlay h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .pause-overlay p { color: #64748b; margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* Result View */
+        #resultScreen { display: none; text-align: center; }
+        #resultScreen h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .result-summary { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95rem; color: #334155; line-height: 1.6; text-align: left; }
+        .retry-container { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .retry-btn { background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .retry-btn:hover { background: #2563eb; }
+
+        /* Review Section */
+        .review-filters { display: flex; gap: 5px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 10px; font-size: 0.8rem; font-weight: bold; border: 1px solid #cbd5e1; background: #e2e8f0; border-radius: 6px; cursor: pointer; }
+        .filter-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+        .review-list { text-align: left; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .review-item { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; }
+        .review-item.correct { background: #f0fdf4; border-color: #bbf7d0; }
+        .review-item.wrong { background: #fef2f2; border-color: #fecaca; }
+        .review-item.skipped { background: #f8fafc; border-color: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="appContainer">
+    
+    <!-- Pause Overlay Modal -->
+    <div class="pause-overlay" id="pauseOverlay">
+        <h2>എക്സാം പോസ് ചെയ്തിരിക്കുന്നു ⏸️</h2>
+        <p>ടൈമർ താൽക്കാലികമായി നിർത്തലാക്കിയിട്ടുണ്ട്. തുടരാൻ താഴെയുള്ള ബട്ടൺ അമർത്തുക.</p>
+        <button class="start-btn" onclick="resumeExam()">തുടരുക (Resume)</button>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <h1>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ്</h1>
+        <p>കേരള സിവിൽ സർവീസ് ചട്ടങ്ങളും സംവിധാനങ്ങളും<br><br>നെഗറ്റീവ് മാർക്ക്: ശരിക്ക് +1, തെറ്റിന് -0.33</p>
+        <button class="start-btn" onclick="startExam()">എക്സാം ആരംഭിക്കുക (Start Exam)</button>
+    </div>
+
+    <!-- Exam Screen -->
+    <div id="examScreen" style="display: none;">
+        <div class="exam-header">
+            <div id="qCounter">ചോദ്യം 1 / 58</div>
+            <div class="timer-box">
+                <span id="timerDisplay">സമയം ബാക്കി: 58:00</span>
+                <button class="pause-btn" id="pauseBtn" onclick="pauseExam()">Pause</button>
+            </div>
+        </div>
+
+        <button class="palette-toggle" onclick="togglePalette()">📊 ചോദ്യങ്ങളുടെ പാലറ്റ് കാണുക (Grid)</button>
+        <div class="palette-grid" id="paletteGrid"></div>
+
+        <div class="q-title" id="questionText">ചോദ്യം ഇവിടെ വരുന്നു...</div>
+        
+        <div class="options-container" id="optionsList"></div>
+
+        <div class="swipe-hint">💡 സ്ക്രീനിന്റെ എവിടെ സ്വൈപ്പ് ചെയ്താലും ചോദ്യങ്ങൾ മാറുന്നതാണ്</div>
+
+        <button class="action-btn bookmark-action" id="bookmarkBtn" onclick="toggleBookmark()">⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)</button>
+        
+        <button class="action-btn submit-action" onclick="submitExam()">എക്സാം സബ്മിറ്റ് ചെയ്യുക</button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="resultScreen">
+        <h2>പരീക്ഷ ഫലം (Result)</h2>
+        <div class="result-summary" id="resultSummaryText">ഫലം കണക്കാക്കുന്നു...</div>
+        
+        <div class="review-filters">
+            <button class="filter-btn active" onclick="filterReview('all')">എല്ലാം</button>
+            <button class="filter-btn" onclick="filterReview('correct')">ശരി</button>
+            <button class="filter-btn" onclick="filterReview('wrong')">തെറ്റ്</button>
+            <button class="filter-btn" onclick="filterReview('skipped')">വിട്ടുപോയവ</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+
+        <div class="retry-container">
+            <button class="retry-btn" onclick="retryQuiz('all')">മുഴുവൻ ചോദ്യങ്ങളും വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong')">തെറ്റായവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('skipped')">വിട്ടുപോയവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong_skipped')">തെറ്റും വിട്ടുപോയവയും മാത്രം വീണ്ടും ചെയ്യുക</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const allQuestionsData = [
+        /* ------------------ പുതിയ 19 ചോദ്യങ്ങൾ (Part 5 PDF) ------------------ */
+        { q: "KS&SSR, 1958 സംബന്ധിച്ച പ്രസ്താവനകൾ പരിഗണിക്കുക.<br>Statement - I: KS&SSR എന്നത് Kerala State and Subordinate Services Rules എന്നതിന്റെ ചുരുക്കപ്പേരാണ്.<br>Statement - II: KS&SSR, 1958 കേന്ദ്ര സർക്കാർ തയ്യാറാക്കിയ ചട്ടങ്ങളാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 0 },
+        { q: "KS&SSR രൂപീകരണത്തിന്റെ ഭരണഘടനാപരമായ അടിസ്ഥാനവുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: Article 309 പ്രകാരമാണ് KS&SSR ചട്ടങ്ങൾ നിർമ്മിച്ചിരിക്കുന്നത്.<br>Statement - II: KS&SSR ചട്ടങ്ങൾ നിർമ്മിച്ചത് കേരള ഗവർണർ / കേരള ഗവൺമെന്റാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iഉം IIഉം ശരി", "D) Iഉം IIഉം തെറ്റ്"], ans: 2 },
+        { q: "KS&SSR, 1958 സംബന്ധിച്ച് താഴെ നൽകിയിരിക്കുന്ന പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: KS&SSR നിലവിൽ വന്നത് 1958-ലാണ്.<br>Statement - II: KS&SSR സർക്കാർ ജീവനക്കാരുടെ നിയമന വ്യവസ്ഥകളും പ്രമോഷനും പ്രതിപാദിക്കുന്നു.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iഉം IIഉം ശരി", "D) Iഉം IIഉം തെറ്റ്"], ans: 2 },
+        { q: "KS&SSR, 1958 സംബന്ധിച്ച തെറ്റായ പ്രസ്താവന കണ്ടെത്തുക.", opts: ["A) Article 309 പ്രകാരമാണ് KS&SSR രൂപപ്പെടുത്തിയിരിക്കുന്നത്", "B) നിയമനം, പ്രമോഷൻ, സർവീസ് വ്യവസ്ഥകൾ KS&SSR-ൽ ഉൾപ്പെടുന്നു", "C) KS&SSR, 1958-ന് നിയമപരമായ അംഗീകാരം 1968-ലെ ആക്ട് നൽകുന്നു", "D) KS&SSR സ്വകാര്യ മേഖലയിലെ ജീവനക്കാർക്കും ബാധകമാണ്"], ans: 3 },
+        { q: "KSR, 1959 സംബന്ധിച്ച പ്രസ്താവനകൾ പരിഗണിക്കുക.<br>Statement - I: KSR എന്നത് Kerala Service Rules എന്നതിന്റെ ചുരുക്കപ്പേരാണ്.<br>Statement - II: KSR, 1959 കേന്ദ്ര സർക്കാർ തയ്യാറാക്കിയ ചട്ടങ്ങളാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 0 },
+        { q: "KSR, 1959 സംബന്ധിച്ച് താഴെ നൽകിയിരിക്കുന്ന പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: KSR നിലവിൽ വന്നത് 1959-ലാണ്.<br>Statement - II: ശമ്പളം, പെൻഷൻ, യാത്രപ്പടി, ലീവ് തുടങ്ങിയ കാര്യങ്ങൾ KSR നിയന്ത്രിക്കുന്നു.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 2 },
+        { q: "KSR-ന്റെ ഭാഗങ്ങളെക്കുറിച്ച് ശരിയായ ജോഡികൾ ഏത്?<br>A) Part-I -> Pay, Leave, Joining Time<br>B) Part-II -> Travelling Allowance<br>C) Part-III -> Pension<br>D) ALL", opts: ["A) Part-I മാത്രം", "B) Part-II മാത്രം", "C) Part-III മാത്രം", "D) ALL"], ans: 3 },
+        { q: "KSR സംബന്ധിച്ച് തെറ്റായ പ്രസ്താവന കണ്ടെത്തുക.", opts: ["A) Article 309 പ്രകാരമാണ് KSR നിർമ്മിച്ചത്", "B) KSR, 1959 സർക്കാർ ജീവനക്കാരുടെ സർവീസ് ആനുകൂല്യങ്ങളെ നിയന്ത്രിക്കുന്നു", "C) KSR സ്വകാര്യ മേഖല ജീവനക്കാർക്കും ബാധകമാണ്", "D) KSR-ന് 1968-ലെ ആക്ട് നിയമപരമായ അംഗീകാരം നൽകുന്നു"], ans: 2 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ ഭരണഘടനാപരമായ അടിസ്ഥാനവുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: Article 309 പ്രകാരമാണ് KCS (CCA) Rules, 1960 നിർമ്മിച്ചിരിക്കുന്നത്.<br>Statement - II: ഈ ചട്ടങ്ങൾ നിർമ്മിച്ചത് കേരള ഗവർണ്ണർ / കേരള ഗവൺമെന്റാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 2 },
+        { q: "KCS (CCA) Rules, 1960-ൽ ഉൾപ്പെട്ട Schedules സംബന്ധിച്ച പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: KCS (CCA) Rules-ൽ 2 Schedules ഉണ്ട്.<br>Statement - II: Schedule I - State Service, Schedule II - Subordinate Service എന്നിങ്ങനെയാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 2 },
+        { q: "KCS (CCA) Rules-ലെ PARTS-നും വിഷയത്തിനും ശരിയായ ജോഡികൾ ഏത്?<br>A) Part II -> Classification<br>B) Part III -> APPOINTING AUTHORITIES<br>C) Part V -> Discipline<br>D) ALL", opts: ["A) Part II മാത്രം", "B) Part III മാത്രം", "C) Part V മാത്രം", "D) ALL"], ans: 3 },
+        { q: "കേരള ഗവൺമെന്റ് സെർവന്റ്സ് കണ്ടക്റ്റ് റൂൾസ്, 1960 സംബന്ധിച്ച പ്രസ്താവനകൾ പരിഗണിക്കുക.<br>Statement - I: കേരള സിവിൽ സർവീസിലെ ജീവനക്കാരുടെ പെരുമാറ്റ ചട്ടങ്ങളാണ്.<br>Statement - II: ഈ ചട്ടങ്ങൾ സ്വകാര്യ മേഖലയിലെ ജീവനക്കാർക്കും ബാധകമാണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 0 },
+        { q: "Kerala Government Servants' Conduct Rules, 1960 സംബന്ധിച്ച് താഴെ നൽകിയിരിക്കുന്ന പ്രസ്താവനകൾ പരിശോധിക്കുക.<br>Statement - I: Kerala Government Servants' Conduct Rules നിലവിൽ വന്നത് 1960-ലാണ്.<br>Statement - II: സർക്കാർ ജീവനക്കാരുടെ ഔദ്യോഗികവും സ്വകാര്യവുമായ പെരുമാറ്റം ഈ ചട്ടങ്ങൾ നിയന്ത്രിക്കുന്നു.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 2 },
+        { q: "SPARK സംബന്ധിച്ച് ശരിയായ പ്രസ്താവന ഏത്?", opts: ["A) SPARK = Service and Payroll Administrative Repository for Kerala", "B) SPARK = State Payroll Accounting Resource of Kerala", "C) SPARK = Service Pension Account for Revenue of Kerala", "D) SPARK = Software Project for Accounting Resource of Kerala"], ans: 0 },
+        { q: "SPARK സംബന്ധിച്ച തെറ്റായ പ്രസ്താവന കണ്ടെത്തുക.", opts: ["A) Treasury system-നോട് SPARK ബന്ധിപ്പിച്ചിരിക്കുന്നു", "B) Government employees-ന്റെ ശമ്പളം SPARK വഴിയാണ് നൽകുന്നത്", "C) Private sector ജീവനക്കാർക്കും SPARK ബാധകമാണ്", "D) Salary & Service matters സംബന്ധിച്ച വിവരങ്ങൾ SPARK കൈകാര്യം ചെയ്യുന്നു"], ans: 2 },
+        { q: "MEDISEP സംബന്ധിച്ച പ്രസ്താവനകൾ പരിഗണിക്കുക.<br>Statement - I: MEDISEP കേരള സർക്കാർ ജീവനക്കാരുടെയും പെൻഷൻധാരികളുടെയും ആരോഗ്യ ഇൻഷുറൻസ് പദ്ധതിയാണ്.<br>Statement - II: MEDISEP ഒരു കേന്ദ്ര സർക്കാർ ആരോഗ്യ പദ്ധതി ആണ്.", opts: ["A) I മാത്രം ശരി", "B) II മാത്രം ശരി", "C) Iയും IIയും ശരി", "D) Iയും IIയും തെറ്റ്"], ans: 0 },
+        { q: "MEDISEP എന്നതിന്റെ പൂർണ്ണരൂപം ഏത്?", opts: ["A) Medical Insurance for State Employees and Pensioners", "B) Medical Scheme for Employees and Public", "C) Medical Insurance for Service Employees Program", "D) Medical Enrollment Scheme for Pension"], ans: 0 },
+        { q: "കേരളത്തിൽ നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) [പങ്കാളിത്വ പെൻഷൻ] നടപ്പാക്കിയത് എപ്പോഴാണ്?", opts: ["A) 01/04/2013", "B) 01/04/2012", "C) 01/04/2014", "D) 01/04/2011"], ans: 0 },
+        { q: "കേരളത്തിൽ നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) അക്കൗണ്ടുകൾ തിരിച്ചറിയാൻ ഉപയോഗിക്കുന്ന 12 അക്ക തനത് കോഡ് ഏത്?", opts: ["A) PRAN", "B) PEN", "C) PAN", "D) AADHAR"], ans: 0 },
+
+        /* ------------------ മുൻപുണ്ടായിരുന്ന ചോദ്യങ്ങൾ ------------------ */
+        { q: "ആർട്ടിക്കിൾ 309 പ്രകാരം രൂപീകരിക്കുകയും 1968 ലെ കേരള പബ്ലിക് സർവീസസ് ആക്റ്റ് പ്രകാരം ക്രമപ്പെടുത്തുകയും ചെയ്ത പ്രധാനചട്ടങ്ങളിൽ ഉൾപ്പെടാത്തത് ഏത്?", opts: ["KS&SSR, 1958", "KSR, 1959", "KCS (CCA) Rules, 1960", "Kerala Civil Courts Act, 1950"], ans: 3 },
+        { q: "KS&SSR, 1958 പ്രധാനമായും എന്തുമായി ബന്ധപ്പെട്ട കാര്യങ്ങളാണ് പ്രതിപാദിക്കുന്നത്?", opts: ["ശമ്പളവും പെൻഷനും", "നിയമനവും പ്രമോഷനും", "സസ്പെൻഷനും അപ്പീലും", "യാത്രാപ്പഡിയും ലീവുകളും"], ans: 1 },
+        { q: "KSR (Kerala Service Rules) നിലവിൽ വന്ന വർഷം ഏത്?", opts: ["1958", "1959", "1960", "1968"], ans: 1 },
+        { q: "KSR, 1959 ഏതെല്ലാം കാര്യങ്ങളാണ് പ്രധാനമായും നിയന്ത്രിക്കുന്നത്?", opts: ["നിയമനവും സ്ഥലംമാറ്റവും", "ശമ്പളം, പെൻഷൻ, യാത്രപ്പടി, ലീവുകൾ", "പെരുമാറ്റച്ചട്ടങ്ങൾ", "വർഗീകരണവും അപ്പീലും"], ans: 1 },
+        { q: "KSR-ന്റെ Part-I എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["Travelling Allowance", "Pension", "Pay, Leave, Joining Time etc.", "Classification"], ans: 2 },
+        { q: "KSR-ന്റെ Part-II പ്രതിപാദിക്കുന്ന വിഷയം എന്ത്?", opts: ["Pension", "Travelling Allowance", "Pay and Leave", "Suspension"], ans: 1 },
+        { q: "KSR-ന്റെ Part-III എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["Pension", "Joining Time", "Classification", "Discipline"], ans: 0 },
+        { q: "കേരള സിവിൽ സർവീസസ് (വർഗീകരണം നിയന്ത്രണം അപ്പീൽ) ചട്ടങ്ങൾ (KCS (CCA) Rules) നിലവിൽ വന്ന വർഷം ഏത്?", opts: ["1958", "1959", "1960", "1968"], ans: 2 },
+        { q: "KCS (CCA) Rules, 1960-ൽ ഉൾപ്പെടാത്ത വിഷയം താഴെ പറയുന്നവയിൽ ഏതാണ്?", opts: ["വർഗീകരണവും നിയന്ത്രണവും", "നിയമനാധികാരിയും സസ്പെൻഷനും", "ശിക്ഷണ നടപടികളും അപ്പീലുകളും", "ശമ്പളനിർണ്ണയവും പെൻഷനും"], ans: 3 },
+        { q: "KCS (CCA) Rules, 1960-ൽ ആകെ എത്ര ഷെഡ്യൂളുകൾ (Schedules) ഉണ്ട്?", opts: ["1 ഷെഡ്യൂൾ", "2 ഷെഡ്യൂളുകൾ", "3 ഷെഡ്യൂളുകൾ", "4 ഷെഡ്യൂളുകൾ"], ans: 1 },
+        { q: "KCS (CCA) Rules 1960 പ്രകാരം Schedule 1 എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["Subordinate Service", "State Service", "Secretarial Service", "Judicial Service"], ans: 1 },
+        { q: "KCS (CCA) Rules 1960 പ്രകാരം Schedule 2 പ്രതിപാദിക്കുന്നത് എന്ത്?", opts: ["State Service", "Subordinate Service", "All India Services", "Central Services"], ans: 1 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ PART II എന്തിനെക്കുറിച്ചാണ് പ്രതിപാദിക്കുന്നത്?", opts: ["Classification", "Appointing Authorities", "Suspension", "Discipline"], ans: 0 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ PART III എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["Suspension", "Appointing Authorities", "Appeals", "General"], ans: 1 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ PART IV പ്രതിപാദിക്കുന്ന വിഷയം ഏത്?", opts: ["Discipline", "Appeals", "Suspension", "Classification"], ans: 2 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ PART V എന്തിനെക്കുറിച്ചാണ് പറയുന്നത്?", opts: ["Discipline", "Appeals", "Classification", "Appointing Authorities"], ans: 0 },
+        { q: "KCS (CCA) Rules, 1960-ന്റെ PART VI എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["Suspension", "Appeals", "General", "Pay and Leave"], ans: 1 },
+        { q: "കേരള ഗവൺമെന്റ് സെർവന്റ്സ് കോണ്ടക്ട് റൂൾസ് (Kerala Government Servants' Conduct Rules) നിലവിൽ വന്ന വർഷം ഏത്?", opts: ["1958", "1959", "1960", "1968"], ans: 2 },
+        { q: "കേരള ഗവൺമെന്റ് സെർവന്റ്സ് കോണ്ടക്ട് റൂൾസ്, 1960 പ്രധാനമായും എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["ജീവനക്കാരുടെ ശമ്പള ഘടന", "ജീവനക്കാരുടെ പെരുമാറ്റ ചട്ടങ്ങൾ", "ജീവനക്കാരുടെ പ്രമോഷൻ മാനദണ്ഡങ്ങൾ", "ജീവനക്കാരുടെ പെൻഷൻ ആനുകൂല്യങ്ങൾ"], ans: 1 },
+        { q: "KS&SSR, KSR, KCS (CCA) Rules, ഗവൺമെന്റ് സെർവന്റ്സ് കോണ്ടക്ട് റൂൾസ് എന്നിവയെല്ലാം ഏത് ആർട്ടിക്കിൾ പ്രകാരമാണ് നിർമ്മിച്ചിരിക്കുന്നത്?", opts: ["Article 308", "Article 309", "Article 310", "Article 315"], ans: 1 },
+        { q: "KS&SSR (1958), KSR (1959), KCS (CCA) Rules (1960), ഗവൺമെന്റ് സെർവന്റ്സ് കോണ്ടക്ട് റൂൾസ് (1960) എന്നിവയ്‌ക്കെല്ലാം നിയമപരമായ പ്രാബല്യം നൽകിയ ആക്ട് ഏത്?", opts: ["The Kerala Public Services Act, 1968", "The Kerala Civil Services Act, 1960", "The Kerala State Services Act, 1958", "The Kerala Service Rules Act, 1959"], ans: 0 },
+        { q: "1968 ലെ കേരള പബ്ലിക് സർവീസസ് ആക്ടിന്റെ ആക്ട് നമ്പർ (Act Number) എത്രയാണ്?", opts: ["Act 15 of 1968", "Act 19 of 1968", "Act 25 of 1968", "Act 30 of 1968"], ans: 1 },
+        { q: "1968 ലെ കേരള പബ്ലിക് സർവീസസ് ആക്ട് ഏത് ആർട്ടിക്കിൾ പ്രകാരമാണ് കേരള നിയമസഭ പാസ്സാക്കിയത്?", opts: ["Article 308", "Article 309", "Article 311", "Article 312"], ans: 1 },
+        { q: "കേരള സർക്കാർ ജീവനക്കാരുടെ ശമ്പളവും സർവീസ് വിവരങ്ങളും കൈകാര്യം ചെയ്യുന്ന ഇ-ഗവേണൻസ് സംവിധാനം ഏത്?", opts: ["MEDISEP", "SPARK", "PRAN", "NPS"], ans: 1 },
+        { q: "SPARK എന്നതിന്റെ പൂർണ്ണരൂപം (Full Form) താഴെ പറയുന്നവയിൽ ഏതാണ്?", opts: ["Salary and Payroll Administrative Repository for Kerala", "Service and Payroll Administrative Repository for Kerala", "Service and Pension Administration Register for Kerala", "State Payroll Accounting Resource of Kerala"], ans: 1 },
+        { q: "SPARK എന്ന സംവിധാനത്തിൽ ഉൾപ്പെട്ടിരിക്കുന്ന പ്രധാന ഘടകങ്ങൾ ഏതൊക്കെയാണ്?", opts: ["Salary + Pension + Service Records", "Salary + Payroll + Service Records (Kerala Govt Employees)", "Savings + Payroll + Service Records", "Service + Provident Fund + Allowance Records"], ans: 1 },
+        { q: "കേരള സർക്കാർ ജീവനക്കാരുടെയും പെൻഷൻകാരുടെയും ആരോഗ്യ ഇൻഷുറൻസ് പദ്ധതിയുടെ പേര് എന്ത്?", opts: ["SPARK", "MEDISEP", "PRAN", "NPS"], ans: 1 },
+        { q: "MEDISEP എന്നതിന്റെ പൂർണ്ണരൂപം താഴെ പറയുന്നവരിൽ ഏതാണ്?", opts: ["Medical Insurance Scheme of State Government Employees and Pensioners", "Medical Endowment Scheme for Employees and Pensioners", "Medical Employees State Insurance Plan", "Medical Enrollment Scheme for Pensioners"], ans: 0 },
+        { q: "MEDISEP പദ്ധതിയുടെ പ്രയോജനം ലഭിക്കുന്ന ഗുണഭോക്താക്കൾ (Beneficiaries) ആരെല്ലാം?", opts: ["സർക്കാർ ജീവനക്കാർ മാത്രം", "പെൻഷൻകാർ മാത്രം", "സർക്കാർ ജീവനക്കാർ, പെൻഷൻകാർ, അവരുടെ കുടുംബാംഗങ്ങൾ", "സ്ഥിര ജീവനക്കാർ മാത്രം"], ans: 2 },
+        { q: "MEDISEP പദ്ധതി നടപ്പിലാക്കുന്നത് ഏത് വകുപ്പാണ്?", opts: ["പൊതുഭരണ വകുപ്പ്", "കേരള സർക്കാർ (ധനകാര്യ വകുപ്പ്)", "ആരോഗ്യ വകുപ്പ്", "നിയമ വകുപ്പ്"], ans: 1 },
+        { q: "MEDISEP പദ്ധതിയുടെ സേവന ദാതാവ് (Service Provider) ആരാണ്?", opts: ["United India Insurance Company", "Oriental Insurance Company", "New India Assurance Company", "Life Insurance Corporation (LIC)"], ans: 1 },
+        { q: "MEDISEP പദ്ധതി പ്രകാരം നൽകുന്ന പരിരക്ഷ എത്ര രൂപയാണ്?", opts: ["2 ലക്ഷം രൂപ", "3 ലക്ഷം രൂപ", "5 ലക്ഷം രൂപ", "10 ലക്ഷം രൂപ"], ans: 2 },
+        { q: "നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) അഥവാ പങ്കാളിത്വ പെൻഷൻ കേരളത്തിൽ ജോലിയിൽ പ്രവേശിക്കുന്ന ആർക്കാണ് ബാധകം?", opts: ["01/04/2010 മുതൽ പ്രവേശിക്കുന്നവർക്ക്", "01/04/2013 മുതൽ പ്രവേശിക്കുന്ന എല്ലാവർക്കും", "01/04/2015 മുതൽ പ്രവേശിക്കുന്നവർക്ക്", "01/04/2018 മുതൽ പ്രവേശിക്കുന്നവർക്ക്"], ans: 1 },
+        { q: "നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) പ്രകാരം ജീവനക്കാർ പ്രതിമാസം അടയ്ക്കേണ്ട വിഹിതം എത്രയാണ്?", opts: ["അടിസ്ഥാന ശമ്പളത്തിന്റെ 5%", "അടിസ്ഥാന ശമ്പളം, ക്ഷാമബത്ത എന്നിവയുടെ 10%", "മൊത്തം ശമ്പളത്തിന്റെ 12%", "അടിസ്ഥാന ശമ്പളത്തിന്റെ 10% മാത്രം"], ans: 1 },
+        { q: "നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) പ്രകാരം ജീവനക്കാരുടെ വിഹിതത്തിന് തുല്യമായ തുക നിക്ഷേപിക്കുന്നത് ആര്?", opts: ["കേന്ദ്ര സർക്കാർ", "കേരള സർക്കാർ", "പിഎഫ്ആർഡിഎ (PFRDA)", "ആർബിഐ (RBI)"], ans: 1 },
+        { q: "നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS) സംവിധാനം ആരുടെയൊക്കെ നിയന്ത്രണത്തിലാണ് പ്രവർത്തിക്കുന്നത്?", opts: ["പിഎഫ്ആർഡിഎയുടെയും (PFRDA) സംസ്ഥാന ധനകാര്യ വകുപ്പിന്റെയും", "കേന്ദ്ര ധനകാര്യ മന്ത്രാലയത്തിന്റെ മാത്രം", "സർക്കാരിന്റെയും റിസർവ് ബാങ്കിന്റെയും", "പബ്ലിക് സർവീസ് കമ്മീഷന്റെയും ധനകാര്യ വകുപ്പിന്റെയും"], ans: 0 },
+        { q: "നാഷണൽ പെൻഷൻ സിസ്റ്റം (NPS)-ലേക്ക് ചേരുന്ന ഓരോ സബ്സ്ക്രൈബർക്കും നൽകുന്ന സ്ഥിരവും യുണീക്കുമായ നമ്പർ ഏതാണ്?", opts: ["PAN", "PRAN", "AADHAR", "PEN"], ans: 1 },
+        { q: "PRAN എന്നതിന്റെ പൂർണ്ണരൂപം താഴെ പറയുന്നവയിൽ ഏതാണ്?", opts: ["Permanent Retirement Account Number", "Pension Retirement Allocation Number", "Permanent Register of Account Number", "Public Retirement annuity Number"], ans: 0 }
+    ];
+
+    let questionsData = [...allQuestionsData];
+    let currentIndex = 0;
+    let userAnswers = {};
+    let bookmarks = {};
+    let timerInterval;
+    let timeLeft = questionsData.length * 60; 
+    let isPaused = false;
+
+    function startExam() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                    return;
+                }
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById('timerDisplay').innerText = `സമയം ബാക്കി: ${m}:${s < 10 ? '0' : ''}${s}`;
+                timeLeft--;
+            }
+        }, 1000);
+    }
+
+    function pauseExam() {
+        isPaused = true;
+        document.getElementById('pauseOverlay').style.display = 'flex';
+    }
+
+    function resumeExam() {
+        isPaused = false;
+        document.getElementById('pauseOverlay').style.display = 'none';
+    }
+
+    function togglePalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+    }
+
+    function buildPalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.innerHTML = '';
+        questionsData.forEach((_, idx) => {
+            let item = document.createElement('div');
+            item.className = 'grid-item';
+            if (idx === currentIndex) item.classList.add('current');
+            if (userAnswers[idx] !== undefined) item.classList.add('answered');
+            if (bookmarks[idx]) item.classList.add('bookmarked');
+            item.innerText = idx + 1;
+            item.onclick = () => {
+                currentIndex = idx;
+                loadQuestion();
+                grid.style.display = 'none';
+            };
+            grid.appendChild(item);
+        });
+    }
+
+    function loadQuestion() {
+        const q = questionsData[currentIndex];
+        document.getElementById('qCounter').innerText = `ചോദ്യം ${currentIndex + 1} / ${questionsData.length}`;
+        document.getElementById('questionText.innerHTML') ? document.getElementById('questionText').innerHTML = `${currentIndex + 1}. ${q.q}` : document.getElementById('questionText').innerText = `${currentIndex + 1}. ${q.q}`;
+        document.getElementById('questionText').innerHTML = `${currentIndex + 1}. ${q.q}`;
+        
+        const list = document.getElementById('optionsList');
+        list.innerHTML = '';
+        q.opts.forEach((opt, idx) => {
+            let isSelected = userAnswers[currentIndex] === idx ? 'selected' : '';
+            list.innerHTML += `
+                <div class="option-box ${isSelected}" onclick="selectOption(${idx})">
+                    ${opt}
+                </div>
+            `;
+        });
+        
+        const bmBtn = document.getElementById('bookmarkBtn');
+        if (bookmarks[currentIndex]) {
+            bmBtn.classList.add('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്തു (Bookmarked)';
+        } else {
+            bmBtn.classList.remove('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)';
+        }
+        buildPalette();
+    }
+
+    function selectOption(idx) {
+        userAnswers[currentIndex] = idx;
+        loadQuestion();
+    }
+
+    function toggleBookmark() {
+        bookmarks[currentIndex] = !bookmarks[currentIndex];
+        loadQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentIndex < questionsData.length - 1) {
+            currentIndex++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadQuestion();
+        }
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+        document.getElementById('pauseOverlay').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+
+        let score = 0;
+        let correct = 0;
+        let wrong = 0;
+        let skipped = 0;
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            if (ans === undefined) {
+                skipped++;
+            } else if (ans === q.ans) {
+                correct++;
+                score += 1;
+            } else {
+                wrong++;
+                score -= 0.33;
+            }
+        });
+
+        document.getElementById('resultSummaryText').innerHTML = `
+            <b>ആകെ സ്കോർ:</b> ${score.toFixed(2)}<br>
+            <b>ശരി ഉത്തരങ്ങൾ:</b> ${correct}<br>
+            <b>തെറ്റായ ഉത്തരങ്ങൾ:</b> ${wrong}<br>
+            <b>വിട്ടുപോയവ:</b> ${skipped}
+        `;
+        filterReview('all');
+    }
+
+    let currentFilter = 'all';
+    function filterReview(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event && event.target.classList.add('active');
+
+        const listContainer = document.getElementById('reviewList');
+        listContainer.innerHTML = '';
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            let status = 'skipped';
+            if (ans !== undefined) {
+                status = (ans === q.ans) ? 'correct' : 'wrong';
+            }
+
+            if (filter !== 'all' && filter !== status) return;
+
+            let item = document.createElement('div');
+            item.className = `review-item ${status}`;
+            item.innerHTML = `
+                <b>ചോദ്യം ${i + 1}:</b> ${q.q.replace(/<br>/g, ' ')}<br>
+                നിങ്ങളുടെ ഉത്തരം: ${ans !== undefined ? q.opts[ans] : 'വിട്ടുപോയി'}<br>
+                ശരിയായ ഉത്തരം: <b>${q.opts[q.ans]}</b>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    function retryQuiz(type) {
+        let filteredIndices = [];
+        if (type === 'all') {
+            questionsData = [...allQuestionsData];
+        } else {
+            allQuestionsData.forEach((q, i) => {
+                let ans = userAnswers[i];
+                if (type === 'wrong' && ans !== undefined && ans !== q.ans) filteredIndices.push(i);
+                if (type === 'skipped' && ans === undefined) filteredIndices.push(i);
+                if (type === 'wrong_skipped' && (ans === undefined || ans !== q.ans)) filteredIndices.push(i);
+            });
+            if (filteredIndices.length === 0) {
+                alert('ഈ വിഭാഗത്തിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല!');
+                return;
+            }
+            questionsData = filteredIndices.map(i => allQuestionsData[i]);
+        }
+
+        currentIndex = 0;
+        userAnswers = {};
+        bookmarks = {};
+        timeLeft = questionsData.length * 60;
+        isPaused = false;
+
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    // Global Swipe Support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        let diff = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diff) > 50 && document.getElementById('examScreen').style.display !== 'none' && !isPaused) {
+            if (diff < 0) nextQuestion();
+            else prevQuestion();
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ് - സിവിൽ സർവീസ് & ഭരണസംവിധാനം</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f6f9; color: #333; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 480px; background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; padding: 20px; position: relative; }
+        
+        /* Welcome Screen */
+        #welcomeScreen { text-align: center; padding: 30px 10px; }
+        #welcomeScreen h1 { font-size: 1.5rem; color: #1e293b; margin-bottom: 15px; line-height: 1.4; font-weight: 700; }
+        #welcomeScreen p { font-size: 0.95rem; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+        .start-btn { background: #22c55e; color: white; border: none; padding: 14px 24px; font-size: 1.05rem; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; transition: background 0.2s; }
+        .start-btn:hover { background: #16a34a; }
+
+        /* Exam Screen Header */
+        .exam-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; font-weight: bold; color: #b91c1c; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+        .timer-box { display: flex; align-items: center; gap: 8px; }
+        .pause-btn { background: #e2e8f0; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #334155; }
+        .pause-btn:hover { background: #cbd5e1; }
+
+        /* Question Palette Grid */
+        .palette-toggle { background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; margin-bottom: 15px; width: 100%; }
+        .palette-grid { display: none; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; max-height: 150px; overflow-y: auto; }
+        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; border-radius: 4px; cursor: pointer; background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
+        .grid-item.answered { background: #22c55e; color: white; border-color: #16a34a; }
+        .grid-item.bookmarked { background: #f59e0b; color: white; border-color: #d97706; }
+        .grid-item.current { border: 2px solid #1e3a8a; }
+        
+        /* Question Section */
+        .q-title { font-size: 1.12rem; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.5; }
+        
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        .option-box { border: 2px solid #cbd5e1; border-radius: 12px; padding: 14px; background: white; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; font-size: 0.95rem; color: #1e293b; font-weight: 500; }
+        .option-box.selected { border-color: #3b82f6; background: #eff6ff; }
+        .option-box:hover { border-color: #94a3b8; }
+
+        /* Swipe Hint */
+        .swipe-hint { text-align: center; font-size: 0.8rem; color: #64748b; margin: 15px 0; }
+
+        /* Action Buttons */
+        .action-btn { width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 0.95rem; border: none; cursor: pointer; margin-bottom: 10px; text-align: center; }
+        .bookmark-action { background: #f59e0b; color: white; }
+        .bookmark-action.bookmarked { background: #d97706; }
+        .submit-action { background: #d97706; color: white; }
+
+        /* Pause Overlay Modal */
+        .pause-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 10; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .pause-overlay h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .pause-overlay p { color: #64748b; margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* Result View */
+        #resultScreen { display: none; text-align: center; }
+        #resultScreen h2 { color: #1e293b; margin-bottom: 15px; font-size: 1.5rem; }
+        .result-summary { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95rem; color: #334155; line-height: 1.6; text-align: left; }
+        .retry-container { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .retry-btn { background: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .retry-btn:hover { background: #2563eb; }
+
+        /* Review Section */
+        .review-filters { display: flex; gap: 5px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 10px; font-size: 0.8rem; font-weight: bold; border: 1px solid #cbd5e1; background: #e2e8f0; border-radius: 6px; cursor: pointer; }
+        .filter-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
+        .review-list { text-align: left; max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .review-item { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; }
+        .review-item.correct { background: #f0fdf4; border-color: #bbf7d0; }
+        .review-item.wrong { background: #fef2f2; border-color: #fecaca; }
+        .review-item.skipped { background: #f8fafc; border-color: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<div class="app-container" id="appContainer">
+    
+    <!-- Pause Overlay Modal -->
+    <div class="pause-overlay" id="pauseOverlay">
+        <h2>എക്സാം പോസ് ചെയ്തിരിക്കുന്നു ⏸️</h2>
+        <p>ടൈമർ താൽക്കാലികമായി നിർത്തലാക്കിയിട്ടുണ്ട്. തുടരാൻ താഴെയുള്ള ബട്ടൺ അമർത്തുക.</p>
+        <button class="start-btn" onclick="resumeExam()">തുടരുക (Resume)</button>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen">
+        <h1>കേരള പിഎസ്‌സി ഓൺലൈൻ റിവിഷൻ ടെസ്റ്റ്</h1>
+        <p>സിവിൽ സർവീസ് & കേരള ഭരണസംവിധാനം<br><br>നെഗറ്റീവ് മാർക്ക്: ശരിക്ക് +1, തെറ്റിന് -0.33</p>
+        <button class="start-btn" onclick="startExam()">എക്സാം ആരംഭിക്കുക (Start Exam)</button>
+    </div>
+
+    <!-- Exam Screen -->
+    <div id="examScreen" style="display: none;">
+        <div class="exam-header">
+            <div id="qCounter">ചോദ്യം 1 / 48</div>
+            <div class="timer-box">
+                <span id="timerDisplay">സമയം ബാക്കി: 48:00</span>
+                <button class="pause-btn" id="pauseBtn" onclick="pauseExam()">Pause</button>
+            </div>
+        </div>
+
+        <button class="palette-toggle" onclick="togglePalette()">📊 ചോദ്യങ്ങളുടെ പാലറ്റ് കാണുക (Grid)</button>
+        <div class="palette-grid" id="paletteGrid"></div>
+
+        <div class="q-title" id="questionText">ചോദ്യം ഇവിടെ വരുന്നു...</div>
+        
+        <div class="options-container" id="optionsList"></div>
+
+        <div class="swipe-hint">💡 സ്ക്രീനിന്റെ എവിടെ സ്വൈപ്പ് ചെയ്താലും ചോദ്യങ്ങൾ മാറുന്നതാണ്</div>
+
+        <button class="action-btn bookmark-action" id="bookmarkBtn" onclick="toggleBookmark()">⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)</button>
+        
+        <button class="action-btn submit-action" onclick="submitExam()">എക്സാം സബ്മിറ്റ് ചെയ്യുക</button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="resultScreen">
+        <h2>പരീക്ഷ ഫലം (Result)</h2>
+        <div class="result-summary" id="resultSummaryText">ഫലം കണക്കാക്കുന്നു...</div>
+        
+        <div class="review-filters">
+            <button class="filter-btn active" onclick="filterReview('all')">എല്ലാം</button>
+            <button class="filter-btn" onclick="filterReview('correct')">ശരി</button>
+            <button class="filter-btn" onclick="filterReview('wrong')">തെറ്റ്</button>
+            <button class="filter-btn" onclick="filterReview('skipped')">വിട്ടുപോയവ</button>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+
+        <div class="retry-container">
+            <button class="retry-btn" onclick="retryQuiz('all')">മുഴുവൻ ചോദ്യങ്ങളും വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong')">തെറ്റായവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('skipped')">വിട്ടുപോയവ മാത്രം വീണ്ടും ചെയ്യുക</button>
+            <button class="retry-btn" onclick="retryQuiz('wrong_skipped')">തെറ്റും വിട്ടുപോയവയും മാത്രം വീണ്ടും ചെയ്യുക</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const allQuestionsData = [
+        { q: "അഖിലേന്ത്യാ സർവീസുകൾ (All India Services - AIS) സേവനം അനുഷ്ഠിക്കുന്നത് ആർക്കൊക്കെ വേണ്ടിയാണ്?", opts: ["കേന്ദ്ര സർക്കാരിന് മാത്രം", "സംസ്ഥാന സർക്കാരിന് മാത്രം", "കേന്ദ്രത്തിനും സംസ്ഥാനങ്ങൾക്കും ഒരുപോലെ", "തദ്ദേശ സ്വയംഭരണ സ്ഥാപനങ്ങൾക്ക് മാത്രം"], ans: 2 },
+        { q: "അഖിലേന്ത്യാ സർവീസുകളിലേക്ക് (AIS) ദേശീയ തലത്തിൽ ഏകീകൃതമായ രീതിയിൽ തെരഞ്ഞെടുപ്പ് (Recruitment) നടത്തുന്നത് ഏത് സ്ഥാപനമാണ്?", opts: ["സ്റ്റേറ്റ് പബ്ലിക് സർവീസ് കമ്മീഷൻ", "യൂണിയൻ പബ്ലിക് സർവീസ് കമ്മീഷൻ (UPSC)", "സുപ്രീം കോടതി", "പാർലമെന്റ്"], ans: 1 },
+        { q: "താഴെ പറയുന്നവയിൽ അഖിലേന്ത്യാ സർവീസിൽ (AIS) ഉൾപ്പെടാത്തത് ഏത്?", opts: ["ഇന്ത്യൻ അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസ് (IAS)", "ഇന്ത്യൻ പോലീസ് സർവീസ് (IPS)", "ഇന്ത്യൻ ഫോറസ്റ്റ് സർവീസ് (IFoS)", "ഇന്ത്യൻ ഫോറിൻ സർവീസ് (IFS)"], ans: 3 },
+        { q: "സെൻട്രൽ സിവിൽ സർവീസുകൾ (CCS) ആരുടെ കീഴിൽ മാത്രമാണ് പ്രവർത്തിക്കുന്നത്?", opts: ["സംസ്ഥാന സർക്കാർ", "യൂണിയൻ ഗവൺമെന്റ് മാത്രം", "കേന്ദ്രവും സംസ്ഥാനവും സംയുക്തമായി", "ജില്ലാ ഭരണകൂടം"], ans: 1 },
+        { q: "സ്റ്റേറ്റ് സിവിൽ സർവീസുകൾ (SCS) നിയന്ത്രിക്കുന്നത് ഏത് സർക്കാരാണ്?", opts: ["കേന്ദ്ര സർക്കാർ", "സംസ്ഥാന സർക്കാർ", "കേന്ദ്ര ഭരണ പ്രദേശങ്ങൾ", "തിരഞ്ഞെടുപ്പ് കമ്മീഷൻ"], ans: 1 },
+        { q: "ഇന്ത്യൻ അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസിന്റെ (IAS) ആപ്തവാക്യം (Motto) ഏതാണ്?", opts: ["സത്യമേവ ജയതേ", "യോഗഃ കർമ്മസു കൗശലം", "അരണ്യം വൈദ്യതേ", "ധർമ്മോ രക്ഷതി രക്ഷිතഃ"], ans: 1 },
+        { q: "യോഗഃ കർമ്മസു കൗശലം (Excellence in action is yoga) എന്ന ആപ്തവാക്യം ഏത് ഗ്രന്ഥത്തിൽ നിന്നുള്ളതാണ്?", opts: ["മുണ്ഡകോപനിഷത്ത്", "ഭഗവദ്ഗീത (അദ്ധ്യായം 2, ശ്ലോകം 50)", "വേദങ്ങൾ", "അർത്ഥശാസ്ത്രം"], ans: 1 },
+        { q: "ഇന്ത്യൻ പോലീസ് സർവീസിന്റെ (IPS) ആപ്തവാക്യം ഏത്?", opts: ["യോഗഃ കർമ്മസു കൗശലം", "സത്യമേവ ജയതേ", "അരണ്യം വൈദ്യതേ", "വസുധൈവ കുടുംബകമ്"], ans: 1 },
+        { q: "ഇന്ത്യൻ പോലീസ് സർവീസിന്റെ (IPS) ആപ്തവാക്യമായ 'സത്യമേവ ജയതേ' എടുത്തിരിക്കുന്നത് എവിടെ നിന്നാണ്?", opts: ["ഭഗവദ്ഗീത", "മുണ്ഡകോപനിഷത്ത്", "മഹോപനിഷത്ത്", "ഋഗ്വേദം"], ans: 1 },
+        { q: "ഇന്ത്യൻ ഫോറസ്റ്റ് സർവീസിന്റെ (IFoS) ആപ്തവാക്യം ഏത്?", opts: ["സത്യമേവ ജയതേ", "യോഗഃ കർമ്മസു കൗശലം", "അരണ്യം വൈദ്യതേ (വനങ്ങൾ ജീവിതത്തെ പരിപോഷിപ്പിക്കുന്നു)", "പ്രകൃതി രക്ഷതി രക്ഷිතഃ"], ans: 2 },
+        { q: "ഇന്ത്യൻ ഫോറസ്റ്റ് സർവീസിന്റെ ആപ്തവാക്യമായ 'അരണ്യം വൈദ്യതേ' ഏത് തത്ത്വചിന്തയിൽ നിന്നുള്ളതാണ്?", opts: ["ആധുനിക സംസ്കൃത തത്ത്വചിന്ത", "പ്രാചീന സംസ്കൃത തത്ത്വചിന്ത (Ancient Sanskrit Philosophy)", "ബുദ്ധ തത്ത്വചിന്ത", "ജൈന തത്ത്വചിന്ത"], ans: 1 },
+        { q: "സെൻട്രൽ സിവിൽ സർവീസസിൽ (CCS) ഗസറ്റഡ് ഓഫീസർമാർ ഉൾപ്പെടുന്ന ഗ്രൂപ്പ് ഏതാണ്?", opts: ["ഗ്രൂപ്പ് B", "ഗ്രൂപ്പ് A", "ഗ്രൂപ്പ് C", "ഗ്രൂപ്പ് D"], ans: 1 },
+        { q: "താഴെ പറയുന്നവയിൽ സെൻട്രൽ സിവിൽ സർവീസ് ഗ്രൂപ്പ് A യിൽ ഉൾപ്പെടാത്തത് ഏത്?", opts: ["ഇന്ത്യൻ ഫോറിൻ സർവീസ് (IFS)", "ഇന്ത്യൻ റെവന്യൂ സർവീസ് (IRS)", "ഇന്ത്യൻ ഓഡിറ്റ് ആൻഡ് അക്കൗണ്ട്സ് സർവീസ് (IA&AS)", "സെക്ഷൻ ഓഫീസേഴ്സ്"], ans: 3 },
+        { q: "സെൻട്രൽ സിവിൽ സർവീസിൽ സെക്ഷൻ ഓഫീസർമാർ, അസിസ്റ്റന്റ് കമ്മീഷണർമാർ തുടങ്ങിയവർ ഏത് ഗ്രൂപ്പിലാണ് ഉൾപ്പെടുന്നത്?", opts: ["ഗ്രൂപ്പ് A", "ഗ്രൂപ്പ് B", "ഗ്രൂപ്പ് C", "ഗ്രൂപ്പ് D"], ans: 1 },
+        { q: "സെൻട്രൽ സിവിൽ സർവീസിലെ ക്ലറിക്കൽ തസ്തികകൾ ഏത് ഗ്രൂപ്പിലാണ് വരുന്നത്?", opts: ["ഗ്രൂപ്പ് A", "ഗ്രൂപ്പ് B", "ഗ്രൂപ്പ് C", "ഗ്രൂപ്പ് D"], ans: 2 },
+        { q: "സെൻട്രൽ സിവിൽ സർവീസിലെ ശാരീരിക അധ്വാനമുള്ള ജോലികൾ (Manual works) ഉൾപ്പെടുന്ന ഗ്രൂപ്പ് ഏത്?", opts: ["ഗ്രൂപ്പ് A", "ഗ്രൂപ്പ് B", "ഗ്രൂപ്പ് C", "ഗ്രൂപ്പ് D"], ans: 3 },
+        { q: "കേരള സ്റ്റേറ്റ് സർവീസിൽ ഉൾപ്പെടുന്ന ക്ലാസുകൾ ഏവ?", opts: ["ക്ലാസ് 3 & 4", "ക്ലാസ് 1 & 2", "ക്ലാസ് 4 മാത്രം", "ക്ലാസ് 1 മാത്രം"], ans: 1 },
+        { q: "കേരള സ്റ്റേറ്റ് സർവീസിലെ ക്ലാസ് 1, ക്ലാസ് 2 ഉദ്യോഗസ്ഥർ ഏത് വിഭാഗത്തിൽ പെടുന്നു?", opts: ["നോൺ-ഗസറ്റഡ്", "ഗസറ്റഡ്", "കണ്ടിജന്റ്", "താൽക്കാലികം"], ans: 1 },
+        { q: "കേരള സബോർഡിനേറ്റ് സർവീസിൽ ഉൾപ്പെടുന്ന ക്ലാസുകൾ ഏവ?", opts: ["ക്ലാസ് 1 & 2", "ക്ലാസ് 3 & 4", "ക്ലാസ് 1 മാത്രം", "ക്ലാസ് 2 മാത്രം"], ans: 1 },
+        { q: "കേരള സബോർഡിനേറ്റ് സർവീസിലെ ക്ലാസ് 3, ക്ലാസ് 4 ജീവനക്കാർ ഏത് വിഭാഗത്തിലാണ് വരുന്നത്?", opts: ["ഗസറ്റഡ്", "നോൺ-ഗസറ്റഡ്", "ഐ.എ.എസ് കേഡർ", "അഖിലേന്ത്യാ സർവീസ്"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസുകളിലെ വർഗീകരണം, നിയന്ത്രണം, അപ്പീൽ എന്നിവയെപ്പറ്റി പ്രതിപാദിക്കുന്ന ചട്ടങ്ങൾ ഏത്?", opts: ["കേരള സിവിൽ സർവീസസ് (വർഗീകരണം നിയന്ത്രണം അപ്പീൽ) ചട്ടങ്ങൾ, 1960", "കേരള സർവീസ് ചട്ടങ്ങൾ, 1958", "കേരള പബ്ലിക് സർവീസ് ആക്ട്, 1968", "കേരള സ്റ്റേറ്റ് ആന്റ് സബോർഡിനേറ്റ് സർവീസ് റൂൾസ്, 1958"], ans: 0 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങൾ, 1960 പ്രകാരം കേരള സ്റ്റേറ്റ് സർവീസ് ഉൾപ്പെടുത്തിയിരിക്കുന്നത് ഏത് ഷെഡ്യൂളിലാണ്?", opts: ["Schedule 2", "Schedule 1", "Schedule 3", "Schedule 4"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങൾ, 1960 പ്രകാരം കേരള സബോർഡിനേറ്റ് സർവീസ് ഉൾപ്പെടുത്തിയിരിക്കുന്നത് ഏത് ഷെഡ്യൂളിലാണ്?", opts: ["Schedule 1", "Schedule 2", "Schedule 3", "Schedule 4"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (വർഗീകരണം നിയന്ത്രണം അപ്പീൽ) ചട്ടങ്ങൾ, 1960 നിലവിൽ വന്ന വർഷം ഏത്?", opts: ["1956", "1960", "1968", "1971"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങൾക്ക് (Rules, 1960) പിന്തുണ നൽകുന്ന പ്രധാന നിയമം ഏത്?", opts: ["കേരള സർവീസ് റൂൾസ്", "കേരള പബ്ലിക് സർവീസ് ആക്ട്, 1968", "കേരള സ്റ്റേറ്റ് ആൻഡ് സബോർഡിനേറ്റ് സർവീസ് റൂൾസ്", "കേരള സിവിൽ കോർട്ട്സ് ആക്ട്"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങൾ ഏത് അനുച്ഛേദത്തിന്റെ (Article) പിന്തുണയോടെയാണ് നിർമ്മിച്ചിരിക്കുന്നത്?", opts: ["Article 308", "Article 310", "Article 309", "Article 315"], ans: 2 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങളുടെ PART II എന്തുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു?", opts: ["നിയമന അധികാരി", "വർഗീകരണം (Classification)", "സസ്പെൻഷൻ", "അപ്പീൽ"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങളുടെ PART III എന്തിനെക്കുറിച്ചാണ് പ്രതിപാദിക്കുന്നത്?", opts: ["ശിക്ഷാനടപടികൾ", "നിയമന അധികാരി (Appointing Authorities)", "സസ്പെൻഷൻ", "അപ്പീൽ"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസുകളിലെ സർവീസുകളിലേക്കുള്ള എല്ലാ നിയമനങ്ങളും (Appointments) നടത്തുന്നത് ആരാണ്?", opts: ["കേരള പബ്ലിക് സർവീസ് കമ്മീഷൻ", "സർക്കാർ (Government)", "ഗവർണർ", "വകുപ്പ് മേധാവി"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസുകളിലേക്കുള്ള നിയമനത്തിനായി തെരഞ്ഞെടുപ്പും (Recruitment) നിയമന ശുപാർശയും നടത്തുന്നത് ഏത് സ്ഥാപനമാണ്?", opts: ["കേരള സർക്കാർ", "കേരള പബ്ലിക് സർവീസ് കമ്മീഷൻ (Kerala PSC)", "സെക്രട്ടറിയേറ്റ്", "നിയമ വകുപ്പ്"], ans: 1 },
+        { q: "കേരള സിവിൽ സർവീസസ് (CCA) ചട്ടങ്ങൾ, 1960-ൽ ആകെ എത്ര ഭാഗങ്ങൾ (Parts) ഉൾപ്പെടുത്തിയിരിക്കുന്നു എന്ന് നോട്ട് സൂചിപ്പിക്കുന്നു?", opts: ["4 ഭാഗങ്ങൾ", "5 ഭാഗങ്ങൾ", "6 ഭാഗങ്ങൾ (Part II മുതൽ Part VI വരെ)", "8 ഭാഗങ്ങൾ"], ans: 2 },
+        { q: "കേരള സ്റ്റേറ്റ് സർവീസിന് ഉദാഹരണമായി നോட்டில் പറയുന്നവയിൽ ഉൾപ്പെടാത്തത് ഏത്?", opts: ["KAS", "കേരള അഗ്രികൾച്ചറൽ സർവീസ്", "കേരള ട്രഷറി സബോർഡിനേറ്റ് സർവീസ്", "കേരള റെവന്യൂ സർവീസ്"], ans: 2 },
+        { q: "കേരള സബോർഡിനേറ്റ് സർവീസിന് ഉദാഹരണമായി നോட்டில் പരാമർശിച്ചിട്ടുള്ളത് ഏതാണ്?", opts: ["കേരള സെക്രട്ടറിയേറ്റ് സർവീസ്", "കേരള ട്രഷറി സബോർഡിനേറ്റ് സർവീസ്", "കേരള അഗ്രികൾച്ചറൽ സർവീസ്", "കേരള റെവന്യൂ സർവീസ്"], ans: 1 },
+        { q: "താഴെ പറയുന്നവയിൽ കേരള സബോർഡിനേറ്റ് സർവീസിൽ (Class 3 & 4) ഉൾപ്പെടാത്ത തസ്തിക ഏത്?", opts: ["ഡെപ്യൂട്ടി കളക്ടർ", "ക്ലാർക്ക്", "വില്ലേജ് ഓഫീസർ", "ലാസ്റ്റ് ഗ്രേഡ് സർവന്റ് (LGS)"], ans: 0 },
+        { q: "കേരള സ്റ്റേറ്റ് സർവീസിൽ (Class 1 & 2 - Gazetted) ഉൾപ്പെടുന്ന ഒരു തസ്തിക ഏത്?", opts: ["ഓഫീസ് അറ്റൻഡന്റ്", "തഹസിൽദാർ", "വില്ലേജ് ഫീൽഡ് അസിസ്റ്റന്റ്", "ഡ്രൈവർ"], ans: 1 },
+        { q: "റവന്യൂ വകുപ്പിൽ കേരള സ്റ്റേറ്റ് സർവീസിൽ (Class 1 & 2) ഉൾപ്പെടുന്ന തസ്തികകളിൽ താഴെ പറയുന്നവയിൽ ഏതാണ് ഉള്ളത്?", opts: ["വില്ലേജ് ഫീൽഡ് അസിസ്റ്റന്റ്", "ഡെപ്യൂട്ടി കളക്ടർ", "വില്ലേജ് അസിസ്റ്റന്റ്", "ഹെഡ് ക്ലാർക്ക്"], ans: 1 },
+        { q: "റവന്യൂ വകുപ്പിൽ സബോർഡിനേറ്റ് സർവീസിൽ ഉൾപ്പെടുന്ന തസ്തിക ഏത്?", opts: ["ഡെപ്യൂട്ടി കളക്ടർ", "തഹസിൽദാർ", "വില്ലേജ് ഫീൽഡ് അസിസ്റ്റന്റ്", "ഡി.വൈ.എസ്.പി"], ans: 2 },
+        { q: "സെക്രട്ടറിയേറ്റ് സർവീസിൽ സ്റ്റേറ്റ് സർവീസ് വിഭാഗത്തിൽ ഉൾപ്പെടുന്ന തസ്തിക ഏത്?", opts: ["അസിസ്റ്റന്റ്", "സെക്ഷൻ ഓഫീസർ (Section Officer)", "ഓഫീസ് അറ്റൻഡന്റ്", "അസിസ്റ്റന്റ് സെക്ഷൻ ഓഫീസർ"], ans: 1 },
+        { q: "സെക്രട്ടറിയേറ്റ് സബോർഡിനേറ്റ് സർവീസിൽ ഉൾപ്പെടുന്ന തസ്തിക ഏത്?", opts: ["അഡീഷണൽ സെക്രട്ടറി", "ജോയിന്റ് സെക്രട്ടറി", "ഓഫീസ് അറ്റൻഡന്റ്", "അണ്ടർ സെക്രട്ടറി"], ans: 2 },
+        { q: "കേരള അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസ് (KAS) നിലവിൽ വന്ന തീയതി ഏത്?", opts: ["2017 ജനുവരി 1", "2018 ജനുവരി 1", "2019 ജനുവരി 1", "2020 ജനുവരി 1"], ans: 1 },
+        { q: "ഇന്ത്യൻ അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസിന് (IAS) സമാനമായി കേരളത്തിൽ രൂപപ്പെടുത്തിയ സർവീസ് ഏതാണ്?", opts: ["കേരള പോലീസ് സർവീസ്", "കേരള അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസ് (KAS)", "കേരള സെക്രട്ടറിയേറ്റ് സർവീസ്", "കേരള റെവന്യൂ സർവീസ്"], ans: 1 },
+        { q: "കേരള അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസിലെ (KAS) ഉദ്യോഗസ്ഥരെ തിരഞ്ഞെടുക്കുന്നത് ആരാണ്?", opts: ["യൂണിയൻ പബ്ലിക് സർവീസ് കമ്മീഷൻ (UPSC)", "കേരള പബ്ലിക് സർവീസ് കമ്മീഷൻ (Kerala PSC)", "കേരള സർക്കാർ നേരിട്ട്", "ഗവർണർ"], ans: 1 },
+        { q: "KAS രൂപീകരണവുമായി ബന്ധപ്പെട്ട പ്രത്യേക ചട്ടങ്ങൾ നിലവിൽ വന്ന വർഷം ഏത്?", opts: ["2016 ലെ KAS പ്രത്യേക ചട്ടങ്ങൾ", "2017 ലെ KAS പ്രത്യേക ചട്ടങ്ങൾ", "2018 ലെ KAS പ്രത്യേക ചട്ടങ്ങൾ", "1968 ലെ KAS പ്രത്യേക ചട്ടങ്ങൾ"], ans: 1 },
+        { q: "കേരള അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസിന് (KAS) പിന്തുണ നൽകുന്ന ഭരണഘടനയുടെ ആർട്ടിക്കിൾ ഏത്?", opts: ["ആർട്ടിക്കിൾ 310", "ആർട്ടിക്കിൾ 311", "ആർട്ടിക്കിൾ 309", "ആർട്ടിക്കിൾ 315"], ans: 2 },
+        { q: "KAS രൂപീകരണത്തിന് പിന്തുണ നൽകുന്ന പ്രധാന നിയമം ഏത്?", opts: ["കേരള പബ്ലിക് സർവീസസ് ആക്റ്റ്, 1968", "കേരള സർവീസ് റൂൾസ്", "കേരള പോലീസ് ആക്ട്", "കേരള റെവന്യൂ ആക്ട്"], ans: 0 },
+        { q: "കേരള അഡ്മിനിസ്ട്രേറ്റീവ് സർവീസ് (KAS) രൂപീകരിക്കാൻ ശുപാർശ ചെയ്ത ഭരണ പരിഷ്കാര കമ്മീഷൻ ഏത്?", opts: ["ഒന്നാം ഭരണ പരിഷ്കാര കമ്മീഷൻ", "രണ്ടാം ഭരണ പരിഷ്കാര കമ്മീഷൻ", "മൂന്നാം ഭരണ പരിഷ്കാര കമ്മീഷൻ", "നാലാം ഭരണ പരിഷ്കാര കമ്മീഷൻ"], ans: 2 },
+        { q: "മൂന്നാം ഭരണ പരിഷ്കാര കമ്മീഷന്റെ ചെയർമാൻ ആരായിരുന്നു?", opts: ["ഇ.കെ. നായനാർ", "ഇ.എം.എസ്. നമ്പൂതിരിപ്പാട്", "സി. അച്യുതമേനോൻ", "പിണറായി വിജയൻ"], ans: 0 },
+        { q: "KAS ഉദ്യോഗസ്ഥരുടെ ഗ്രേഡ് ക്രമത്തെക്കുറിച്ച് താഴെ നൽകിയിരിക്കുന്നവയിൽ ശരിയായ ക്രമം ഏത്?", opts: ["Junior Time Scale → Senior Time Grade Scale → KAS (selection Grade Scale)", "Selection Grade Scale → Senior Time Grade Scale → Junior Time Scale", "Senior Time Grade Scale → Junior Time Scale → Selection Grade Scale", "Junior Time Scale → Selection Grade Scale → Senior Time Grade Scale"], ans: 0 }
+    ];
+
+    let questionsData = [...allQuestionsData];
+    let currentIndex = 0;
+    let userAnswers = {};
+    let bookmarks = {};
+    let timerInterval;
+    let timeLeft = 2880; // 48 minutes
+    let isPaused = false;
+
+    function startExam() {
+        document.getElementById('welcomeScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                    return;
+                }
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById('timerDisplay').innerText = `സമയം ബാക്കി: ${m}:${s < 10 ? '0' : ''}${s}`;
+                timeLeft--;
+            }
+        }, 1000);
+    }
+
+    function pauseExam() {
+        isPaused = true;
+        document.getElementById('pauseOverlay').style.display = 'flex';
+    }
+
+    function resumeExam() {
+        isPaused = false;
+        document.getElementById('pauseOverlay').style.display = 'none';
+    }
+
+    function togglePalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+    }
+
+    function buildPalette() {
+        const grid = document.getElementById('paletteGrid');
+        grid.innerHTML = '';
+        questionsData.forEach((_, idx) => {
+            let item = document.createElement('div');
+            item.className = 'grid-item';
+            if (idx === currentIndex) item.classList.add('current');
+            if (userAnswers[idx] !== undefined) item.classList.add('answered');
+            if (bookmarks[idx]) item.classList.add('bookmarked');
+            item.innerText = idx + 1;
+            item.onclick = () => {
+                currentIndex = idx;
+                loadQuestion();
+                grid.style.display = 'none';
+            };
+            grid.appendChild(item);
+        });
+    }
+
+    function loadQuestion() {
+        const q = questionsData[currentIndex];
+        document.getElementById('qCounter').innerText = `ചോദ്യം ${currentIndex + 1} / ${questionsData.length}`;
+        document.getElementById('questionText').innerText = `${currentIndex + 1}. ${q.q}`;
+        
+        const list = document.getElementById('optionsList');
+        list.innerHTML = '';
+        q.opts.forEach((opt, idx) => {
+            let isSelected = userAnswers[currentIndex] === idx ? 'selected' : '';
+            list.innerHTML += `
+                <div class="option-box ${isSelected}" onclick="selectOption(${idx})">
+                    ${opt}
+                </div>
+            `;
+        });
+        
+        const bmBtn = document.getElementById('bookmarkBtn');
+        if (bookmarks[currentIndex]) {
+            bmBtn.classList.add('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്തു (Bookmarked)';
+        } else {
+            bmBtn.classList.remove('bookmarked');
+            bmBtn.innerText = '⭐ ബുക്ക്മാർക്ക് ചെയ്യുക (Bookmark)';
+        }
+        buildPalette();
+    }
+
+    function selectOption(idx) {
+        userAnswers[currentIndex] = idx;
+        loadQuestion();
+    }
+
+    function toggleBookmark() {
+        bookmarks[currentIndex] = !bookmarks[currentIndex];
+        loadQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentIndex < questionsData.length - 1) {
+            currentIndex++;
+            loadQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            loadQuestion();
+        }
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+        document.getElementById('pauseOverlay').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+
+        let score = 0;
+        let correct = 0;
+        let wrong = 0;
+        let skipped = 0;
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            if (ans === undefined) {
+                skipped++;
+            } else if (ans === q.ans) {
+                correct++;
+                score += 1;
+            } else {
+                wrong++;
+                score -= 0.33;
+            }
+        });
+
+        document.getElementById('resultSummaryText').innerHTML = `
+            <b>ആകെ സ്കോർ:</b> ${score.toFixed(2)}<br>
+            <b>ശരി ഉത്തരങ്ങൾ:</b> ${correct}<br>
+            <b>തെറ്റായ ഉത്തരങ്ങൾ:</b> ${wrong}<br>
+            <b>വിട്ടുപോയവ:</b> ${skipped}
+        `;
+        filterReview('all');
+    }
+
+    let currentFilter = 'all';
+    function filterReview(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event && event.target.classList.add('active');
+
+        const listContainer = document.getElementById('reviewList');
+        listContainer.innerHTML = '';
+
+        questionsData.forEach((q, i) => {
+            let ans = userAnswers[i];
+            let status = 'skipped';
+            if (ans !== undefined) {
+                status = (ans === q.ans) ? 'correct' : 'wrong';
+            }
+
+            if (filter !== 'all' && filter !== status) return;
+
+            let item = document.createElement('div');
+            item.className = `review-item ${status}`;
+            item.innerHTML = `
+                <b>ചോദ്യം ${i + 1}:</b> ${q.q}<br>
+                നിങ്ങളുടെ ഉത്തരം: ${ans !== undefined ? q.opts[ans] : 'വിട്ടുപോയി'}<br>
+                ശരിയായ ഉത്തരം: <b>${q.opts[q.ans]}</b>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    function retryQuiz(type) {
+        let filteredIndices = [];
+        if (type === 'all') {
+            questionsData = [...allQuestionsData];
+        } else {
+            allQuestionsData.forEach((q, i) => {
+                let ans = userAnswers[i];
+                if (type === 'wrong' && ans !== undefined && ans !== q.ans) filteredIndices.push(i);
+                if (type === 'skipped' && ans === undefined) filteredIndices.push(i);
+                if (type === 'wrong_skipped' && (ans === undefined || ans !== q.ans)) filteredIndices.push(i);
+            });
+            if (filteredIndices.length === 0) {
+                alert('ഈ വിഭാഗത്തിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല!');
+                return;
+            }
+            questionsData = filteredIndices.map(i => allQuestionsData[i]);
+        }
+
+        currentIndex = 0;
+        userAnswers = {};
+        bookmarks = {};
+        timeLeft = questionsData.length * 60;
+        isPaused = false;
+
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'block';
+        buildPalette();
+        loadQuestion();
+        startTimer();
+    }
+
+    // Global Swipe Support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        let diff = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diff) > 50 && document.getElementById('examScreen').style.display !== 'none' && !isPaused) {
+            if (diff < 0) nextQuestion();
+            else prevQuestion();
+        }
+    });
+</script>
+
+</body>
+</html>
