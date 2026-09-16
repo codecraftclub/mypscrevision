@@ -134,7 +134,6 @@
             color: #9ca3af;
         }
 
-        /* Bottom Action Buttons (Red & Green) */
         .action-buttons {
             display: flex;
             gap: 20px;
@@ -229,6 +228,7 @@
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
+            width: 100%;
         }
 
         .btn:hover {
@@ -260,7 +260,6 @@
                 </div>
             </div>
 
-            <!-- Clear Action Buttons below the card -->
             <div class="action-buttons">
                 <button class="action-btn btn-red" onclick="markCard('unlearned')">❌ ഓർമ്മയില്ല</button>
                 <button class="action-btn btn-green" onclick="markCard('learned')">✔️ അറിയാം</button>
@@ -286,9 +285,51 @@
                 </div>
             </div>
             <button class="btn" id="retry-btn" onclick="retryUnlearned()" style="display: none;">പഠിക്കാത്തവ മാത്രം വീണ്ടും പഠിക്കുക</button>
+            <button class="btn" id="save-firebase-btn" onclick="promptSaveToFirebase()" style="display: none; background: var(--success-color);">തെറ്റിയ ചോദ്യങ്ങൾ പുതിയ ഫ്ലാഷ് കാർഡായി സേവ് ചെയ്യുക</button>
             <button class="btn" onclick="restartAll()" style="background: #6b7280;">എല്ലാം ആദ്യമേ മുതൽ റിവിഷൻ ചെയ്യുക</button>
         </div>
     </div>
+
+    <!-- Firebase SDK & Save Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDA1XwfYzlPCL_Soxia0d-JpNekGGCaJMM",
+            authDomain: "mypscrevison.firebaseapp.com",
+            projectId: "mypscrevison",
+            storageBucket: "mypscrevison.firebasestorage.app",
+            messagingSenderId: "89979950079",
+            appId: "1:89979950079:web:707815264541bba457cdca",
+            measurementId: "G-GC849S4G0N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.saveUnlearnedToFirebase = async function(cardsToSave) {
+            if (cardsToSave.length === 0) return;
+
+            let confirmSave = confirm("തെറ്റിയ ചോദ്യങ്ങൾ ഉൾപ്പെടുത്തി പുതിയൊരു ഫ്ലാഷ് കാർഡ് സെറ്റ് ഫയർബേസിൽ ക്രിയേറ്റ് ചെയ്ത് സേവ് ചെയ്യണമോ?");
+            
+            if (!confirmSave) return;
+
+            try {
+                for (let card of cardsToSave) {
+                    await addDoc(collection(db, "revision_mistakes"), {
+                        q: card.q,
+                        a: card.a,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+                alert("തെറ്റിയ ചോദ്യങ്ങൾ പുതിയ ഫ്ലാഷ് കാർഡ് സെറ്റായി വിജയകരമായി സേവ് ചെയ്തു!");
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("സേവ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു.");
+            }
+        }
+    </script>
 
     <script>
         const cardsData = [
@@ -361,7 +402,6 @@
         const appScreen = document.getElementById('app-screen');
         const resultScreen = document.getElementById('result-screen');
 
-        // Fisher-Yates Shuffle Function to randomize cards order
         function shuffleArray(array) {
             let shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -410,10 +450,14 @@
             document.getElementById('res-unlearned').textContent = unlearnedCards.length;
 
             const retryBtn = document.getElementById('retry-btn');
+            const saveFirebaseBtn = document.getElementById('save-firebase-btn');
+
             if (unlearnedCards.length > 0) {
                 retryBtn.style.display = 'block';
+                saveFirebaseBtn.style.display = 'block';
             } else {
                 retryBtn.style.display = 'none';
+                saveFirebaseBtn.style.display = 'none';
             }
         }
 
@@ -426,8 +470,15 @@
             loadCard();
         }
 
+        function promptSaveToFirebase() {
+            if (typeof window.saveUnlearnedToFirebase === 'function') {
+                window.saveUnlearnedToFirebase(unlearnedCards);
+            } else {
+                alert("ഫയർബേസ് കണക്ഷൻ ലഭ്യമായിട്ടില്ല.");
+            }
+        }
+
         function restartAll() {
-            // Shuffle cards every time the user restarts the full session
             activeCards = shuffleArray(cardsData);
             unlearnedCards = [];
             currentIndex = 0;
@@ -472,7 +523,6 @@
             }
         }
 
-        // Initialize first card with shuffled data on page load
         activeCards = shuffleArray(cardsData);
         loadCard();
     </script>
