@@ -177,6 +177,9 @@
     </div>
 
     <script>
+        // ആഗോളതലത്തിൽ സെറ്റുകൾ സേവ് ചെയ്തു വെക്കാൻ
+        let allTestSets = {};
+
         // ഫയർബേസിൽ നിന്ന് സേവ് ചെയ്ത കസ്റ്റം സെറ്റുകൾ ലോഡ് ചെയ്യുക
         async function loadTestSets() {
             const container = document.getElementById('test-sets-container');
@@ -187,9 +190,13 @@
 
             try {
                 const querySnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.db, "custom_test_sets"));
+                allTestSets = {}; // ക്ലിയർ ചെയ്യുന്നു
                 let setsList = [];
+                
                 querySnapshot.forEach((docItem) => {
-                    setsList.push({ id: docItem.id, ...docItem.data() });
+                    let data = docItem.data();
+                    allTestSets[docItem.id] = data; // മെമ്മറിയിൽ സൂക്ഷിക്കുന്നു
+                    setsList.push({ id: docItem.id, setName: data.setName, count: data.questions ? data.questions.length : 0 });
                 });
 
                 if (setsList.length === 0) {
@@ -201,17 +208,13 @@
                 setsList.forEach((setItem) => {
                     let card = document.createElement('div');
                     card.className = 'set-card';
-                    
-                    // ഡാറ്റ സുരക്ഷിതമായി എൻകോഡ് ചെയ്യുന്നു
-                    let encodedItem = encodeURIComponent(JSON.stringify(setItem));
-
                     card.innerHTML = `
                         <div class="set-info">
                             <h3>${setItem.setName}</h3>
-                            <p>ചോദ്യങ്ങളുടെ എണ്ണം: ${setItem.questions ? setItem.questions.length : 0}</p>
+                            <p>ചോദ്യങ്ങളുടെ എണ്ണം: ${setItem.count}</p>
                         </div>
                         <div class="btn-group">
-                            <button class="btn-start" onclick='startCustomExamFromEncoded("${encodedItem}")'>ടെസ്റ്റ് എഴുതുക</button>
+                            <button class="btn-start" onclick="startCustomExam('${setItem.id}')">ടെസ്റ്റ് എഴുതുക</button>
                             <button class="btn-delete" onclick="deleteTestSet('${setItem.id}')">✕</button>
                         </div>
                     `;
@@ -235,18 +238,19 @@
             }
         };
 
-        // സെറ്റ് എടുത്തു ടെസ്റ്റ് സ്റ്റാർട്ട് ചെയ്യാൻ
         let currentExamQuestions = [];
         let currentExamIndex = 0;
         let customUserAnswers = {};
 
-        window.startCustomExamFromEncoded = function(encodedItem) {
-            let setItem = JSON.parse(decodeURIComponent(encodedItem));
+        // ഐഡി വഴി സെറ്റ് എടുത്ത് ടെസ്റ്റ് സ്റ്റാർട്ട് ചെയ്യുന്നു
+        window.startCustomExam = function(setId) {
+            let setItem = allTestSets[setId];
             
-            if (!setItem.questions || setItem.questions.length === 0) {
+            if (!setItem || !setItem.questions || setItem.questions.length === 0) {
                 alert('ഈ സെറ്റിൽ ചോദ്യങ്ങൾ ഒന്നും ലഭ്യമല്ല.');
                 return;
             }
+            
             currentExamQuestions = setItem.questions;
             currentExamIndex = 0;
             customUserAnswers = {};
@@ -280,7 +284,7 @@
                     optsHtml += `<div class="option-item ${isSelected}" onclick="selectCustomOption(${oIdx})">${optLetter}) ${opt}</div>`;
                 });
             } else {
-                optsHtml = `<div style="color: #dc2626;">ഈ ചോദ്യത്തിന് ഓപ്ഷനുകൾ ലഭ്യമായിട്ടില്ല. (ദയവായി പുതിയൊരു സെറ്റ് സേവ് ചെയ്തു നോക്കുക)</div>`;
+                optsHtml = `<div style="color: #dc2626;">ഈ ചോദ്യത്തിന് ഓപ്ഷനുകൾ ലഭ്യമായിട്ടില്ല. (ദയവായി മോക്ക് ടെസ്റ്റ് എഴുതി പുതിയൊരു സെറ്റ് സേവ് ചെയ്യുക)</div>`;
             }
             optsContainer.innerHTML = optsHtml;
 
