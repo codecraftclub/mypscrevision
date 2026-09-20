@@ -8,7 +8,7 @@
     <!-- Firebase SDK & Firestore (v12) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDA1XwfYzlPCL_Soxia0d-JpNekGGCaJMM",
@@ -27,6 +27,7 @@
         window.firebaseCollection = collection;
         window.firebaseDeleteDoc = deleteDoc;
         window.firebaseDoc = doc;
+        window.firebaseAddDoc = addDoc;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof loadTestSets === 'function') {
@@ -112,11 +113,15 @@
         .actions-box { display: flex; max-width: 600px; margin: 20px auto 20px auto; }
         .btn-home { background: #059669; width: 100%; padding: 12px; color: white; text-decoration: none; border-radius: 10px; font-weight: 700; text-align: center; display: block; }
         
-        /* ടെസ്റ്റ് എഴുതുന്ന സ്ക്രീൻ സ്റ്റെപ്പുകൾ */
+        /* ടെസ്റ്റ് സ്ക്രീൻ സ്റ്റെപ്പുകൾ */
         .exam-screen { display: none; background: #fff; padding: 20px; border-radius: 12px; max-width: 600px; margin: 0 auto; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .exam-screen.active { display: block; }
         .main-review-screen.hidden { display: none; }
         
+        .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.95rem; color: #64748b; }
+        .bookmark-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #cbd5e1; transition: color 0.2s; }
+        .bookmark-btn.bookmarked { color: #f59e0b; }
+
         .q-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #1e293b; line-height: 1.4; }
         .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .option-item {
@@ -131,6 +136,16 @@
         .option-item:hover { border-color: #4f46e5; background: #f1f5f9; }
         .option-item.selected { border-color: #4f46e5; background: #e0e7ff; color: #4338ca; font-weight: 600; }
         
+        /* ചോദ്യങ്ങളുടെ പട്ടിക (Palette Grid) */
+        .palette-container { margin-top: 20px; border-top: 1px solid #cbd5e1; padding-top: 15px; }
+        .palette-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #475569; }
+        .palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; max-height: 120px; overflow-y: auto; padding: 4px; }
+        .palette-btn { width: 36px; height: 36px; border-radius: 6px; border: 1px solid #cbd5e1; background: #e2e8f0; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .palette-btn.current { border: 2px solid #4f46e5; box-shadow: 0 0 5px rgba(79, 70, 229, 0.5); }
+        .palette-btn.answered { background: #10b981; color: white; border-color: #10b981; }
+        .palette-btn.bookmarked-pal { position: relative; }
+        .palette-btn.bookmarked-pal::after { content: '★'; position: absolute; top: -2px; right: 2px; font-size: 10px; color: #f59e0b; }
+
         .btn-action {
             background: #4f46e5;
             color: white;
@@ -139,8 +154,19 @@
             border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
+            width: 100%;
         }
         .btn-action:hover { background: #4338ca; }
+
+        /* റിസൾട്ട് പേജ് ഫിൽട്ടർ ബട്ടണുകൾ */
+        .filter-buttons { display: flex; gap: 5px; margin: 15px 0; flex-wrap: wrap; justify-content: center; }
+        .filter-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .filter-btn.active-filter { background: #4f46e5; color: white; border-color: #4f46e5; }
+        .review-list { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; text-align: left; }
+        .review-item { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+        .correct-bg { background-color: #d1fae5; border-color: #6ee7b7; }
+        .wrong-bg { background-color: #fee2e2; border-color: #fca5a5; }
+        .unattempted-bg { background-color: #fef3c7; border-color: #fde68a; }
     </style>
 </head>
 <body>
@@ -161,26 +187,40 @@
         </div>
     </div>
 
-    <!-- മോക്ക് ടെസ്റ്റ് എഴുതുന്ന സ്ക്രീൻ -->
+    <!-- മോക്ക് ടെസ്റ്റ് & റിസൾട്ട് സ്ക്രീൻ -->
     <div id="exam-screen" class="exam-screen">
-        <h2 id="active-set-title" style="margin-bottom: 15px; color: #4f46e5; font-size: 1.2rem;">ടെസ്റ്റ്</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h2 id="active-set-title" style="color: #4f46e5; font-size: 1.1rem;">ടെസ്റ്റ്</h2>
+            <button class="btn-action" style="background: #dc2626; width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="exitExam()">ക്വിറ്റ് ചെയ്യുക</button>
+        </div>
+
+        <div class="q-meta">
+            <span id="q-counter">ചോദ്യം 1 / 0</span>
+            <button class="bookmark-btn" id="bookmark-toggle" onclick="toggleBookmark()">★</button>
+        </div>
+
         <div id="exam-question-container"></div>
         
         <div class="options-list" id="exam-options-container" style="margin-top: 15px;">
             <!-- ഓപ്ഷനുകൾ ഇവിടെ വരും -->
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-action" onclick="nextCustomQuestion()" id="next-btn" style="flex: 1;">അടുത്ത ചോദ്യം</button>
-            <button class="btn-action" style="background: #dc2626;" onclick="exitExam()">ക്വിറ്റ് ചെയ്യുക</button>
+        <!-- ക്വസ്റ്റ്യൻ വ്യൂ പാലറ്റ് -->
+        <div class="palette-container" id="palette-section">
+            <div class="palette-title">ചോദ്യങ്ങളുടെ പട്ടിക (Question Palette):</div>
+            <div class="palette-grid" id="palette-grid">
+                <!-- പാലറ്റ് ബട്ടണുകൾ ഇവിടെ വരും -->
+            </div>
+        </div>
+
+        <div id="exam-nav-box" style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn-action" onclick="nextCustomQuestion()" id="next-btn">അടുത്ത ചോദ്യം</button>
         </div>
     </div>
 
     <script>
-        // ആഗോളതലത്തിൽ സെറ്റുകൾ സേവ് ചെയ്തു വെക്കാൻ
         let allTestSets = {};
 
-        // ഫയർബേസിൽ നിന്ന് സേവ് ചെയ്ത കസ്റ്റം സെറ്റുകൾ ലോഡ് ചെയ്യുക
         async function loadTestSets() {
             const container = document.getElementById('test-sets-container');
             if (!window.db) {
@@ -190,12 +230,12 @@
 
             try {
                 const querySnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.db, "custom_test_sets"));
-                allTestSets = {}; // ക്ലിയർ ചെയ്യുന്നു
+                allTestSets = {};
                 let setsList = [];
                 
                 querySnapshot.forEach((docItem) => {
                     let data = docItem.data();
-                    allTestSets[docItem.id] = data; // മെമ്മറിയിൽ സൂക്ഷിക്കുന്നു
+                    allTestSets[docItem.id] = data;
                     setsList.push({ id: docItem.id, setName: data.setName, count: data.questions ? data.questions.length : 0 });
                 });
 
@@ -226,7 +266,6 @@
             }
         }
 
-        // സെറ്റ് ഡിലീറ്റ് ചെയ്യാൻ
         window.deleteTestSet = async function(setId) {
             if (confirm("ഈ ടെസ്റ്റ് സെറ്റ് ഒഴിവാക്കണമെന്നുറപ്പാണോ?")) {
                 try {
@@ -241,8 +280,9 @@
         let currentExamQuestions = [];
         let currentExamIndex = 0;
         let customUserAnswers = {};
+        let customBookmarks = new Set();
+        let activeSetName = "";
 
-        // ഐഡി വഴി സെറ്റ് എടുത്ത് ടെസ്റ്റ് സ്റ്റാർട്ട് ചെയ്യുന്നു
         window.startCustomExam = function(setId) {
             let setItem = allTestSets[setId];
             
@@ -254,28 +294,42 @@
             currentExamQuestions = setItem.questions;
             currentExamIndex = 0;
             customUserAnswers = {};
+            customBookmarks.clear();
+            activeSetName = setItem.setName;
             
-            document.getElementById('active-set-title').innerText = setItem.setName;
+            document.getElementById('active-set-title').innerText = activeSetName;
             document.getElementById('main-review-screen').classList.add('hidden');
             document.getElementById('exam-screen').classList.add('active');
+            document.getElementById('palette-section').style.display = 'block';
+            document.getElementById('exam-nav-box').style.display = 'flex';
+            
             renderExamQuestion();
+            renderPalette();
         }
 
         function renderExamQuestion() {
             if (currentExamIndex >= currentExamQuestions.length) {
-                showCustomExamResults();
+                showCustomExamResults('all');
                 return;
             }
 
             let qData = currentExamQuestions[currentExamIndex];
-            let container = document.getElementById('exam-question-container');
-            let optsContainer = document.getElementById('exam-options-container');
-            
-            container.innerHTML = `
-                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 6px;">ചോദ്യം ${currentExamIndex + 1} / ${currentExamQuestions.length}</div>
-                <div class="q-title">${qData.question}</div>
-            `;
+            document.getElementById('q-counter').innerText = `ചോദ്യം ${currentExamIndex + 1} / ${currentExamQuestions.length}`;
+            document.getElementById('question-text-div').innerText = qData.question;
 
+            let bBtn = document.getElementById('bookmark-toggle');
+            if (customBookmarks.has(currentExamIndex)) {
+                bBtn.classList.add('bookmarked');
+                bBtn.innerText = '★';
+            } else {
+                bBtn.classList.remove('bookmarked');
+                bBtn.innerText = '☆';
+            }
+
+            let container = document.getElementById('exam-question-container');
+            container.innerHTML = `<div class="q-title" id="question-text-div">${currentExamIndex + 1}. ${qData.question}</div>`;
+
+            let optsContainer = document.getElementById('exam-options-container');
             let optsHtml = '';
             if (qData.options && Array.isArray(qData.options)) {
                 qData.options.forEach((opt, oIdx) => {
@@ -284,59 +338,195 @@
                     optsHtml += `<div class="option-item ${isSelected}" onclick="selectCustomOption(${oIdx})">${optLetter}) ${opt}</div>`;
                 });
             } else {
-                optsHtml = `<div style="color: #dc2626;">ഈ ചോദ്യത്തിന് ഓപ്ഷനുകൾ ലഭ്യമായിട്ടില്ല. (ദയവായി മോക്ക് ടെസ്റ്റ് എഴുതി പുതിയൊരു സെറ്റ് സേവ് ചെയ്യുക)</div>`;
+                optsHtml = `<div style="color: #dc2626;">ഈ ചോദ്യത്തിന് ഓപ്ഷനുകൾ ലഭ്യമായിട്ടില്ല.</div>`;
             }
             optsContainer.innerHTML = optsHtml;
 
             document.getElementById('next-btn').innerText = (currentExamIndex === currentExamQuestions.length - 1) ? "ടെസ്റ്റ് ഫലം കാണുക" : "അടുത്ത ചോദ്യം";
+            renderPalette();
         }
 
         window.selectCustomOption = function(optIndex) {
             customUserAnswers[currentExamIndex] = optIndex;
             renderExamQuestion();
+
+            setTimeout(() => {
+                if (currentExamIndex < currentExamQuestions.length - 1) {
+                    currentExamIndex++;
+                    renderExamQuestion();
+                }
+            }, 250);
+        }
+
+        window.toggleBookmark = function() {
+            if (customBookmarks.has(currentExamIndex)) {
+                customBookmarks.delete(currentExamIndex);
+            } else {
+                customBookmarks.add(currentExamIndex);
+            }
+            renderExamQuestion();
+        }
+
+        function renderPalette() {
+            let gridHtml = '';
+            currentExamQuestions.forEach((item, idx) => {
+                let isAns = customUserAnswers[idx] !== undefined ? 'answered' : '';
+                let isCurr = idx === currentExamIndex ? 'current' : '';
+                let isMark = customBookmarks.has(idx) ? 'bookmarked-pal' : '';
+
+                gridHtml += `<button class="palette-btn ${isAns} ${isCurr} ${isMark}" onclick="jumpToQuestion(${idx})">${idx + 1}</button>`;
+            });
+            document.getElementById('palette-grid').innerHTML = gridHtml;
+        }
+
+        window.jumpToQuestion = function(idx) {
+            currentExamIndex = idx;
+            renderExamQuestion();
         }
 
         window.nextCustomQuestion = function() {
-            if (customUserAnswers[currentExamIndex] === undefined) {
-                if (!confirm("ഈ ചോദ്യത്തിന് ഉത്തരം നൽകിയിട്ടില്ല. അടുത്ത ചോദ്യത്തിലേക്ക് പോകണോ?")) {
-                    return;
-                }
-            }
             currentExamIndex++;
             renderExamQuestion();
         }
 
-        function showCustomExamResults() {
+        // ടെസ്റ്റ് പൂർത്തിയാകുമ്പോൾ റിസൾട്ട് കാണിക്കുന്ന ഫങ്ക്ഷൻ
+        function showCustomExamResults(filterType) {
             let correct = 0;
             let wrong = 0;
+            let unattempted = 0;
+            let targetQuestionsToSave = [];
 
             currentExamQuestions.forEach((q, idx) => {
                 let userAns = customUserAnswers[idx];
-                if (userAns !== undefined && userAns === q.ans) {
+                if (userAns === undefined) {
+                    unattempted++;
+                    targetQuestionsToSave.push(q);
+                } else if (userAns === q.ans) {
                     correct++;
                 } else {
                     wrong++;
+                    targetQuestionsToSave.push(q);
                 }
             });
 
+            window.latestWrongOrUnattempted = targetQuestionsToSave;
+            let totalScore = (correct * 1.0) - (wrong * 0.33);
+
             let container = document.getElementById('exam-question-container');
             let optsContainer = document.getElementById('exam-options-container');
+            document.getElementById('palette-section').style.display = 'none';
+            document.getElementById('q-meta').style.display = 'none';
 
             container.innerHTML = `
-                <h2 style="color: #4f46e5; margin-bottom: 10px;">ടെസ്റ്റ് പൂർത്തിയായി! 🎉</h2>
-                <p style="font-size: 1.05rem; margin-bottom: 8px;">ശരിയായ ഉത്തരങ്ങൾ: <strong style="color: #10b981;">${correct}</strong></p>
-                <p style="font-size: 1.05rem; margin-bottom: 15px;">ശരിയല്ലാത്തവ / അറ്റൻഡ് ചെയ്യാത്തവ: <strong style="color: #ef4444;">${wrong}</strong></p>
+                <h2 style="color: #4f46e5; margin-bottom: 10px; text-align: center;">ടെസ്റ്റ് ഫലം 🎉</h2>
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: left; font-size: 0.9rem;">
+                    <div>സ്കോർ: <strong style="color: #4f46e5;">${totalScore.toFixed(2)}</strong> | ശരി: <strong style="color: #10b981;">${correct}</strong> | തെറ്റ്: <strong style="color: #ef4444;">${wrong}</strong> | അറ്റൻഡ് ചെയ്യാത്തവ: <strong style="color: #f59e0b;">${unattempted}</strong></div>
+                </div>
+                
+                <!-- ഫിൽട്ടർ ബട്ടണുകൾ -->
+                <div class="filter-buttons">
+                    <button class="filter-btn ${filterType === 'all' ? 'active-filter' : ''}" onclick="filterCustomReview('all')">എല്ലാം</button>
+                    <button class="filter-btn ${filterType === 'correct' ? 'active-filter' : ''}" onclick="filterCustomReview('correct')">ശരി ഉത്തരങ്ങൾ</button>
+                    <button class="filter-btn ${filterType === 'wrong' ? 'active-filter' : ''}" onclick="filterCustomReview('wrong')">തെറ്റായവ മാത്രം</button>
+                    <button class="filter-btn ${filterType === 'unattempted' ? 'active-filter' : ''}" onclick="filterCustomReview('unattempted')">അറ്റൻഡ് ചെയ്യാത്തവ</button>
+                </div>
+
+                <div class="review-list" id="custom-review-list"></div>
             `;
-            optsContainer.innerHTML = `
-                <button class="btn-action" onclick="exitExam()" style="width: 100%; padding: 12px;">മടങ്ങിപ്പോവുക</button>
-            `;
-            document.getElementById('next-btn').style.display = 'none';
+
+            renderCustomReviewItems(filterType);
+
+            let actionButtonsHtml = `<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">`;
+            
+            if (targetQuestionsToSave.length > 0) {
+                actionButtonsHtml += `<button class="btn-action" style="background: #9333ea;" onclick="saveAgainWrongOrUnattemptedSet()">⭐ തെറ്റിയവയും അറ്റൻഡ് ചെയ്യാത്തവയും പുതിയ സെറ്റായി സേവ് ചെയ്യുക</button>`;
+            } else {
+                actionButtonsHtml += `<p style="color: #10b981; font-weight: bold; text-align: center;">അഭിനന്ദനങ്ങൾ! എല്ലാ ചോദ്യങ്ങൾക്കും താങ്കൾ ശരിയായ ഉത്തരം നൽകിയിരിക്കുന്നു! 🌟</p>`;
+            }
+
+            actionButtonsHtml += `
+                <button class="btn-action" style="background: #4f46e5;" onclick="startCustomExamFromExisting('${activeSetName}')">ഈ സെറ്റ് വീണ്ടും ചെയ്യുക</button>
+                <button class="btn-action" style="background: #64748b;" onclick="exitExam()">ലിസ്റ്റ് പേജിലേക്ക് മടങ്ങുക</button>
+            </div>`;
+
+            optsContainer.innerHTML = actionButtonsHtml;
+            document.getElementById('exam-nav-box').style.display = 'none';
+        }
+
+        window.filterCustomReview = function(type) {
+            showCustomExamResults(type);
+        }
+
+        function renderCustomReviewItems(filter) {
+            let listContainer = document.getElementById('custom-review-list');
+            if (!listContainer) return;
+
+            let html = '';
+            currentExamQuestions.forEach((item, idx) => {
+                let userAns = customUserAnswers[idx];
+                let status = '';
+                if (userAns === undefined) status = 'unattempted';
+                else if (userAns === item.ans) status = 'correct';
+                else status = 'wrong';
+
+                if (filter !== 'all' && filter !== status) return;
+
+                let bgClass = status === 'correct' ? 'correct-bg' : (status === 'wrong' ? 'wrong-bg' : 'unattempted-bg');
+                let userOptText = userAns !== undefined ? item.options[userAns] : 'അറ്റൻഡ് ചെയ്തിട്ടില്ല';
+                let correctOptText = item.options[item.ans];
+
+                html += `
+                    <div class="review-item ${bgClass}">
+                        <strong>ചോദ്യം ${idx + 1}:</strong> ${item.question}<br>
+                        <span>നിങ്ങളുടെ ഉത്തരം: <strong>${userOptText}</strong></span><br>
+                        <span style="color: #047857;">ശരിയായ ഉത്തരം: <strong>${correctOptText}</strong></span>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        window.startCustomExamFromExisting = function(setName) {
+            let foundSet = Object.values(allTestSets).find(s => s.setName === setName);
+            if (foundSet) {
+                currentExamQuestions = foundSet.questions;
+                currentExamIndex = 0;
+                customUserAnswers = {};
+                customBookmarks.clear();
+                activeSetName = foundSet.setName;
+                document.getElementById('palette-section').style.display = 'block';
+                document.getElementById('exam-nav-box').style.display = 'flex';
+                renderExamQuestion();
+            }
+        }
+
+        window.saveAgainWrongOrUnattemptedSet = async function() {
+            if (!window.latestWrongOrUnattempted || window.latestWrongOrUnattempted.length === 0) return;
+
+            let defaultName = activeSetName + " (റിവ്യൂ സെറ്റ്)";
+            let setName = prompt("ഈ പുതിയ ടെസ്റ്റ് സെറ്റിന് ഒരു പേര് നൽകുക:", defaultName);
+            
+            if (!setName || setName.trim() === "") return;
+
+            try {
+                await window.firebaseAddDoc(window.firebaseCollection(window.db, "custom_test_sets"), {
+                    setName: setName.trim(),
+                    questions: window.latestWrongOrUnattempted,
+                    timestamp: new Date()
+                });
+                alert('വിജയകരമായി പുതിയ ടെസ്റ്റ് സെറ്റ് ഫയർബേസിൽ സേവ് ചെയ്യപ്പെട്ടു!');
+                exitExam();
+            } catch (e) {
+                console.error("Firebase save error: ", e);
+                alert('സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു.');
+            }
         }
 
         window.exitExam = function() {
             document.getElementById('exam-screen').classList.remove('active');
             document.getElementById('main-review-screen').classList.remove('hidden');
-            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('palette-section').style.display = 'block';
+            document.getElementById('exam-nav-box').style.display = 'flex';
             loadTestSets();
         }
     </script>
