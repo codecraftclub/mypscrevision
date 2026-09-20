@@ -3,123 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Previous Year Questions - Mocktest</title>
+    <title>English PYQ - 50 Sets (Mocktest & Flashcards)</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); padding: 16px 10px; text-align: center; min-height: 100vh; color: #1e293b; }
         
-        .banner-box {
-            background-color: #198754;
-            color: white;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2);
+        .header { 
+            background: linear-gradient(135deg, #4338ca 0%, #312e81 100%); 
+            color: white; padding: 24px 18px; border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(67, 56, 202, 0.3); max-width: 550px; margin: 0 auto 20px auto; 
         }
-        .banner-box h2 {
-            margin: 0 0 10px 0;
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .banner-box p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .header p { font-size: 0.9rem; opacity: 0.95; }
 
-        .chapter-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 15px 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-        }
-        .chapter-row:hover {
-            border-color: #198754;
-            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.1);
-        }
-        .chapter-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+        .container { display: flex; flex-direction: column; gap: 12px; max-width: 550px; margin: 0 auto; }
         
-        .btn-view {
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
+        /* സെറ്റ് ബോക്സ് */
+        .set-box { 
+            background: #ffffff; padding: 14px 16px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; 
+            border-left: 6px solid #4338ca; 
         }
-        .btn-view:hover {
-            background-color: #157347;
+        .set-box h3 { color: #1e293b; font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; }
+        
+        /* ബട്ടണുകൾ അടങ്ങിയ ഗ്രൂപ്പ് */
+        .btn-group { display: flex; gap: 10px; }
+        
+        .btn-flash { 
+            flex: 1; padding: 9px 10px; background: #ffc107; color: #212529; 
+            text-decoration: none; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; 
         }
+        .btn-flash:hover { background: #ffca2c; }
 
-        .btn-back {
-            display: block;
-            width: 100%;
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 25px;
-            box-sizing: border-box;
+        .btn-mock { 
+            flex: 1; padding: 9px 10px; background: #0d6efd; color: white; 
+            text-decoration: none; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; 
         }
-        .btn-back:hover {
-            background-color: #157347;
-        }
+        .btn-mock:hover { background: #0b5ed7; }
+
+        .back-link { display: inline-block; margin-top: 25px; color: #312e81; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="banner-box">
-        <h2>📝 ഇംഗ്ലീഷ് പ്രീവിയസ് ഇയർ ക്വസ്റ്റ്യൻസ് - Mocktest & Flash Cards</h2>
-        <p>പഠനത്തിനായി ഒരു ചാപ്റ്റർ തിരഞ്ഞെടുക്കുക</p>
+    <div class="header">
+        <h1>📜 ഇംഗ്ലീഷ് പ്രീവിയസ് ഇയർ ക്വസ്റ്റ്യൻസ് (50 Sets)</h1>
+        <p>ഫ്ലാഷ് കാർഡുകളും മോക്ക് ടെസ്റ്റുകളും തിരഞ്ഞെടുക്കുക</p>
     </div>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 1</span>
-        <a href="english-pyq-chapter1.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
+    <div class="container">
+        
+        <!-- സെറ്റ് 1 മുതൽ 50 വരെയുള്ള ലൂപ്പ് മാതൃക -->
+        <!-- Set 1 -->
+        <div class="set-box">
+            <h3>Set 1</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set1" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set1" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 2 -->
+        <div class="set-box">
+            <h3>Set 2</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set2" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set2" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 3 -->
+        <div class="set-box">
+            <h3>Set 3</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set3" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set3" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 4 -->
+        <div class="set-box">
+            <h3>Set 4</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set4" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set4" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 5 -->
+        <div class="set-box">
+            <h3>Set 5</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set5" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set5" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 6 -->
+        <div class="set-box">
+            <h3>Set 6</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set6" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set6" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 7 -->
+        <div class="set-box">
+            <h3>Set 7</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set7" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set7" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 8 -->
+        <div class="set-box">
+            <h3>Set 8</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set8" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set8" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 9 -->
+        <div class="set-box">
+            <h3>Set 9</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set9" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set9" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 10 -->
+        <div class="set-box">
+            <h3>Set 10</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set10" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set10" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 11 -->
+        <div class="set-box">
+            <h3>Set 11</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set11" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set11" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 12 -->
+        <div class="set-box">
+            <h3>Set 12</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set12" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set12" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 13 -->
+        <div class="set-box">
+            <h3>Set 13</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set13" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set13" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 14 -->
+        <div class="set-box">
+            <h3>Set 14</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set14" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set14" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 15 -->
+        <div class="set-box">
+            <h3>Set 15</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set15" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set15" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 16 -->
+        <div class="set-box">
+            <h3>Set 16</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set16" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set16" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 17 -->
+        <div class="set-box">
+            <h3>Set 17</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set17" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set17" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 18 -->
+        <div class="set-box">
+            <h3>Set 18</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set18" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set18" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 19 -->
+        <div class="set-box">
+            <h3>Set 19</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set19" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set19" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 20 -->
+        <div class="set-box">
+            <h3>Set 20</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set20" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set20" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 21 -->
+        <div class="set-box">
+            <h3>Set 21</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set21" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set21" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 22 -->
+        <div class="set-box">
+            <h3>Set 22</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set22" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set22" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 23 -->
+        <div class="set-box">
+            <h3>Set 23</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set23" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set23" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 24 -->
+        <div class="set-box">
+            <h3>Set 24</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set24" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set24" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 25 -->
+        <div class="set-box">
+            <h3>Set 25</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set25" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set25" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 26 -->
+        <div class="set-box">
+            <h3>Set 26</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set26" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set26" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 27 -->
+        <div class="set-box">
+            <h3>Set 27</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set27" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set27" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 28 -->
+        <div class="set-box">
+            <h3>Set 28</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set28" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set28" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 29 -->
+        <div class="set-box">
+            <h3>Set 29</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set29" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set29" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 30 -->
+        <div class="set-box">
+            <h3>Set 30</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set30" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set30" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 31 -->
+        <div class="set-box">
+            <h3>Set 31</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set31" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set31" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 32 -->
+        <div class="set-box">
+            <h3>Set 32</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set32" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set32" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 33 -->
+        <div class="set-box">
+            <h3>Set 33</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set33" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set33" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 34 -->
+        <div class="set-box">
+            <h3>Set 34</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set34" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set34" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 35 -->
+        <div class="set-box">
+            <h3>Set 35</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set35" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set35" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 36 -->
+        <div class="set-box">
+            <h3>Set 36</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set36" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set36" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 37 -->
+        <div class="set-box">
+            <h3>Set 37</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set37" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set37" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 38 -->
+        <div class="set-box">
+            <h3>Set 38</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set38" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set38" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 39 -->
+        <div class="set-box">
+            <h3>Set 39</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set39" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set39" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 40 -->
+        <div class="set-box">
+            <h3>Set 40</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set40" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set40" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 41 -->
+        <div class="set-box">
+            <h3>Set 41</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set41" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set41" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 42 -->
+        <div class="set-box">
+            <h3>Set 42</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set42" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set42" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 43 -->
+        <div class="set-box">
+            <h3>Set 43</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set43" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set43" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 44 -->
+        <div class="set-box">
+            <h3>Set 44</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set44" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set44" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 45 -->
+        <div class="set-box">
+            <h3>Set 45</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set45" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set45" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 46 -->
+        <div class="set-box">
+            <h3>Set 46</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set46" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set46" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 47 -->
+        <div class="set-box">
+            <h3>Set 47</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set47" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set47" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 48 -->
+        <div class="set-box">
+            <h3>Set 48</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set48" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set48" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 49 -->
+        <div class="set-box">
+            <h3>Set 49</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set49" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set49" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Set 50 -->
+        <div class="set-box">
+            <h3>Set 50</h3>
+            <div class="btn-group">
+                <a href="eng_pyq_flash.html#set50" class="btn-flash">⚡ Flash Cards</a>
+                <a href="eng_pyq_mock.html#set50" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
     </div>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 2</span>
-        <a href="english-pyq-chapter2.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
-
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 3</span>
-        <a href="english-pyq-chapter3.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
-
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 4</span>
-        <a href="english-pyq-chapter4.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
-
-    <a href="index.html" class="btn-back">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
-</div>
+    <a href="index.html" class="back-link">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
 
 </body>
 </html>

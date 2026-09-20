@@ -3,130 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCERT Chapters - Mocktest</title>
+    <title>SCERT Chapters - Mocktest & Flashcards</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); padding: 16px 10px; text-align: center; min-height: 100vh; color: #1e293b; }
         
-        /* Top Banner Box */
-        .banner-box {
-            background-color: #198754;
-            color: white;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2);
+        .header { 
+            background: linear-gradient(135deg, #059669 0%, #047857 100%); 
+            color: white; padding: 24px 18px; border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.3); max-width: 550px; margin: 0 auto 20px auto; 
         }
-        .banner-box h2 {
-            margin: 0 0 10px 0;
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .banner-box p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .header p { font-size: 0.9rem; opacity: 0.95; }
 
-        /* Chapter Item Row */
-        .chapter-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 15px 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            transition: all 0.2s ease;
-        }
-        .chapter-row:hover {
-            border-color: #198754;
-            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.1);
-        }
-        .chapter-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+        .container { display: flex; flex-direction: column; gap: 14px; max-width: 550px; margin: 0 auto; }
         
-        /* Action Button Inside Row */
-        .btn-view {
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
+        /* ഓരോ ചാപ്റ്ററിനുമുള്ള ബോക്സ് */
+        .chapter-box { 
+            background: #ffffff; padding: 16px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; 
+            border-left: 6px solid #059669; 
         }
-        .btn-view:hover {
-            background-color: #157347;
+        .chapter-box h3 { color: #1e293b; font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+        
+        /* ബട്ടണുകൾ അടങ്ങിയ ഗ്രൂപ്പ് */
+        .btn-group { display: flex; gap: 10px; }
+        
+        .btn-flash { 
+            flex: 1; padding: 10px; background: #ffc107; color: #212529; 
+            text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; 
         }
+        .btn-flash:hover { background: #ffca2c; }
 
-        /* Back Button */
-        .btn-back {
-            display: block;
-            width: 100%;
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 25px;
-            box-sizing: border-box;
+        .btn-mock { 
+            flex: 1; padding: 10px; background: #0d6efd; color: white; 
+            text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; 
         }
-        .btn-back:hover {
-            background-color: #157347;
-        }
+        .btn-mock:hover { background: #0b5ed7; }
+
+        .back-link { display: inline-block; margin-top: 25px; color: #047857; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .back-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Top Header Banner -->
-    <div class="banner-box">
-        <h2>📖 എസ്‌.സി.ഇ.ആർ.ടി ചാപ്റ്ററുകൾ - Mocktest & Flash Cards</h2>
-        <p>പഠനത്തിനായി ഒരു ചാപ്റ്റർ തിരഞ്ഞെടുക്കുക</p>
+    <div class="header">
+        <h1>📖 എസ്‌.സി.ഇ.ആർ.ടി ചാപ്റ്ററുകൾ</h1>
+        <p>ഫ്ലാഷ് കാർഡുകളും മോക്ക് ടെസ്റ്റുകളും തിരഞ്ഞെടുക്കുക</p>
     </div>
 
-    <!-- Chapter List Items -->
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 1</span>
-        <a href="chapter1.html" class="btn-view">മോക്ക് ടെസ്റ്റ് ചെയ്യുക →</a>
+    <div class="container">
+        
+        <!-- Chapter 1 -->
+        <div class="chapter-box">
+            <h3>Chapter 1</h3>
+            <div class="btn-group">
+                <a href="scert_flash.html#ch1" class="btn-flash">⚡ Flash Cards</a>
+                <a href="scert_mock.html#ch1" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Chapter 2 -->
+        <div class="chapter-box">
+            <h3>Chapter 2</h3>
+            <div class="btn-group">
+                <a href="scert_flash.html#ch2" class="btn-flash">⚡ Flash Cards</a>
+                <a href="scert_mock.html#ch2" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div class="chapter-box">
+            <h3>Chapter 3</h3>
+            <div class="btn-group">
+                <a href="scert_flash.html#ch3" class="btn-flash">⚡ Flash Cards</a>
+                <a href="scert_mock.html#ch3" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
+        <!-- Chapter 4 -->
+        <div class="chapter-box">
+            <h3>Chapter 4</h3>
+            <div class="btn-group">
+                <a href="scert_flash.html#ch4" class="btn-flash">⚡ Flash Cards</a>
+                <a href="scert_mock.html#ch4" class="btn-mock">📝 Mock Test</a>
+            </div>
+        </div>
+
     </div>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 2</span>
-        <a href="chapter2.html" class="btn-view">മോക്ക് ടെസ്റ്റ് ചെയ്യുക →</a>
-    </div>
-
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 3</span>
-        <a href="chapter3.html" class="btn-view">മോക്ക് ടെസ്റ്റ് ചെയ്യുക →</a>
-    </div>
-
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 4</span>
-        <a href="chapter4.html" class="btn-view">മോക്ക് ടെസ്റ്റ് ചെയ്യുക →</a>
-    </div>
-
-    <!-- Back to Dashboard Button -->
-    <a href="index.html" class="btn-back">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
-</div>
+    <a href="index.html" class="back-link">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
 
 </body>
 </html>

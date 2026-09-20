@@ -3,123 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malayalam Previous Year Questions - Mocktest</title>
+    <title>Malayalam PYQ - 200 Sets (Mocktest & Flashcards)</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); padding: 16px 10px; text-align: center; min-height: 100vh; color: #1e293b; }
         
-        .banner-box {
-            background-color: #198754;
-            color: white;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2);
+        .header { 
+            background: linear-gradient(135deg, #15803d 100%, #166534 0%); 
+            color: white; padding: 24px 18px; border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(21, 128, 61, 0.3); max-width: 550px; margin: 0 auto 15px auto; 
         }
-        .banner-box h2 {
-            margin: 0 0 10px 0;
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .banner-box p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.95;
-        }
+        .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .header p { font-size: 0.9rem; opacity: 0.95; }
 
-        .chapter-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+        /* മുകളിലുള്ള ബാക്ക് ബട്ടൺ സ്റ്റൈൽ */
+        .btn-top-back {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #15803d;
+            border: 2px solid #15803d;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
             border-radius: 10px;
-            padding: 15px 18px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            text-decoration: none;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             transition: all 0.2s ease;
         }
-        .chapter-row:hover {
-            border-color: #198754;
-            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.1);
-        }
-        .chapter-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .btn-view {
-            background-color: #198754;
+        .btn-top-back:hover {
+            background-color: #15803d;
             color: white;
-            border: none;
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        .btn-view:hover {
-            background-color: #157347;
         }
 
-        .btn-back {
-            display: block;
-            width: 100%;
-            background-color: #198754;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-top: 25px;
-            box-sizing: border-box;
+        .container { display: flex; flex-direction: column; gap: 12px; max-width: 550px; margin: 0 auto; }
+        
+        /* സെറ്റ് ബോക്സ് */
+        .set-box { 
+            background: #ffffff; padding: 14px 16px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; 
+            border-left: 6px solid #16a34a; 
         }
-        .btn-back:hover {
-            background-color: #157347;
+        .set-box h3 { color: #1e293b; font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; }
+        
+        /* ബട്ടണുകൾ അടങ്ങിയ ഗ്രൂപ്പ് */
+        .btn-group { display: flex; gap: 10px; }
+        
+        .btn-flash { 
+            flex: 1; padding: 9px 10px; background: #ffc107; color: #212529; 
+            text-decoration: none; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; 
         }
+        .btn-flash:hover { background: #ffca2c; }
+
+        .btn-mock { 
+            flex: 1; padding: 9px 10px; background: #0d6efd; color: white; 
+            text-decoration: none; border-radius: 8px; font-size: 0.8rem; font-weight: 700; text-align: center; 
+        }
+        .btn-mock:hover { background: #0b5ed7; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="banner-box">
-        <h2>📚 മലയാളം പ്രീവിയസ് ഇയർ ക്വസ്റ്റ്യൻസ് - Mocktest & Flash Cards</h2>
-        <p>പഠനത്തിനായി ഒരു ചാപ്റ്റർ തിരഞ്ഞെടുക്കുക</p>
+    <div class="header">
+        <h1>📜 മലയാളം പ്രീവിയസ് ഇയർ ക്വസ്റ്റ്യൻസ് (200 Sets)</h1>
+        <p>ഫ്ലാഷ് കാർഡുകളും മോക്ക് ടെസ്റ്റുകളും തിരഞ്ഞെടുക്കുക</p>
     </div>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 1</span>
-        <a href="malayalam-pyq-chapter1.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
+    <!-- പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോകാനുള്ള ബാക്ക് ബട്ടൺ മുകളിൽ നൽകിയിരിക്കുന്നു -->
+    <a href="index.html" class="btn-top-back">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 2</span>
-        <a href="malayalam-pyq-chapter2.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
+    <div class="container">
+        
+        <!-- JavaScript വഴി സെറ്റ് 1 മുതൽ 200 വരെ ഓട്ടോമാറ്റിക്കായി ജനറേറ്റ് ചെയ്യുന്ന സ്ക്രിപ്റ്റ് -->
+        <script>
+            const container = document.currentScript.parentElement;
+            for (let i = 1; i <= 200; i++) {
+                const box = document.createElement('div');
+                box.className = 'set-box';
+                box.innerHTML = `
+                    <h3>Set ${i}</h3>
+                    <div class="btn-group">
+                        <a href="mal_pyq_flash.html#set${i}" class="btn-flash">⚡ Flash Cards</a>
+                        <a href="mal_pyq_mock.html#set${i}" class="btn-mock">📝 Mock Test</a>
+                    </div>
+                `;
+                container.appendChild(box);
+            }
+        </script>
 
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 3</span>
-        <a href="malayalam-pyq-chapter3.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
     </div>
-
-    <div class="chapter-row">
-        <span class="chapter-title">Chapter 4</span>
-        <a href="malayalam-pyq-chapter4.html" class="btn-view">ഉള്ളടക്കം കാണുക →</a>
-    </div>
-
-    <a href="index.html" class="btn-back">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
-</div>
 
 </body>
 </html>

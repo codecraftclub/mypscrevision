@@ -7,15 +7,41 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); padding: 16px 10px; text-align: center; min-height: 100vh; color: #1e293b; }
-        .header { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; padding: 24px 18px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.3); max-width: 550px; margin: 0 auto 20px auto; }
+        
+        .header { 
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); 
+            color: white; padding: 24px 18px; border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.3); max-width: 550px; margin: 0 auto 20px auto; 
+        }
         .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
         .header p { font-size: 0.9rem; opacity: 0.95; }
-        .container { display: flex; flex-direction: column; gap: 12px; max-width: 550px; margin: 0 auto; }
-        .main-box { background: #ffffff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; border-left: 6px solid #16a34a; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .main-box h3 { color: #1e293b; font-size: 0.98rem; font-weight: 700; margin: 0; flex: 1; }
-        a { padding: 9px 14px; background: #16a34a; color: white; text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; white-space: nowrap; }
-        a:hover { background: #15803d; }
-        .back-link { display: inline-block; margin-top: 20px; color: #1e3c72; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+
+        .container { display: flex; flex-direction: column; gap: 14px; max-width: 550px; margin: 0 auto; }
+        
+        /* ചാപ്റ്റർ ബോക്സ് */
+        .chapter-box { 
+            background: #ffffff; padding: 16px; border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; 
+            border-left: 6px solid #16a34a; 
+        }
+        .chapter-box h3 { color: #1e293b; font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+        
+        /* ബട്ടണുകൾ അടങ്ങിയ ഗ്രൂപ്പ് */
+        .btn-group { display: flex; gap: 10px; }
+        
+        .btn-flash { 
+            flex: 1; padding: 10px; background: #ffc107; color: #212529; 
+            text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; 
+        }
+        .btn-flash:hover { background: #ffca2c; }
+
+        .btn-mock { 
+            flex: 1; padding: 10px; background: #0d6efd; color: white; 
+            text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; 
+        }
+        .btn-mock:hover { background: #0b5ed7; }
+
+        .back-link { display: inline-block; margin-top: 25px; color: #1e3c72; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
         .back-link:hover { text-decoration: underline; }
     </style>
 </head>
@@ -23,16 +49,22 @@
 
     <div class="header">
         <h1>📖 മലയാളം - സബ്‌ടോപ്പിക്കുകൾ</h1>
-        <p>പഠനത്തിനായി ഒരു വിഭാഗം തിരഞ്ഞെടുക്കുക</p>
+        <p>ഫ്ലാഷ് കാർഡുകളും മോക്ക് ടെസ്റ്റുകളും തിരഞ്ഞെടുക്കുക</p>
     </div>
 
     <div class="container">
-        <!-- വാക്യശുദ്ധി സബ്‌ടോപ്പിക് ബട്ടൺ -->
-        <div class="main-box">
+        
+        <!-- വാക്യശുദ്ധി സബ്‌ടോപ്പിക് -->
+        <div class="chapter-box">
             <h3>വാക്യശുദ്ധി</h3>
-            <a href="vakyashudhi.html">ഉള്ളടക്കം കാണുക →</a>
+            <div class="btn-group">
+                <a href="vakyashudhi.html#vakyashudhi" class="btn-flash">⚡ Flash Cards</a>
+                <a href="vakyashudhi.html#vakyashudhi" class="btn-mock">📝 Mock Test</a>
+            </div>
         </div>
-        <!-- ഭാവിയിൽ വരുന്ന മറ്റ് സബ്‌ടോപ്പിക്കുകൾ ഇവിടെ ചേർക്കാം -->
+
+        <!-- ഭാവിയിൽ വരുന്ന മറ്റ് സബ്‌ടോപ്പിക്കുകൾ ഇതിനു താഴെ ഇതേപോലെ ചേർക്കാം -->
+
     </div>
 
     <a href="index.html" class="back-link">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>

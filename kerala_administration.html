@@ -5,36 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>കേരളം ഭരണവും ഭരണസംവിധാനങ്ങളും - സബ്‌ടോപ്പിക്കുകൾ</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); padding: 16px 10px; text-align: center; min-height: 100vh; color: #1e293b; }
-        .header { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; padding: 24px 18px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.3); max-width: 550px; margin: 0 auto 20px auto; }
-        .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
-        .header p { font-size: 0.9rem; opacity: 0.95; }
-        .container { display: flex; flex-direction: column; gap: 12px; max-width: 550px; margin: 0 auto; }
-        .main-box { background: #ffffff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: left; border-left: 6px solid #0284c7; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-        .main-box h3 { color: #1e293b; font-size: 0.98rem; font-weight: 700; margin: 0; flex: 1; }
-        a { padding: 9px 14px; background: #0284c7; color: white; text-decoration: none; border-radius: 8px; font-size: 0.85rem; font-weight: 700; text-align: center; white-space: nowrap; }
-        a:hover { background: #0369a1; }
-        .back-link { display: inline-block; margin-top: 20px; color: #1e3c72; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-        .back-link:hover { text-decoration: underline; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        
+        .banner-box {
+            background-color: #0284c7;
+            color: white;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+        }
+        .banner-box h2 {
+            margin: 0 0 10px 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .banner-box p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .chapter-row {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .chapter-row:hover {
+            border-color: #0284c7;
+            box-shadow: 0 4px 8px rgba(2, 132, 199, 0.1);
+        }
+        .chapter-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .sub-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-mock {
+            flex: 1;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-mock:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-flash {
+            flex: 1;
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        .btn-flash:hover {
+            background-color: #ffca2c;
+        }
+
+        .btn-back {
+            display: block;
+            width: 100%;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 25px;
+            box-sizing: border-box;
+        }
+        .btn-back:hover {
+            background-color: #0369a1;
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🏛️ കേരളം ഭരണവും ഭരണസംവിധാനങ്ങളും</h1>
+<div class="container">
+    <div class="banner-box">
+        <h2>🏛️ കേരളം ഭരണവും ഭരണസംവിധാനങ്ങളും</h2>
         <p>സബ്‌ടോപ്പിക്കുകൾ തിരഞ്ഞെടുക്കുക</p>
     </div>
 
-    <div class="container">
-        <!-- കേരള സിവിൽ സർവീസ് ബട്ടൺ -->
-        <div class="main-box">
-            <h3>കേരള സിവിൽ സർവീസ്</h3>
-            <a href="civil_service.html">ഉള്ളടക്കം കാണുക →</a>
+    <!-- കേരള സിവിൽ സർവീസ് -->
+    <div class="chapter-row">
+        <span class="chapter-title">കേരള സിവിൽ സർവീസ്</span>
+        <div class="sub-btn-group">
+            <a href="civil_service.html" class="btn-mock">📝 Mock Test</a>
+            <a href="civil_service_flash.html" class="btn-flash">⚡ Flash Cards</a>
         </div>
     </div>
 
-    <a href="index.html" class="back-link">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
+    <a href="index.html" class="btn-back">← പ്രധാന ഡാഷ്‌ബോർഡിലേക്ക് തിരികെ പോവുക</a>
+</div>
 
 </body>
 </html>
