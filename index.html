@@ -42,6 +42,18 @@
             gap: 10px; 
         }
 
+        /* തെറ്റിയ ഉത്തരങ്ങൾക്കായി പ്രത്യേക കളർ ഹൈലൈറ്റ് (ഓറഞ്ച്/റെഡ് തീം) */
+        .main-box.wrong-box {
+            border-left-color: #dc2626;
+            background: #fff1f2;
+        }
+        .main-box.wrong-box a {
+            background: #dc2626;
+        }
+        .main-box.wrong-box a:hover {
+            background: #b91c1c;
+        }
+
         .main-box h3 { color: #1e293b; font-size: 0.95rem; font-weight: 700; margin: 0; flex: 1; word-break: break-word; }
 
         a { 
@@ -66,6 +78,12 @@
     </div>
 
     <div class="container">
+        <!-- മറ്റെല്ലാറ്റിനും മുകളിലായി നമ്പർ ഇല്ലാതെ നൽകിയിരിക്കുന്ന തെറ്റിയ ഉത്തരങ്ങൾ റിവ്യൂ ചെയ്യാനുള്ള ബോക്സ് -->
+        <div class="main-box wrong-box">
+            <h3>❌ തെറ്റിയ ഉത്തരങ്ങൾ റിവ്യൂ ചെയ്യുക</h3>
+            <a href="wrong_answers_review.html">റിവ്യൂ ചെയ്യുക →</a>
+        </div>
+
         <div class="main-box"><h3>*. HOT TOPICS </h3><a href="hot_topics.html">ഉള്ളടക്കം കാണുക →</a></div>
         <div class="main-box"><h3>1. ചരിത്രം</h3><a href="history.html">ഉള്ളടക്കം കാണുക →</a></div>
         <div class="main-box"><h3>2. ഭൂമിശാസ്ത്രം</h3><a href="geography_home.html">ഉള്ളടക്കം കാണുക →</a></div>
