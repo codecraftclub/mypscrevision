@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>എന്റെ പഠന & റിവിഷൻ ട്രാക്കർ - Kerala PSC</title>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #f8fafc 100%, #e2e8f0 0%); 
+            padding: 16px 10px; 
+            text-align: center; 
+            min-height: 100vh; 
+            color: #1e293b;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); 
+            color: white; 
+            padding: 24px 18px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); 
+            max-width: 650px; 
+            margin: 0 auto 20px auto; 
+        }
+        .header h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+        .header p { font-size: 0.9rem; opacity: 0.95; }
+
+        .container { display: flex; flex-direction: column; gap: 14px; max-width: 650px; margin: 0 auto; }
+
+        /* പുതിയ ടോപ്പിക് ആഡ് ചെയ്യുന്ന ബോക്സ് */
+        .add-box {
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .add-box input, .add-box select {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .add-box input:focus, .add-box select:focus { border-color: #4f46e5; }
+        .btn-add {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-add:hover { background: #4338ca; }
+
+        /* ടോപ്പിക് കാർഡുകൾ */
+        .topic-card { 
+            background: #ffffff; 
+            padding: 16px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            text-align: left; 
+            border-left: 6px solid #cbd5e1; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        .topic-card.completed { border-left-color: #10b981; background: #f0fdf4; }
+
+        .topic-info h3 { font-size: 1.05rem; color: #1e293b; margin-bottom: 4px; }
+        .topic-info span { font-size: 0.8rem; background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-weight: 600; color: #475569; }
+        .topic-info p { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+
+        .topic-actions { display: flex; align-items: center; gap: 12px; }
+        
+        /* ചെക്ക്ബോക്സ് സ്റ്റൈൽ */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .checkbox-container input { width: 18px; height: 18px; cursor: pointer; accent-color: #10b981; }
+
+        /* റിവിഷൻ കൗണ്ടർ ബട്ടണുകൾ */
+        .rev-box {
+            display: flex;
+            align-items: center;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .rev-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 10px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #334155;
+        }
+        .rev-btn:hover { background: #cbd5e1; }
+        .rev-count { padding: 0 10px; font-size: 0.85rem; font-weight: bold; color: #4f46e5; }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn-delete:hover { background: #dc2626; color: white; }
+
+        .no-data { background: #ffffff; padding: 30px; border-radius: 12px; font-size: 0.95rem; color: #64748b; }
+
+        .actions-box { display: flex; max-width: 650px; margin: 20px auto; }
+        .btn-home { background: #059669; width: 100%; padding: 12px; color: white; text-decoration: none; border-radius: 10px; font-weight: 700; text-align: center; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📖 പഠന & റിവിഷൻ ട്രാക്കർ</h1>
+        <p>പഠിച്ച ടോപ്പിക്കുകളും റിവിഷൻ ചെയ്ത തവണകളും കൃത്യമായി മാർക്ക് ചെയ്തു വെക്കൂ</p>
+    </div>
+
+    <div class="container">
+        <!-- പുതിയ ടോപ്പിക് ആഡ് ചെയ്യാനുള്ള ഫോം -->
+        <div class="add-box">
+            <input type="text" id="topic-name" placeholder="ടോപ്പിക്കിന്റെ പേര് (ഉദാ: കേരള ചരിത്രം)">
+            <select id="topic-subject">
+                <option value="ചരിത്രം (History)">ചരിത്രം (History)</option>
+                <option value="ഭൂമിശാസ്ത്രം (Geography)">ഭൂമിശാസ്ത്രം (Geography)</option>
+                <option value="ഭരണഘടന (Constitution)">ഭരണഘടന (Constitution)</option>
+                <option value="മലയാളം (Malayalam)">മലയാളം (Malayalam)</option>
+                <option value="ഇംഗ്ലീഷ് (English)">ഇംഗ്ലീഷ് (English)</option>
+                <option value="കറന്റ് അഫയേഴ്സ്">കറന്റ് അഫയേഴ്സ്</option>
+                <option value="മറ്റുള്ളവ">മറ്റുള്ളവ</option>
+            </select>
+            <button class="btn-add" onclick="addTopic()">+ ടോപ്പിക് ചേർക്കുക</button>
+        </div>
+
+        <!-- ടോപ്പിക്കുകൾ ലിസ്റ്റ് ചെയ്യുന്ന സ്ഥലം -->
+        <div id="topics-container">
+            <div class="no-data">ടോപ്പിക്കുകൾ ഒന്നും ചേർത്തിട്ടില്ല. പുതിയ ഒന്ന് മുകളിൽ ചേർക്കുക.</div>
+        </div>
+    </div>
+
+    <div class="actions-box">
+        <a href="index.html" class="btn-home">← ഹോം പേജിലേക്ക് മടങ്ങുക</a>
+    </div>
+
+    <script>
+        // ലോക്കൽ സ്റ്റോറേജിൽ നിന്ന് ഡാറ്റ എടുക്കുന്നു അല്ലെങ്കിൽ എംപ്റ്റി അറേ കൊടുക്കുന്നു
+        let topicsList = JSON.parse(localStorage.getItem('psc_study_topics')) || [];
+
+        function saveAndRender() {
+            localStorage.setItem('psc_study_topics', JSON.stringify(topicsList));
+            renderTopics();
+        }
+
+        function addTopic() {
+            let nameInput = document.getElementById('topic-name');
+            let subjectSelect = document.getElementById('topic-subject');
+            
+            let name = nameInput.value.trim();
+            let subject = subjectSelect.value;
+
+            if (name === "") {
+                alert("ദയവായി ടോപ്പിക്കിന്റെ പേര് നൽകുക!");
+                return;
+            }
+
+            let newTopic = {
+                id: Date.now(),
+                name: name,
+                subject: subject,
+                completed: false,
+                revisionCount: 0
+            };
+
+            topicsList.push(newTopic);
+            nameInput.value = "";
+            saveAndRender();
+        }
+
+        function toggleComplete(id) {
+            let topic = topicsList.find(t => t.id === id);
+            if (topic) {
+                topic.completed = !topic.completed;
+                saveAndRender();
+            }
+        }
+
+        function updateRevision(id, change) {
+            let topic = topicsList.find(t => t.id === id);
+            if (topic) {
+                topic.revisionCount += change;
+                if (topic.revisionCount < 0) topic.revisionCount = 0;
+                saveAndRender();
+            }
+        }
+
+        function deleteTopic(id) {
+            if (confirm("ഈ ടോപ്പിക് ഒഴിവാക്കണമെന്നുറപ്പാണോ?")) {
+                topicsList = topicsList.filter(t => t.id !== id);
+                saveAndRender();
+            }
+        }
+
+        function renderTopics() {
+            let container = document.getElementById('topics-container');
+            
+            if (topicsList.length === 0) {
+                container.innerHTML = `<div class="no-data">ടോപ്പിക്കുകൾ ഒന്നും ചേർത്തിട്ടില്ല. പുതിയ ഒന്ന് മുകളിൽ ചേർക്കുക.</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            topicsList.forEach((topic) => {
+                let card = document.createElement('div');
+                card.className = `topic-card ${topic.completed ? 'completed' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="topic-info">
+                        <span>${topic.subject}</span>
+                        <h3>${topic.name}</h3>
+                        <p>റിവിഷൻ ചെയ്തത്: <strong>${topic.revisionCount} തവണ</strong></p>
+                    </div>
+                    <div class="topic-actions">
+                        <label class="checkbox-container">
+                            <input type="checkbox" ${topic.completed ? 'checked' : ''} onclick="toggleComplete(${topic.id})">
+                            ${topic.completed ? 'പഠിച്ചു' : 'പഠിക്കാൻ ഉണ്ട്'}
+                        </label>
+                        <div class="rev-box">
+                            <button class="rev-btn" onclick="updateRevision(${topic.id}, -1)">-</button>
+                            <span class="rev-count">${topic.revisionCount}</span>
+                            <button class="rev-btn" onclick="updateRevision(${topic.id}, 1)">+</button>
+                        </div>
+                        <button class="btn-delete" onclick="deleteTopic(${topic.id})">🗑️</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // പേജ് ലോഡ് ചെയ്യുമ്പോൾ ടോപ്പിക്കുകൾ കാണിക്കാൻ
+        window.onload = function() {
+            renderTopics();
+        };
+    </script>
+</body>
+</html>

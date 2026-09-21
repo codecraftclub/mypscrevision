@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>കേരള PSC - പ്രൊഫഷണൽ പഠന & റിവിഷൻ ട്രാക്കർ</title>
+    
+    <!-- Firebase SDK & Firestore (v12) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDA1XwfYzlPCL_Soxia0d-JpNekGGCaJMM",
+            authDomain: "mypscrevison.firebaseapp.com",
+            projectId: "mypscrevison",
+            storageBucket: "mypscrevison.firebasestorage.app",
+            messagingSenderId: "89979950079",
+            appId: "1:89979950079:web:707815264541bba457cdca",
+            measurementId: "G-GC849S4G0N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        window.db = db;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseGetDocs = getDocs;
+        window.firebaseDeleteDoc = deleteDoc;
+        window.firebaseDoc = doc;
+        window.firebaseCollection = collection;
+        window.firebaseUpdateDoc = updateDoc;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof loadTopicsFromFirebase === 'function') {
+                loadTopicsFromFirebase();
+            }
+        });
+    </script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { 
+            background: #f8fafc; 
+            padding: 16px; 
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%); 
+            color: white; 
+            padding: 24px 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25); 
+            width: 100%;
+            max-width: 800px; 
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+        .header p { font-size: 0.9rem; opacity: 0.9; }
+
+        .container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 16px; 
+            width: 100%;
+            max-width: 800px; 
+        }
+
+        .dashboard-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            text-align: center;
+        }
+        .stat-box { 
+            background: #f8fafc; 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: 1px solid #e2e8f0; 
+            flex: 1; 
+        }
+        .stat-box span { display: block; font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .stat-box strong { font-size: 1.25rem; color: #0f172a; }
+
+        .add-box {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .add-box input, .add-box select {
+            flex: 1;
+            min-width: 180px;
+            padding: 10px 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .add-box input:focus, .add-box select:focus { border-color: #4f46e5; }
+        .btn-add {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-add:hover { background: #4338ca; }
+
+        .topic-card { 
+            background: #ffffff; 
+            padding: 16px 20px; 
+            border-radius: 14px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid #cbd5e1; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .topic-card.completed { border-left-color: #10b981; background: #f0fdf4; opacity: 0.95; }
+
+        .topic-info { flex: 1; text-align: left; }
+        .topic-info h3 { font-size: 1rem; color: #1e293b; margin-bottom: 4px; line-height: 1.4; }
+        .topic-info span { font-size: 0.75rem; background: #e2e8f0; padding: 3px 8px; border-radius: 6px; font-weight: 700; color: #334155; display: inline-block; margin-bottom: 4px;}
+
+        .topic-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .checkbox-container input { width: 18px; height: 18px; cursor: pointer; accent-color: #10b981; }
+
+        .rev-box {
+            display: flex;
+            align-items: center;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .rev-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 10px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #334155;
+            font-size: 0.85rem;
+        }
+        .rev-btn:hover:not(:disabled) { background: #cbd5e1; }
+        .rev-btn:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; opacity: 0.6; }
+        .rev-count { padding: 0 8px; font-size: 0.85rem; font-weight: bold; color: #4f46e5; }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-delete:hover { background: #dc2626; color: white; }
+
+        .no-data { background: #ffffff; padding: 40px; border-radius: 16px; font-size: 0.95rem; color: #64748b; border: 1px solid #e2e8f0; text-align: center; }
+
+        .actions-box { width: 100%; max-width: 800px; margin: 10px 0; }
+        .btn-home { background: #059669; width: 100%; padding: 14px; color: white; text-decoration: none; border-radius: 12px; font-weight: 700; text-align: center; display: block; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); }
+        .btn-home:hover { background: #047857; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header { padding: 18px 14px; }
+            .topic-card { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .topic-actions { width: 100%; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📖 KERALA PSC - STUDY TRACKER</h1>
+        <p>Revision Strategy & Firebase Sync</p>
+    </div>
+
+    <div class="container">
+        <!-- ഡാഷ്‌ബോർഡ് കാർഡ് -->
+        <div class="dashboard-card">
+            <div class="stat-box">
+                <span>ആകെ ടോപ്പിക്കുകൾ</span>
+                <strong id="total-count">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>പഠിച്ചു തീർത്തത്</span>
+                <strong style="color: #10b981;" id="completed-count">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>ബാക്കിയുള്ളവ (Pending)</span>
+                <strong style="color: #ef4444;" id="pending-count">0</strong>
+            </div>
+        </div>
+
+        <!-- പുതിയ ടോപ്പിക് ആഡ് ചെയ്യാനുള്ള ഫോം -->
+        <div class="add-box">
+            <input type="text" id="topic-name" placeholder="ടോപ്പിക്കിന്റെ പേര് നൽകുക">
+            <select id="topic-subject">
+                <option value="കേരള ചരിത്രം">കേരള ചരിത്രം</option>
+                <option value="ഇന്ത്യൻ ചരിത്രം">ഇന്ത്യൻ ചരിത്രം</option>
+                <option value="ലോക ചരിത്രം">ലോക ചരിത്രം</option>
+                <option value="ലോകഭൂമിശാസ്ത്രം">ലോകഭൂമിശാസ്ത്രം</option>
+                <option value="ഇന്ത്യൻ ഭൂമിശാസ്ത്രം">ഇന്ത്യൻ ഭൂമിശാസ്ത്രം</option>
+                <option value="കേരള ഭൂമിശാസ്ത്രം">കേരള ഭൂമിശാസ്ത്രം</option>
+                <option value="ധനതത്ത്വശാസ്ത്രം">ധനതത്ത്വശാസ്ത്രം</option>
+                <option value="ഭരണഘടന">ഭരണഘടന</option>
+                <option value="കേരള ഭരണം">കേരള ഭരണം</option>
+                <option value="ജീവശാസ്ത്രവും പൊതുജനാരോഗ്യവും">ജീവശാസ്ത്രവും പൊതുജനാരോഗ്യവും</option>
+                <option value="ഭൗതികശാസ്ത്രം">ഭൗതികശാസ്ത്രം</option>
+                <option value="രസതന്ത്രം">രസതന്ത്രം</option>
+                <option value="സുപ്രധാന നിയമങ്ങൾ">സുപ്രധാന നിയമങ്ങൾ</option>
+                <option value="കല & കായികം">കല & കായികം</option>
+                <option value="സാഹിത്യം & സംസ്കാരം">സാഹിത്യം & സംസ്കാരം</option>
+                <option value="കമ്പ്യൂട്ടർ അടിസ്ഥാന വിവരങ്ങൾ">കമ്പ്യൂട്ടർ അടിസ്ഥാന വിവരങ്ങൾ</option>
+                <option value="ആനുകാലികം">ആനുകാലികം</option>
+                <option value="ഗണിതം & റീസണിംഗ്">ഗണിതം & റീസണിംഗ്</option>
+                <option value="ഇംഗ്ലീഷ്">ഇംഗ്ലീഷ്</option>
+                <option value="മലയാളം">മലയാളം</option>
+            </select>
+            <button class="btn-add" onclick="addNewTopic()">+ ടോപ്പിക് ചേർക്കുക</button>
+        </div>
+
+        <!-- ടോപ്പിക്കുകൾ ലിസ്റ്റ് ചെയ്യുന്ന സ്ഥലം -->
+        <div id="topics-container" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="no-data">ഡാറ്റ ലോഡ് ചെയ്യുന്നു...</div>
+        </div>
+    </div>
+
+    <div class="actions-box">
+        <a href="index.html" class="btn-home">← ഹോം പേജിലേക്ക് മടങ്ങുക</a>
+    </div>
+
+    <script>
+        let topicsList = [];
+
+        async function loadTopicsFromFirebase() {
+            const container = document.getElementById('topics-container');
+            if (!window.db) {
+                setTimeout(loadTopicsFromFirebase, 500);
+                return;
+            }
+
+            try {
+                const querySnapshot = await window.firebaseGetDocs(window.firebaseCollection(window.db, "psc_simple_tracker"));
+                topicsList = [];
+                querySnapshot.forEach((docItem) => {
+                    topicsList.push({ id: docItem.id, ...docItem.data() });
+                });
+
+                renderTopics();
+            } catch (e) {
+                console.error("ഫയർബേസ് ലോഡ് പിഴവ്:", e);
+                container.innerHTML = `<div class="no-data">ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു.</div>`;
+            }
+        }
+
+        async function addNewTopic() {
+            let nameInput = document.getElementById('topic-name');
+            let subjectSelect = document.getElementById('topic-subject');
+            
+            let name = nameInput.value.trim();
+            let subject = subjectSelect.value;
+
+            if (name === "") {
+                alert("ദയവായി ടോപ്പിക്കിന്റെ പേര് നൽകുക!");
+                return;
+            }
+
+            let tempId = 'temp_' + Date.now();
+            let newTopicData = {
+                id: tempId,
+                name: name,
+                subject: subject,
+                completed: false,
+                revisionCount: 0,
+                timestamp: new Date()
+            };
+
+            try {
+                topicsList.push(newTopicData);
+                renderTopics();
+                nameInput.value = "";
+
+                const docRef = await window.firebaseAddDoc(window.firebaseCollection(window.db, "psc_simple_tracker"), {
+                    name: newTopicData.name,
+                    subject: newTopicData.subject,
+                    completed: newTopicData.completed,
+                    revisionCount: newTopicData.revisionCount,
+                    timestamp: newTopicData.timestamp
+                });
+
+                // അപ്ഡേറ്റ് ആയ ഒഫിഷ്യൽ ഐഡി സെറ്റ് ചെയ്യുക
+                let index = topicsList.findIndex(t => t.id === tempId);
+                if (index !== -1) {
+                    topicsList[index].id = docRef.id;
+                }
+            } catch (e) {
+                console.error("സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല:", e);
+                alert("ഡാറ്റ സേവ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു.");
+                loadTopicsFromFirebase();
+            }
+        }
+
+        window.toggleCompleteFirebase = async function(docId, currentStatus) {
+            let topic = topicsList.find(t => t.id === docId);
+            if (topic) topic.completed = !currentStatus;
+            renderTopics();
+
+            try {
+                const docRef = window.firebaseDoc(window.db, "psc_simple_tracker", docId);
+                await window.firebaseUpdateDoc(docRef, { completed: !currentStatus });
+            } catch (e) {
+                console.error("അപ്ഡേറ്റ് പിഴവ്:", e);
+                loadTopicsFromFirebase();
+            }
+        }
+
+        window.updateRevisionFirebase = async function(docId, currentCount, change) {
+            let newCount = currentCount + change;
+            if (newCount < 0) newCount = 0;
+
+            let actionText = change > 0 ? "ഈ ടോപ്പിക്കിന്റെ റിവിഷൻ കൗണ്ട് കൂട്ടണമെന്നുറപ്പാണോ?" : "ഈ ടോപ്പിക്കിന്റെ റിവിഷൻ കൗണ്ട് കുറയ്ക്കണമെന്നുറപ്പാണോ?";
+            
+            if (confirm(actionText)) {
+                let topic = topicsList.find(t => t.id === docId);
+                if (topic) topic.revisionCount = newCount;
+                renderTopics();
+
+                try {
+                    const docRef = window.firebaseDoc(window.db, "psc_simple_tracker", docId);
+                    await window.firebaseUpdateDoc(docRef, { revisionCount: newCount });
+                } catch (e) {
+                    console.error("റിവിഷൻ അപ്ഡേറ്റ് പിഴവ്:", e);
+                    loadTopicsFromFirebase();
+                }
+            }
+        }
+
+        window.deleteTopicFirebase = async function(docId) {
+            if (confirm("ഈ ടോപ്പിക് ഒഴിവാക്കണമെന്നുറപ്പാണോ?")) {
+                try {
+                    topicsList = topicsList.filter(t => t.id !== docId);
+                    renderTopics();
+
+                    await window.firebaseDeleteDoc(window.firebaseDoc(window.db, "psc_simple_tracker", docId));
+                } catch (e) {
+                    console.error("ഡിലീറ്റ് പിഴവ്:", e);
+                    loadTopicsFromFirebase();
+                }
+            }
+        }
+
+        function renderTopics() {
+            let container = document.getElementById('topics-container');
+            
+            if (topicsList.length === 0) {
+                container.innerHTML = `<div class="no-data">ടോപ്പിക്കുകൾ ഒന്നും ചേർത്തിട്ടില്ല. മുകളിൽ നിന്ന് പുതിയവ ചേർക്കുക.</div>`;
+                updateDashboard(0, 0);
+                return;
+            }
+
+            let completedCount = topicsList.filter(t => t.completed).length;
+            let totalCount = topicsList.length;
+            updateDashboard(completedCount, totalCount);
+
+            container.innerHTML = '';
+            topicsList.forEach((topic) => {
+                let card = document.createElement('div');
+                card.className = `topic-card ${topic.completed ? 'completed' : ''}`;
+                
+                let isCompleted = topic.completed;
+
+                card.innerHTML = `
+                    <div class="topic-info">
+                        <span>${topic.subject}</span>
+                        <h3>${topic.name}</h3>
+                    </div>
+                    <div class="topic-actions">
+                        <label class="checkbox-container">
+                            <input type="checkbox" ${isCompleted ? 'checked' : ''} onclick="toggleCompleteFirebase('${topic.id}', ${isCompleted})">
+                            ${isCompleted ? 'പഠിച്ചു' : 'പഠിക്കാൻ ഉണ്ട്'}
+                        </label>
+                        <div class="rev-box">
+                            <button class="rev-btn" ${!isCompleted ? 'disabled' : ''} onclick="updateRevisionFirebase('${topic.id}', ${topic.revisionCount || 0}, -1)">-</button>
+                            <span class="rev-count">റിവിഷൻ: ${topic.revisionCount || 0}</span>
+                            <button class="rev-btn" ${!isCompleted ? 'disabled' : ''} onclick="updateRevisionFirebase('${topic.id}', ${topic.revisionCount || 0}, 1)">+</button>
+                        </div>
+                        <button class="btn-delete" onclick="deleteTopicFirebase('${topic.id}')">🗑️</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateDashboard(completed, total) {
+            let pending = total - completed;
+            document.getElementById('total-count').innerText = total;
+            document.getElementById('completed-count').innerText = completed;
+            document.getElementById('pending-count').innerText = pending;
+        }
+    </script>
+</body>
+</html>
